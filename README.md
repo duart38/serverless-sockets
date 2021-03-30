@@ -26,7 +26,7 @@
 - CLI application (install-able as native binary)
 
 # What i will need
-- A github repository
+- A github repository (i could alo create my own)
 - A set of things that this framework MUST do (MVP)
 - What "problem" this framework will solve or how it will improve ***X***
 - Someone available that i can contact as i go through the process of writing my internship papers (i.e. approval form, mobilityOnline)
