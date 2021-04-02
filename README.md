@@ -17,6 +17,8 @@
 - Error logging module (threaded, should take load away from printing to the console)
 - Lifecycle hooks for plugs ??? -> (e.g. beforeSend(), afterSend() )
 - C# to web-assembly to this framework ***???*** (should be supported but i have not tested this)
+- CORS!!!
+- Loading plugs from the network!.  (currently it is possible via an import st combined with a call or instantiation)
 
 # Deliverables
 - An executable (.exe or a unix executable) to allow "double-click-run"
@@ -43,3 +45,18 @@ customer generates operational data and the back-office receives analytical data
 sockets have a problem with mocking it on the front-end you generally have to wait for a data with a shape you do not know about.
 want to be able to mimic a response from server (shaping), this should be conceptually similar to mocking in unit tests.
 essentially you want to able to develop the front-end without the back-end ever being there (compile time knowledge).
+
+
+# Optimizations
+JIT compiler optimizing functions to native code.
+
+decoding and encoding on the front end? less server costs..
+
+pre-computed arrays or Map for "hole-prone" arrays.
+
+The optimizer (V8) makes optimistic assumptions from the inline cache but it may fail sometimes so in those cases V8 throws away the optimized code and comes back to the Full compiler to get types again from the ICs. This process is slow and should be avoided by trying not to change the functions once they are optimized.
+
+.. Maybe we can introduce runtime-type safety features to "trick" TurboFan into kicking in earlier?..
+Another thing we can do is restrict the shapes of objects to no more than and no less than (typescript partially does this but not at run-time..)... Any validity checks do lower performance on non "hot" declared methods BUT will be compiled to machine code as soon as these become "hot". why? well multiple shapes in the runtime will require the engine to do a linear search for a shape of the matching parameter shape, that shit is slow as fuck.
+
+Some sort of monomorphic (as apposed to polymorphic) checker would be very nice (we could technically do this at compile time and make the IDE annoy the living shit out of the developer...). ***AVOID megamorphic***
