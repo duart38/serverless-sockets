@@ -1,0 +1,1 @@
+This folder contains method decorators to more easily extend defined methods with certain behaviors.
