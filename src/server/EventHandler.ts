@@ -13,11 +13,17 @@ export async function HandleEvent(
   const fileWatcher: Watcher = socket.directoryWatcher;
   try {
     const m = await import(`../${fileWatcher.directory()}/${sanitizeEvent(message.event)}.ts?${fileWatcher.getHash()}`);
-    Object.keys(m).forEach(async (FName)=>{if (typeof m[FName] === "function") await m[FName](socket, message, from) });
+    Object.keys(m).forEach(async (FName)=>{
+      try{
+        if (typeof m[FName] === "function" && validateFunctionShape(m[FName])) await m[FName](socket, message, from) 
+      }catch(e){
+        console.log(e);
+        from.send("error");
+      }
+    });
   } catch (error) {
     console.log(error);
-    from.send("error");
-    // TODO: do something error wise? ..
+    from.send("Invalid event");
   }
 }
 
@@ -30,6 +36,11 @@ function sanitizeEvent(eventString: string): string {
   return eventString.replaceAll(/(\W|\r|\t|\n|\s)+/g, "");
 }
 
+/**
+ * Validates the shape of a plug function.
+ * @HOT
+ * @param x function.
+ */
 function validateFunctionShape(x: ()=>void){
-  if(x.length != PLUG_LENGTH) throw new Error();
+  if(x.length != PLUG_LENGTH) throw new Error(`shape of ${x.name} is wrong. parameter count of ${x.length} needs to be ${PLUG_LENGTH}`);
 }
