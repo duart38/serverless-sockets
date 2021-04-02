@@ -15,12 +15,10 @@ export async function HandleEvent(
   try {
     const m = await import(`../${fileWatcher.directory()}/${sanitizeEvent(message.event)}.ts?${fileWatcher.getHash()}`);
 
-    console.time("bruteForce"+message.event);
     (Object.values(m) as PlugFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v))
     .forEach((fn)=>{
         NonBlocking.call(fn, socket, message, from);
     });
-    console.timeEnd("bruteForce"+message.event);
   } catch (error) {
     console.log(error);
     from.send("Invalid event");
