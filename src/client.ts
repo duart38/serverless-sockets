@@ -2,7 +2,7 @@ import type { socketMessage } from "./interface/message.ts";
 
 
 function firstConnection(){
-  let ws = new WebSocket("ws://localhost:8080");
+  const ws = new WebSocket("ws://localhost:8080");
   ws.addEventListener("message", (ev) => console.log(ev.data));
   ws.addEventListener("open", () => {
     const testObject: socketMessage = { event: "decorate", payload: "xx" };
@@ -11,7 +11,7 @@ function firstConnection(){
 }
 
 function secondConnection(){
-  let second = new WebSocket("ws://localhost:8080");
+  const second = new WebSocket("ws://localhost:8080");
   second.addEventListener("message", (ev) => console.log(ev.data));
   second.addEventListener("open", () => { second.send(JSON.stringify({ event: "echo", payload: "Hello World" })) });
 }
