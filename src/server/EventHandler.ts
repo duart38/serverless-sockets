@@ -43,4 +43,5 @@ function sanitizeEvent(eventString: string): string {
  */
 function validateFunctionShape(x: ()=>void){
   if(x.length != PLUG_LENGTH) throw new Error(`shape of ${x.name} is wrong. parameter count of ${x.length} needs to be ${PLUG_LENGTH}`);
+  return true
 }
