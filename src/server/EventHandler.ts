@@ -7,7 +7,7 @@ import { PLUG_LENGTH, PlugFunction } from "../interface/socketFunction.ts";
 import NonBlocking from "../decorators/NonBlocking.ts";
 
 export async function HandleEvent(
-  socket: Socket,
+  socket: Readonly<Socket>,
   message: socketMessage,
   from: WebSocket,
 ) {

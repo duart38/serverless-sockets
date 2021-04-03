@@ -32,9 +32,8 @@ export default class Socket {
   private async waitForSocket(socket: WebSocket) {
     try {
       for await (const ev of socket) {
-        console.log("Socket connected with rid:",socket.conn.rid);
         if (typeof ev === "string") {
-          HandleEvent(this, this.decodeStringMessage(ev), socket);
+          HandleEvent(Object.freeze(this), this.decodeStringMessage(ev), socket);
         } else if (isWebSocketCloseEvent(ev)) {
           this.handleClose(socket);
         }

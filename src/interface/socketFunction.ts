@@ -6,7 +6,7 @@ import Socket from "../server/Socket.ts";
  * @see HandleEvent
  */
 export type PlugFunction = (
-  socket: Socket,
+  socket: Readonly<Socket>,
   message: socketMessage,
   from: WebSocket,
 ) => void;
