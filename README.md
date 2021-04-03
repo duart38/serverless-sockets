@@ -19,6 +19,8 @@
 - C# to web-assembly to this framework ***???*** (should be supported but i have not tested this)
 - CORS!!!
 - Loading plugs from the network!.  (currently it is possible via an import st combined with a call or instantiation)
+- Add pre-compiler to remove the initial slow call?
+- We could also compile/bundle on change, store in different directory, and then have the handler pick from the bundles (space/time tradeoff here as the FS will grow with all the self-contained JS modules in each bundled file... definitely faster tho..)
 
 # Deliverables
 - An executable (.exe or a unix executable) to allow "double-click-run"
