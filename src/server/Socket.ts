@@ -22,10 +22,7 @@ export default class Socket {
   }
 
   private decodeStringMessage(str: string): socketMessage {
-    // TODO: error handling here...
-    const temp: socketMessage = $Log.getInstance().silent(()=>JSON.parse(str));
-    // ... do some more stuff maybe? .. this has multi-threading or web-assembly support
-    return temp;
+    return Object.freeze($Log.getInstance().silent(()=>JSON.parse(str)) || {event: "404", payload: "not found"});
   }
   private handleClose(socket: WebSocket){
     if(!socket.isClosed) socket.close();
