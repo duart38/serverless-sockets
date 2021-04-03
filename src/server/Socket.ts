@@ -8,6 +8,7 @@ import {
 } from "https://deno.land/std@0.90.0/ws/mod.ts";
 import { Watcher } from "../FS/FileWatcher.ts";
 import { HandleEvent } from "./EventHandler.ts";
+import { $Log } from "../decorators/Log.ts";
 
 export default class Socket {
   //public connections: WebSocket[] = [];
@@ -22,7 +23,7 @@ export default class Socket {
 
   private decodeStringMessage(str: string): socketMessage {
     // TODO: error handling here...
-    const temp: socketMessage = JSON.parse(str);
+    const temp: socketMessage = $Log.getInstance().silent(()=>JSON.parse(str));
     // ... do some more stuff maybe? .. this has multi-threading or web-assembly support
     return temp;
   }
