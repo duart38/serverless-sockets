@@ -7,6 +7,7 @@ export default class NonBlocking{
      * This can be used to deffer the function and execute other functions that are then pushed onto the stack.
      * @note not very efficient.. the v8 runtime treats function passing in setTimeout as "eval", this means TurboFan will NOT kick in...
      * @note not to be used for decorating PlugFunctions..
+     * @see queueMicrotask
      * @param func 
      * @param args 
      */
