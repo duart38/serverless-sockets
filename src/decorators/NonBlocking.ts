@@ -2,7 +2,7 @@ import { PlugFunction } from "../interface/socketFunction.ts";
 
 export default class NonBlocking{
     /**
-     * Little nifty code to push the passed function off the call stack and eventually (immediatly) into the task queue.
+     * Little nifty code to push the passed function off the call stack and eventually (immediately) into the task queue.
      * The task queue will wait until the call stack is empty before pushing back into the call stack.
      * This can be used to deffer the function and execute other functions that are then pushed onto the stack.
      * @note not to be used for decorating PlugFunctions..
@@ -14,7 +14,7 @@ export default class NonBlocking{
     }
 
     /**
-     * Decorator to be used for non blocking PlugFunction(s).
+     * Decorator to be used for non blocking PlugFunction(s). see call() method for details on how this works
      * @see NonBlocking.call()
      */
     public static $Call(func: PlugFunction): PlugFunction {
