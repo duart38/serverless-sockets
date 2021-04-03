@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.90.0/http/server.ts";
+import NonBlocking from "./decorators/NonBlocking.ts";
 import Socket from "./server/Socket.ts";
 
 // TODO: TLS? (depends on deployment style)
