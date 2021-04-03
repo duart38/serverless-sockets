@@ -58,5 +58,6 @@ The optimizer (V8) makes optimistic assumptions from the inline cache but it may
 
 .. Maybe we can introduce runtime-type safety features to "trick" TurboFan into kicking in earlier?..
 Another thing we can do is restrict the shapes of objects to no more than and no less than (typescript partially does this but not at run-time..)... Any validity checks do lower performance on non "hot" declared methods BUT will be compiled to machine code as soon as these become "hot". why? well multiple shapes in the runtime will require the engine to do a linear search for a shape of the matching parameter shape, that shit is slow as fuck.
+**.. in short.. define a shape.. stick to that shape.. PROFIT.**
 
 Some sort of monomorphic (as apposed to polymorphic) checker would be very nice (we could technically do this at compile time and make the IDE annoy the living shit out of the developer...). ***AVOID megamorphic***
