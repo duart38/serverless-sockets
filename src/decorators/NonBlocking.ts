@@ -5,16 +5,18 @@ export default class NonBlocking{
      * Little nifty code to push the passed function off the call stack and eventually (immediately) into the task queue.
      * The task queue will wait until the call stack is empty before pushing back into the call stack.
      * This can be used to deffer the function and execute other functions that are then pushed onto the stack.
+     * @note not very efficient.. the v8 runtime treats function passing in setTimeout as "eval", this means TurboFan will NOT kick in...
      * @note not to be used for decorating PlugFunctions..
      * @param func 
      * @param args 
      */
-    public static call<T>(func: any, ...args: unknown[]){
+    public static call(func: any, ...args: unknown[]){
         setTimeout(function(...passed){passed[0](...passed.slice(1))},0, func, ...args)
     }
 
     /**
-     * Decorator to be used for non blocking PlugFunction(s). see call() method for details on how this works
+     * Decorator to be used for non blocking PlugFunction(s). see call() method for details on how this works.
+     * @note this will still block other sockets from execution when it reaches the "slow" method..
      * @see NonBlocking.call()
      */
     public static $Call(func: PlugFunction): PlugFunction {
