@@ -11,7 +11,8 @@ export default class NonBlocking{
      * @param args 
      */
     public static call(func: any, ...args: unknown[]){
-        setTimeout(function(...passed){passed[0](...passed.slice(1))},0, func, ...args)
+        //setTimeout(function(...passed){passed[0](...passed.slice(1))},0, func, ...args) // keeping here for compatibility
+        queueMicrotask(()=>func(...args)); // Deno has a built in rust-implemented version which is much safer.
     }
 
     /**
