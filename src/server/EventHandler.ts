@@ -17,7 +17,8 @@ export async function HandleEvent(
 
     (Object.values(m) as PlugFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v))
     .forEach((fn)=>{
-        NonBlocking.call(fn, socket, message, from);
+        //NonBlocking.call(fn, socket, message, from);
+        fn(socket, message, from);
     });
   } catch (error) {
     console.log(error);
