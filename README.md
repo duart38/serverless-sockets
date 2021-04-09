@@ -21,7 +21,7 @@
 - Loading plugs from the network!.  (currently it is possible via an import st combined with a call or instantiation)
 - Add pre-compiler to remove the initial slow call?
 - We could also compile/bundle on change, store in different directory, and then have the handler pick from the bundles (space/time tradeoff here as the FS will grow with all the self-contained JS modules in each bundled file... definitely faster tho..)
-- instead of freezing the messageEvent payload and also passing in the connected socket, modify the object's accessors to allow to reply by assigning to the messageEvent (e.g.  message.payload = {foo:"bar"} // reply back with this modified message object)
+- we need to build a front-end websocket wrapper that filters out events based on our messageEvent payload.. also an addition would be to listen for changes inside our accessor decorator and call the "set" method when the server responds.. this will introduce a shaping for the front-end
 
 # Deliverables
 - An executable (.exe or a unix executable) to allow "double-click-run"
