@@ -12,22 +12,22 @@ function sleep(seconds: number) {
     }
 }
 
-function slow_task() {
+function slowTask() {
     sleep(5);
 
     return [4, 8, 15, 16, 23, 42];
 }
-export const decorated = NonBlocking.$Call((socket, message) => {
-    slow_task();
+export const decorated: PlugFunction = NonBlocking.$Call((_socket, _message) => {
+    slowTask();
     console.log("reached");
 });
 
 // #### BAD CODE BELOW ####
 // export const decorated: PlugFunction = (socket, message, from) => {
-//     slow_task();
+//     slowTask();
 //     console.log("reached");
 // }
 
-export const dontBlock: PlugFunction = (socket, message) => {
+export const dontBlock: PlugFunction = (_socket, _message) => {
     console.log("Hello i'm the last function");
 }
