@@ -9,9 +9,10 @@ import {
 import { Watcher } from "../FS/FileWatcher.ts";
 import { HandleEvent } from "./EventHandler.ts";
 import { $Log } from "../decorators/Log.ts";
+import { CONFIG } from "../config.js";
+import { decorateAccessors } from "../MISC/utils.ts";
 
 export default class Socket {
-  //public connections: WebSocket[] = [];
   public connections: Map<number, WebSocket>;
   public directoryWatcher: Watcher;
   protected instanceID: string;
@@ -21,8 +22,24 @@ export default class Socket {
     this.connections = new Map();
   }
 
-  private decodeStringMessage(str: string): socketMessage {
-    return Object.freeze($Log.getInstance().silent(()=>JSON.parse(str)) || {event: "404", payload: "not found"});
+  /**
+   * Decodes a string message into a socketMessage shape. Also freezes the decoded object to prevent re-shaping
+   * @todo check on shape.
+   * @param str 
+   * @returns 
+   */
+  private decodeStringMessage(str: string, client: WebSocket): socketMessage {
+    return Object.freeze($Log.getInstance().silent(()=>{
+      const t: socketMessage = JSON.parse(str);
+      decorateAccessors(t as any, async ()=>await client.send(JSON.stringify(t)));
+      return t;
+    }) || {event: "404", payload: {}});
+  }
+
+  private payloadCeiling(str:string): boolean{
+    // {"event":"x","payload":""} <-- baseline shape not included in limit calculation.
+    if(str.length > (CONFIG.payloadLimit - 26)) return true;
+    return false
   }
   private handleClose(socket: WebSocket){
     if(!socket.isClosed) socket.close();
@@ -32,8 +49,8 @@ export default class Socket {
   private async waitForSocket(socket: WebSocket) {
     try {
       for await (const ev of socket) {
-        if (typeof ev === "string") {
-          HandleEvent(Object.freeze(this), this.decodeStringMessage(ev), socket);
+        if (typeof ev === "string" && !this.payloadCeiling(ev)) {
+          HandleEvent(Object.freeze(this), this.decodeStringMessage(ev, socket));
         } else if (isWebSocketCloseEvent(ev)) {
           this.handleClose(socket);
         }

@@ -7,11 +7,10 @@ import Socket from "../server/Socket.ts";
  */
 export type PlugFunction = (
   socket: Readonly<Socket>,
-  message: socketMessage,
-  from: WebSocket,
+  message: socketMessage
 ) => void;
 
 /**
  * The length of the plug function, this allows shape checking to fail early.
  */
-export const PLUG_LENGTH = 3;
+export const PLUG_LENGTH = 2;

@@ -3,5 +3,5 @@
  */
 export interface socketMessage {
   event: string;
-  payload: string;
+  payload: Record<string, unknown>;
 }

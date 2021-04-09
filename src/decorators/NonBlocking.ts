@@ -22,6 +22,6 @@ export default class NonBlocking{
      * @see NonBlocking.call()
      */
     public static $Call(func: PlugFunction): PlugFunction {
-        return (socket, message, from) => NonBlocking.call(func, socket, message, from);
+        return (socket, message) => NonBlocking.call(func, socket, message);
     }
 }

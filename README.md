@@ -21,6 +21,7 @@
 - Loading plugs from the network!.  (currently it is possible via an import st combined with a call or instantiation)
 - Add pre-compiler to remove the initial slow call?
 - We could also compile/bundle on change, store in different directory, and then have the handler pick from the bundles (space/time tradeoff here as the FS will grow with all the self-contained JS modules in each bundled file... definitely faster tho..)
+- instead of freezing the messageEvent payload and also passing in the connected socket, modify the object's accessors to allow to reply by assigning to the messageEvent (e.g.  message.payload = {foo:"bar"} // reply back with this modified message object)
 
 # Deliverables
 - An executable (.exe or a unix executable) to allow "double-click-run"
@@ -62,4 +63,8 @@ The optimizer (V8) makes optimistic assumptions from the inline cache but it may
 Another thing we can do is restrict the shapes of objects to no more than and no less than (typescript partially does this but not at run-time..)... Any validity checks do lower performance on non "hot" declared methods BUT will be compiled to machine code as soon as these become "hot". why? well multiple shapes in the runtime will require the engine to do a linear search for a shape of the matching parameter shape, that shit is slow as fuck.
 **.. in short.. define a shape.. stick to that shape.. PROFIT.**
 
-Some sort of monomorphic (as apposed to polymorphic) checker would be very nice (we could technically do this at compile time and make the IDE annoy the living shit out of the developer...). ***AVOID megamorphic***
+Some sort of monomorphic (as apposed to polymorphic) checker would be very nice (we could technically do this at compile time and make the IDE annoy the living shit out of the developer...). ***AVOID megamorphic***.
+
+We could seek the first few bytes of an incoming bytestream to only get the event tuple then pass down the rest to the function so the developer can decide if it even makes sense to decode the incoming or not.. also byte arrays are faster to check upon due to the lower level APIs that they provide
+
+another advantage of passing in intArrays instead of strings is that the shape of the message is ALWAYS the same.. this means that the V8 profiler will have a much much easier time optimizing anything that the intArray is passed to.

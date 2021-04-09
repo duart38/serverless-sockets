@@ -9,7 +9,7 @@ import NonBlocking from "../decorators/NonBlocking.ts";
 export async function HandleEvent(
   socket: Readonly<Socket>,
   message: socketMessage,
-  from: WebSocket,
+  // from: WebSocket,
 ) {
   const fileWatcher: Watcher = socket.directoryWatcher;
   try {
@@ -18,11 +18,11 @@ export async function HandleEvent(
     (Object.values(m) as PlugFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v))
     .forEach((fn)=>{
         //NonBlocking.call(fn, socket, message, from);
-        fn(socket, message, from);
+        fn(socket, message);
     });
   } catch (error) {
     console.log(error);
-    from.send("Invalid event");
+    // from.send("Invalid event");
   }
 }
 
