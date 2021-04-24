@@ -8,33 +8,33 @@
 - wrap existing APIs into a websocket interface for legacy codebase
 
 # Quality of Life options
-- Payload / Performance measuring (inbound, outbound payload sizes, plug execution time..)
-- CLI for generating functions! (e.g: $ ```socket add plug <name>```)
+- [ ] Payload / Performance measuring (inbound, outbound payload sizes, plug execution time..)
+- [ ] CLI for generating functions! (e.g: $ ```socket add plug <name>```)
 
 # extra TODO(s):
-- Write tests
-- More modular approach to the EventHandler (i.e. allow non dynamic, compile time function interpretation)
-- Error logging module (threaded, should take load away from printing to the console)
-- Lifecycle hooks for plugs ??? -> (e.g. beforeSend(), afterSend() )
-- C# to web-assembly to this framework ***???*** (should be supported but i have not tested this)
-- CORS!!!
-- Loading plugs from the network!.  (currently it is possible via an import st combined with a call or instantiation)
-- Add pre-compiler to remove the initial slow call?
-- We could also compile/bundle on change, store in different directory, and then have the handler pick from the bundles (space/time tradeoff here as the FS will grow with all the self-contained JS modules in each bundled file... definitely faster tho..)
-- we need to build a front-end websocket wrapper that filters out events based on our messageEvent payload.. also an addition would be to listen for changes inside our accessor decorator and call the "set" method when the server responds.. this will introduce a shaping for the front-end
-- Caching is NOT part of the websocket spec. so while ws has less overhead than HTTP we need some form of caching.
+- [ ] Write tests
+- [ ] More modular approach to the EventHandler (i.e. allow non dynamic, compile time function interpretation)
+- [ ] Error logging module (threaded, should take load away from printing to the console)
+- [ ] Lifecycle hooks for plugs ??? -> (e.g. beforeSend(), afterSend() )
+- [ ] C# to web-assembly to this framework ***???*** (should be supported but i have not tested this)
+- [ ] CORS!!!
+- [ ] Loading plugs from the network!.  (currently it is possible via an import st combined with a call or instantiation)
+- [ ] Add pre-compiler to remove the initial slow call?
+- [ ] We could also compile/bundle on change, store in different directory, and then have the handler pick from the bundles (space/time tradeoff here as the FS will grow with all the self-contained JS modules in each bundled file... definitely faster tho..)
+- [ ] we need to build a front-end websocket wrapper that filters out events based on our messageEvent payload.. also an addition would be to listen for changes inside our accessor decorator and call the "set" method when the server responds.. this will introduce a shaping for the front-end
+- [ ] Caching is NOT part of the websocket spec. so while ws has less overhead than HTTP we need some form of caching.
 
 # Deliverables
-- An executable (.exe or a unix executable) to allow "double-click-run"
-- SRS
-- Documentation
-- tests (Unit tests, integration tests)
-- CLI application (install-able as native binary)
+- [ ] An executable (.exe or a unix executable) to allow "double-click-run"
+- [ ] SRS
+- [ ] Documentation
+- [ ] tests (Unit tests, integration tests)
+- [ ] CLI application (install-able as native binary)
 
 # What i will need
 - A github repository (i could alo create my own)
-- A set of things that this framework MUST do (MVP)
-- What "problem" this framework will solve or how it will improve ***X***
+- [x] A set of things that this framework MUST do (MVP)
+- [x] What "problem" this framework will solve or how it will improve ***X***
 - Someone available that i can contact as i go through the process of writing my internship papers (i.e. approval form, mobilityOnline)
 
 # The problem
