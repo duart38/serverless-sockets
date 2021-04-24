@@ -1,10 +1,8 @@
 import type { socketMessage } from "../interface/message.ts";
-import type { WebSocket } from "https://deno.land/std@0.90.0/ws/mod.ts";
 
 import Socket from "./Socket.ts";
 import { Watcher } from "../FS/FileWatcher.ts";
 import { PLUG_LENGTH, PlugFunction } from "../interface/socketFunction.ts";
-import NonBlocking from "../decorators/NonBlocking.ts";
 
 export async function HandleEvent(
   socket: Readonly<Socket>,
