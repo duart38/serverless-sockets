@@ -6,5 +6,8 @@ export const echo: PlugFunction = (socket, message) => {
 // supports multiple functions in one plug
 export const test: PlugFunction = (socket, message) => {
   console.log("some other function")
-  message.payload["name"] = "John";
+  for(let i = 0; i < 20; i++){
+    message.payload["name"] = "John";
+  }
+  
 }
