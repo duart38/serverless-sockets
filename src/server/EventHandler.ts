@@ -32,7 +32,7 @@ export async function HandleEvent(
  * @returns 
  */
 function sanitizeEvent(eventString: string): string {
-  return eventString.replaceAll(/(\W|\r|\t|\n|\s)+/g, "");
+  return eventString.replaceAll(/(\.{0,}|\r|\t|\n|\s|[!@#$%^&*()])+/g, "");
 }
 
 /**
