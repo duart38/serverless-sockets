@@ -8,10 +8,10 @@ export default class Measure {
    * @returns a new function that is wrapped with timing logic
    */
   static $Timing(func: PlugFunction): PlugFunction {
-    return (socket, message, from) =>{
-        const timeLabel = `[TIME] - (E:${message.event})_(RID:${from.conn.rid})_${Math.round(Math.random() * 1000)}`;
+    return (socket, message) =>{
+        const timeLabel = `[TIME] - (E:${message.event})_${Math.round(Math.random() * 1000)}`;
         console.time(timeLabel);
-        func.call(func, socket, message, from);
+        func.call(func, socket, message);
         console.timeEnd(timeLabel);
     }
   }
