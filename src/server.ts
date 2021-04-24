@@ -1,8 +1,8 @@
 import { serve } from "https://deno.land/std@0.90.0/http/server.ts";
-import NonBlocking from "./decorators/NonBlocking.ts";
 import Socket from "./server/Socket.ts";
 
 // TODO: TLS? (depends on deployment style)
+// TODO: take plug function from CLI
 if (import.meta.main) {
   const port = Deno.args[0] || "8080"; // TODO: parse "port" flag for various server providers to supply
   console.log(`websocket server is running on :${port}`);
