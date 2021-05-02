@@ -10,7 +10,7 @@ import { Watcher } from "../FS/FileWatcher.ts";
 import { HandleEvent } from "./EventHandler.ts";
 import { $Log } from "../decorators/Log.ts";
 import { CONFIG } from "../config.js";
-import { decorateAccessors } from "../MISC/utils.ts";
+import { decorateAccessors, payloadCeiling } from "../MISC/utils.ts";
 
 export default class Socket {
   public connections: Map<number, WebSocket>;
@@ -36,11 +36,7 @@ export default class Socket {
     }) || {event: "404", payload: {}});
   }
 
-  private payloadCeiling(str:string): boolean{
-    // {"event":"x","payload":""} <-- baseline shape not included in limit calculation.
-    if(str.length > (CONFIG.payloadLimit - 26)) return true;
-    return false
-  }
+
   private handleClose(socket: WebSocket){
     if(!socket.isClosed) socket.close();
     this.connections.delete(socket.conn.rid);
@@ -49,7 +45,7 @@ export default class Socket {
   private async waitForSocket(socket: WebSocket) {
     try {
       for await (const ev of socket) {
-        if (typeof ev === "string" && !this.payloadCeiling(ev)) {
+        if (typeof ev === "string" && !payloadCeiling(ev)) {
           HandleEvent(Object.freeze(this), this.decodeStringMessage(ev, socket));
         } else if (isWebSocketCloseEvent(ev)) {
           this.handleClose(socket);
