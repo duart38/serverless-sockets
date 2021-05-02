@@ -5,8 +5,8 @@ import Socket from "./server/Socket.ts";
 
 // TODO: take plug function from CLI
 if (import.meta.main) {
-  const socket = new Socket("./plugs");
-  preLoadPlugs("./plugs");
+  const socket = new Socket(CONFIG.plugsFolder);
+  CONFIG.preloadPlugs && preLoadPlugs(CONFIG.plugsFolder);
   // ... other http code goes here ...
   if(CONFIG.secure){
     console.log(`websocket server is running on :${CONFIG.TLS.port}`);

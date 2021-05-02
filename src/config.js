@@ -12,6 +12,8 @@ export const CONFIG = Object.freeze({
     /** Indicates wether this server needs to load from TLS or not */
     secure: false,
 
+    plugsFolder: "./plugs",
+
     INSECURE: {
         /** The port to listen on. */
         port: Number(Deno.args[0]) || 8080,
