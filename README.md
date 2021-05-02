@@ -23,7 +23,7 @@
 - [ ] We could also compile/bundle on change, store in different directory, and then have the handler pick from the bundles (space/time tradeoff here as the FS will grow with all the self-contained JS modules in each bundled file... definitely faster tho..)
 - [ ] we need to build a front-end websocket wrapper that filters out events based on our messageEvent payload.. also an addition would be to listen for changes inside our accessor decorator and call the "set" method when the server responds.. this will introduce a shaping for the front-end
 - [ ] Caching is NOT part of the websocket spec. so while ws has less overhead than HTTP we need some form of caching.
-- [ ] Support sub directories in plugs to allow some structure to devs
+- [x] Support sub directories in plugs to allow some structure to devs
 
 # Deliverables
 - [ ] An executable (.exe or a unix executable) to allow "double-click-run"
