@@ -24,6 +24,7 @@
 - [ ] we need to build a front-end websocket wrapper that filters out events based on our messageEvent payload.. also an addition would be to listen for changes inside our accessor decorator and call the "set" method when the server responds.. this will introduce a shaping for the front-end
 - [ ] Caching is NOT part of the websocket spec. so while ws has less overhead than HTTP we need some form of caching.
 - [x] Support sub directories in plugs to allow some structure to devs
+- [ ] SIMD can be very competitive -> https://github.com/luizperes/simdjson_nodejs
 
 # Deliverables
 - [ ] An executable (.exe or a unix executable) to allow "double-click-run"
