@@ -9,7 +9,6 @@ import {
 import { Watcher } from "../FS/FileWatcher.ts";
 import { HandleEvent } from "./EventHandler.ts";
 import { $Log } from "../decorators/Log.ts";
-import { CONFIG } from "../config.js";
 import { decorateAccessors, payloadCeiling } from "../MISC/utils.ts";
 
 export default class Socket {
