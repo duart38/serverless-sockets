@@ -7,6 +7,9 @@
 - Multi-threading becomes quite easy
 - wrap existing APIs into a websocket interface for legacy codebase
 
+### Why TS and Deno.. specifically why TS in the Deno configuration?
+Strongly typed JIT compilers have a crazy overhead.On top of that regular TS in most nodejs configurations obfuscate the code in an inneficient manner.. moral of the story is if you compile with TS in Deno you do not obfuscate the code you just strip away the types.. this allows me (the developer) to restrict shapes in function and allow the V8 engine to more easily optimize code. This, in contract to run-time type checking (which prevents any sort of optimizations from happening), will make this server quite fast.
+
 # Quality of Life options
 - [ ] Payload / Performance measuring (inbound, outbound payload sizes, plug execution time..)
 - [ ] CLI for generating functions! (e.g: $ ```socket add plug <name>```)
@@ -15,7 +18,6 @@
 - [ ] Write tests
 - [ ] More modular approach to the EventHandler (i.e. allow non dynamic, compile time function interpretation)
 - [ ] Error logging module (threaded, should take load away from printing to the console)
-- [ ] Lifecycle hooks for plugs ??? -> (e.g. beforeSend(), afterSend() )
 - [ ] C# to web-assembly to this framework ***???*** (should be supported but i have not tested this)
 - [ ] CORS!!!
 - [ ] Loading plugs from the network!.  (currently it is possible via an import st combined with a call or instantiation)
@@ -24,7 +26,11 @@
 - [ ] we need to build a front-end websocket wrapper that filters out events based on our messageEvent payload.. also an addition would be to listen for changes inside our accessor decorator and call the "set" method when the server responds.. this will introduce a shaping for the front-end
 - [ ] Caching is NOT part of the websocket spec. so while ws has less overhead than HTTP we need some form of caching.
 - [x] Support sub directories in plugs to allow some structure to devs
-- [ ] SIMD can be very competitive -> https://github.com/luizperes/simdjson_nodejs
+- [ ] Global data management (start with localStorage but allow for branching to Redis, for system wide data access)
+- [ ] For payload measuring push it to a thread. (make sure to pre-computer wether we should post messages to threads BEFORE we receive the first messages.. i.e. compute from user configuration at start-up. use queuemicrotask when needed to prevent object ref issues)
+- [ ] What if we can have 2 exactly the same objects on the server and the client side and just keep them in sync? we can then instead of sending big objects between the server and the client just instruct one another on how things should be updated? (NOTE: technically with a front-end lib accompanying this server we should already have similar functionality providing we figure out a way to solve the accessor performance issues)
+- [ ] As mentioned above.. decoration of accessors are hella slow in v8....
+
 
 # Deliverables
 - [ ] An executable (.exe or a unix executable) to allow "double-click-run"
