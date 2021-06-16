@@ -1,31 +1,20 @@
 import { CONFIG } from "../config.js";
 
-function makeDefaultProperty(
-  obj: Record<string, unknown>,
-  name: string,
-  callBack: (val: unknown) => void
-) {
-  let value = obj[name];
-  return Object.defineProperty(obj, name, {
-    set: function (val) {
-      value = val;
-      callBack(value);
-    },
-    get: function () {
-      return value;
-    },
-  });
-}
-export function decorateAccessors(
-  obj: Record<string, unknown>,
-  callBack: (val: unknown) => void
-) {
-  Object.entries(obj).forEach(([key, val]) => {
-    if (typeof val === "object") {
-      decorateAccessors(val as any, callBack);
+export function decorateAccessors<T extends Record<string, unknown>>(obj: T, callBack: (val: unknown) => void) {
+  if(CONFIG.nestedPayloadProxy){
+    Object.entries(obj).forEach(([key, val]) => {
+      if (typeof val === "object") {
+        (obj[key] as unknown) = decorateAccessors(val as any, callBack);
+      }
+    });
+  }
+  return new Proxy(obj, {
+    set: (obj, modifiedKey, value)=>{
+      Reflect.set(obj, modifiedKey, value);
+      callBack(value); // TODO: we could accelerate ignition and turbofan if we ensure the same data shape here (i.e. don't mix numbers with string etc)
+      return true;
     }
-    makeDefaultProperty(obj, key, callBack); // NOTE: obj here needs to be the scope that the key is in..
-  });
+});
 }
 
 /**
