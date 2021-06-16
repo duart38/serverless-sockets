@@ -30,6 +30,7 @@ Strongly typed JIT compilers have a crazy overhead.On top of that regular TS in 
 - [ ] For payload measuring push it to a thread. (make sure to pre-computer wether we should post messages to threads BEFORE we receive the first messages.. i.e. compute from user configuration at start-up. use queuemicrotask when needed to prevent object ref issues)
 - [ ] What if we can have 2 exactly the same objects on the server and the client side and just keep them in sync? we can then instead of sending big objects between the server and the client just instruct one another on how things should be updated? (NOTE: technically with a front-end lib accompanying this server we should already have similar functionality providing we figure out a way to solve the accessor performance issues)
 - [ ] As mentioned above.. decoration of accessors are hella slow in v8....
+- [ ] Force break reference chains for garbage collector to hit earlier
 
 
 # Deliverables
@@ -77,3 +78,10 @@ Some sort of monomorphic (as apposed to polymorphic) checker would be very nice 
 We could seek the first few bytes of an incoming bytestream to only get the event tuple then pass down the rest to the function so the developer can decide if it even makes sense to decode the incoming or not.. also byte arrays are faster to check upon due to the lower level APIs that they provide
 
 another advantage of passing in intArrays instead of strings is that the shape of the message is ALWAYS the same.. this means that the V8 profiler will have a much much easier time optimizing anything that the intArray is passed to.
+
+# some links
+- https://v8.dev/blog/optimizing-proxies
+- https://blog.sessionstack.com/how-javascript-works-event-loop-and-the-rise-of-async-programming-5-ways-to-better-coding-with-2f077c4438b5
+- https://blog.sessionstack.com/how-javascript-works-inside-the-v8-engine-5-tips-on-how-to-write-optimized-code-ac089e62b12e
+- https://blog.sessionstack.com/how-javascript-works-memory-management-how-to-handle-4-common-memory-leaks-3f28b94cfbec
+- https://javascript.info/proxy
