@@ -31,5 +31,11 @@ export const CONFIG = Object.freeze({
         certFile: "",
         /** Server public key file. */
         keyFile: "",
-    }
+    },
+    /**
+     * Indicates wether incoming payloads should be recursively proxied. if true
+     * Proxying the payload will call itself to proxy any nested objects withing the incoming object.
+     * Turning this on will have a small perfomance impact on deep nested objects to about O(log2n)
+     */
+    nestedPayloadProxy: false
 })
