@@ -28,10 +28,9 @@ export default class Socket {
    * @returns 
    */
   private decodeStringMessage(str: string, client: WebSocket): socketMessage {
-    return Object.freeze($Log.getInstance().silent(()=>{
+    return Object.freeze($Log.getInstance().silent(()=>{ // TODO: this shit is garbage...
       const t: socketMessage = JSON.parse(str);
-      decorateAccessors(t as any, async ()=>await client.send(JSON.stringify(t)));
-      return t;
+      return decorateAccessors(t as any, async ()=>await client.send(JSON.stringify(t)));
     }) || {event: "404", payload: {}});
   }
 

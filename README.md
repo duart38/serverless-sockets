@@ -6,6 +6,7 @@
 - no server config modifications required.. just add a function and you're done..
 - Multi-threading becomes quite easy
 - wrap existing APIs into a websocket interface for legacy codebase
+- Serverless because the longer a JS program runs the more markings the v8 makes thus allowing it to make better optimization assumptions
 
 ### Why TS and Deno.. specifically why TS in the Deno configuration?
 Strongly typed JIT compilers have a crazy overhead.On top of that regular TS in most nodejs configurations obfuscate the code in an inneficient manner.. moral of the story is if you compile with TS in Deno you do not obfuscate the code you just strip away the types.. this allows me (the developer) to restrict shapes in function and allow the V8 engine to more easily optimize code. This, in contract to run-time type checking (which prevents any sort of optimizations from happening), will make this server quite fast.
@@ -28,7 +29,7 @@ Strongly typed JIT compilers have a crazy overhead.On top of that regular TS in 
 - [x] Support sub directories in plugs to allow some structure to devs
 - [ ] Global data management (start with localStorage but allow for branching to Redis, for system wide data access)
 - [ ] For payload measuring push it to a thread. (make sure to pre-computer wether we should post messages to threads BEFORE we receive the first messages.. i.e. compute from user configuration at start-up. use queuemicrotask when needed to prevent object ref issues)
-- [ ] What if we can have 2 exactly the same objects on the server and the client side and just keep them in sync? we can then instead of sending big objects between the server and the client just instruct one another on how things should be updated? (NOTE: technically with a front-end lib accompanying this server we should already have similar functionality providing we figure out a way to solve the accessor performance issues)
+- [ ] What if we can have 2 exactly the same objects on the server and the client side and just keep them in sync? we can then instead of sending big objects between the server and the client just instruct one another on how things should be updated (CRUD ENUM representing?)? (NOTE: technically with a front-end lib accompanying this server we should already have similar functionality providing we figure out a way to solve the accessor performance issues)
 - [ ] As mentioned above.. decoration of accessors are hella slow in v8....
 - [ ] Force break reference chains for garbage collector to hit earlier
 
@@ -78,6 +79,26 @@ Some sort of monomorphic (as apposed to polymorphic) checker would be very nice 
 We could seek the first few bytes of an incoming bytestream to only get the event tuple then pass down the rest to the function so the developer can decide if it even makes sense to decode the incoming or not.. also byte arrays are faster to check upon due to the lower level APIs that they provide
 
 another advantage of passing in intArrays instead of strings is that the shape of the message is ALWAYS the same.. this means that the V8 profiler will have a much much easier time optimizing anything that the intArray is passed to.
+
+# some commands
+```
+deno run -A --v8-flags=--trace-deopt,--trace-opt server.ts
+deno run -A --v8-flags=--trace-turbo server.ts
+deno run -A --v8-flags=--trace-gc server.ts 
+deno run -A --v8-flags=--trace-opt,--trace-file-names server.ts  <---- diamonds
+
+// compiling shenanigans
+  --parallel-compile-tasks (enable parallel compile tasks)
+        type: bool  default: false
+
+// here's some nasty flags XD
+  --always-opt (always try to optimize functions)
+        type: bool  default: false
+
+
+
+deno run -A --v8-flags=--trace-opt,--trace-file-names,--always-opt,--trace-deopt server.ts > v8dump.txt
+```
 
 # some links
 - https://v8.dev/blog/optimizing-proxies
