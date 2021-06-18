@@ -9,7 +9,8 @@ import {
 import { Watcher } from "../FS/FileWatcher.ts";
 import { HandleEvent } from "./EventHandler.ts";
 import { $Log } from "../decorators/Log.ts";
-import { decorateAccessors, payloadCeiling } from "../MISC/utils.ts";
+import { decorateAccessors, decorateAccessorsWP, payloadCeiling } from "../MISC/utils.ts";
+import { syncInstruction } from "../interface/sync.ts";
 
 export default class Socket {
   public connections: Map<number, WebSocket>;
@@ -30,7 +31,16 @@ export default class Socket {
   private decodeStringMessage(str: string, client: WebSocket): socketMessage {
     return Object.freeze($Log.getInstance().silent(()=>{ // TODO: this shit is garbage...
       const t: socketMessage = JSON.parse(str);
-      return decorateAccessors(t as any, async ()=>await client.send(JSON.stringify(t)));
+      return decorateAccessorsWP(t as any, async (v, p)=>{
+        await client.send(JSON.stringify({
+          event: "",
+          payload: {
+            path: p,
+            value: v,
+            ins: syncInstruction.modify
+          }
+        } as socketMessage))
+      });
     }) || {event: "404", payload: {}});
   }
 
@@ -79,8 +89,11 @@ export default class Socket {
   public onSocketDisconnect(callBack: ()=>void){
     addEventListener(this.instanceID+"_disconnect", callBack);
   }
-  public broadcast(data: socketMessage){
-    this.connections.forEach((s)=>{if(!s.isClosed) s.send(JSON.stringify(data))});
+  public broadcast(data: Omit<socketMessage, "event">){
+    this.connections.forEach((s)=>{if(!s.isClosed) s.send(JSON.stringify({
+      ...data,
+      event: "#$_BC" // TODO: move to a method
+    }))});
   }
   /**
    * Ban hammer.
