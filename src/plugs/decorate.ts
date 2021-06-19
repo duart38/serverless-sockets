@@ -17,7 +17,7 @@ function slowTask() {
 
     return [4, 8, 15, 16, 23, 42];
 }
-export const decorated: PlugFunction = NonBlocking.$Call((_socket, _message) => {
+export const decorated: PlugFunction = NonBlocking.$Call((_message, _from) => {
     slowTask();
     console.log("reached");
 });
@@ -28,6 +28,6 @@ export const decorated: PlugFunction = NonBlocking.$Call((_socket, _message) => 
 //     console.log("reached");
 // }
 
-export const dontBlock: PlugFunction = (_socket, _message) => {
+export const dontBlock: PlugFunction = (_message, _from) => {
     console.log("Hello i'm the last function");
 }
