@@ -11,6 +11,9 @@ import { HandleEvent } from "./EventHandler.ts";
 import { $Log } from "../decorators/Log.ts";
 import { decorateAccessorsWP, payloadCeiling } from "../MISC/utils.ts";
 import { syncInstruction } from "../interface/sync.ts";
+import { CONFIG } from "../config.js";
+
+import singleton from "https://raw.githubusercontent.com/grevend/singleton/main/mod.ts";
 
 export default class Socket {
   public connections: Map<number, WebSocket>;
@@ -55,7 +58,7 @@ export default class Socket {
     try {
       for await (const ev of socket) {
         if (typeof ev === "string" && !payloadCeiling(ev)) {
-          HandleEvent(Object.freeze(this), this.decodeStringMessage(ev, socket));
+          HandleEvent(this.decodeStringMessage(ev, socket), socket.conn.rid);
         } else if (isWebSocketCloseEvent(ev)) {
           this.handleClose(socket);
         }
@@ -103,3 +106,5 @@ export default class Socket {
     this.connections.forEach(x=>this.handleClose(x))
   }
 }
+
+export const socketS = singleton(()=> new Socket(CONFIG.plugsFolder))
