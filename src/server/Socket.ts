@@ -9,7 +9,7 @@ import {
 import { Watcher } from "../FS/FileWatcher.ts";
 import { HandleEvent } from "./EventHandler.ts";
 import { $Log } from "../decorators/Log.ts";
-import { decorateAccessors, decorateAccessorsWP, payloadCeiling } from "../MISC/utils.ts";
+import { decorateAccessorsWP, payloadCeiling } from "../MISC/utils.ts";
 import { syncInstruction } from "../interface/sync.ts";
 
 export default class Socket {
@@ -32,7 +32,8 @@ export default class Socket {
     return Object.freeze($Log.getInstance().silent(()=>{ // TODO: this shit is garbage...
       const t: socketMessage = JSON.parse(str);
       return decorateAccessorsWP(t as any, async (v, p)=>{
-        await client.send(JSON.stringify({
+        // TODO: could it be faster if we binary encode it immediately? since we don't make use of the stringified value
+        await client.send(JSON.stringify({ // TODO: move json stringify to a method for hot func
           event: "",
           payload: {
             path: p,

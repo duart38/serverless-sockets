@@ -36,6 +36,10 @@ Strongly typed JIT compilers have a crazy overhead.On top of that regular TS in 
 - [ ] My hypothesis is that this solution will have a bad decoration performance hit when a payload comes in but all subsequent sync operations on an object will have VERY low latency and payload sizes because of the instruction nature of the sync operations... (we need to test this).
 - [ ] It would be nice if we allow a config property that allows us to turn off the sync operations and thus does NOT decorate any incoming object but only takes the return value from a method to be sent back to the client...
 - [ ] Add check on uint8array payload if the first few bytes correspond to the >>> "events":"xx" .. if not pre-maturely return error..
+- [ ] Bundle, bundle,bundle... increases performance (see links)
+- [ ] Need method to simply "send" to the provided client with wathever info as long as it follows our shape..
+- [ ] Pause ever so slightly when someone is modifying plug functions? (prevents human mistakes from going to prod)
+- [ ] Figure out if dynamic imports ever trigger turbofan.. i have a feeling they do not.
 
 
 # Deliverables
@@ -110,3 +114,4 @@ deno run -A --v8-flags=--trace-opt,--trace-file-names,--always-opt,--trace-deopt
 - https://blog.sessionstack.com/how-javascript-works-inside-the-v8-engine-5-tips-on-how-to-write-optimized-code-ac089e62b12e
 - https://blog.sessionstack.com/how-javascript-works-memory-management-how-to-handle-4-common-memory-leaks-3f28b94cfbec
 - https://javascript.info/proxy
+- https://v8.dev/features/modules
