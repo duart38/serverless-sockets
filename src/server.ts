@@ -1,11 +1,11 @@
 import { serveTLS, serve } from "https://deno.land/std@0.90.0/http/server.ts";
 import { CONFIG } from "./config.js";
 import { preLoadPlugs } from "./server/PreLoader.ts";
-import Socket from "./server/Socket.ts";
+import { socketS } from "./server/Socket.ts";
 
 // TODO: take plug function from CLI
 if (import.meta.main) {
-  const socket = new Socket(CONFIG.plugsFolder);
+  const socket = socketS.getInstance();
   CONFIG.preloadPlugs && preLoadPlugs(CONFIG.plugsFolder);
   // ... other http code goes here ...
   if(CONFIG.secure){
