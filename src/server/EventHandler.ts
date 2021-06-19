@@ -1,14 +1,20 @@
 import type { socketMessage } from "../interface/message.ts";
 
-import Socket from "./Socket.ts";
+import { socketS } from "./Socket.ts";
 import { Watcher } from "../FS/FileWatcher.ts";
 import { PLUG_LENGTH, PlugFunction } from "../interface/socketFunction.ts";
 
+
+/**
+ * 
+ * @param message says it all dun' it
+ * @param from Represents the RID of the sender.
+ */
 export async function HandleEvent(
-  socket: Readonly<Socket>, // TODO: make this singleton and provide it to whomever needs it via import
   message: socketMessage, 
-  // from: WebSocket, // TODO: bring this back in but only the key (number) of the Map<number, WebSocket> should be passed.. the Socket class with provide helpers when needed
+  from: number,
 ) {
+  const socket = socketS.getInstance();
   const fileWatcher: Watcher = socket.directoryWatcher;
 
   // TODO: try catch (fucking slow) vs then.catch ??? or we could get rid of both of them..
@@ -18,7 +24,7 @@ export async function HandleEvent(
 
     (Object.values(m) as PlugFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v))
     .forEach((fn)=>{
-        fn(socket, message); // TODO: return value here.. also send back returned value
+        fn(message, from); // TODO: return value here.. also send back returned value
     });
   } catch (error) {
     console.log(error);
