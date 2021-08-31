@@ -97,8 +97,8 @@ export default class Socket {
   public onSocketDisconnect(callBack: ()=>void){
     addEventListener(this.instanceID+"_disconnect", callBack);
   }
-  public broadcast(data: Omit<socketMessage, "event">){
-    this.connections.forEach((s)=>{if(!s.isClosed) s.send(JSON.stringify({
+  static broadcast(data: Omit<socketMessage, "event">){
+    socketS.getInstance().connections.forEach((s)=>{if(!s.isClosed) s.send(JSON.stringify({
       ...data,
       event: "#$_BC" // TODO: move to a method
     }))});
@@ -110,7 +110,9 @@ export default class Socket {
     this.connections.forEach(x=>this.handleClose(x))
   }
 
-  // TODO: method to send message to a single connection here
+  static sendMessage(to: number, msg: socketMessage){
+    socketS.getInstance().connections.get(to)?.send(JSON.stringify(msg));
+  }
 }
 
 export const socketS = singleton(()=> new Socket(CONFIG.plugsFolder))
