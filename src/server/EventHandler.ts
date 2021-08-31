@@ -17,7 +17,7 @@ export async function HandleEvent(
   const socket = socketS.getInstance();
   const fileWatcher: Watcher = socket.directoryWatcher;
 
-  // TODO: try catch (fucking slow) vs then.catch ??? or we could get rid of both of them..
+  // TODO: try catch (slow) vs then.catch (probably does the same thing internally) ??? or we could get rid of both of them..
   // i believe promises provide more utility.. especially with the "finally()" allowing us to cleanup the proxied payload
   try {
     const m = await import(`../${fileWatcher.directory()}/${sanitizeEvent(message.event)}.ts?${fileWatcher.getHash()}`);
@@ -29,6 +29,8 @@ export async function HandleEvent(
   } catch (error) {
     console.log(error);
   }
+  // i don't trust weakRefs for message because of possible long running methods, so this will do
+  (message as unknown) = null;
 }
 
 /**

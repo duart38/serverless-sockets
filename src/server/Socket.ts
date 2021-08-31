@@ -32,10 +32,11 @@ export default class Socket {
    * @returns 
    */
   private decodeStringMessage(str: string, client: WebSocket): socketMessage {
-    return Object.freeze($Log.getInstance().silent(()=>{ // TODO: this shit is garbage...
+    return $Log.getInstance().silent(()=>{ // TODO: this is garbage...
       const t: socketMessage = JSON.parse(str);
-      return decorateAccessorsWP(t as any, async (v, p)=>{
+      return decorateAccessorsWP(t as any, async (v, p)=>{ // TODO: proxies are fancy but slow.. use callbacks instead
         // TODO: could it be faster if we binary encode it immediately? since we don't make use of the stringified value
+        // TODO: when someone disconnects this thing keeps floating (i think), so we might need to collect it manually
         await client.send(JSON.stringify({ // TODO: move json stringify to a method for hot func
           event: "",
           payload: {
@@ -45,7 +46,7 @@ export default class Socket {
           }
         } as socketMessage))
       });
-    }) || {event: "404", payload: {}});
+    }) || {event: "404", payload: {}};
   }
 
 
@@ -105,6 +106,8 @@ export default class Socket {
   public kickAll(){
     this.connections.forEach(x=>this.handleClose(x))
   }
+
+  // TODO: method to send message to a single connection here
 }
 
 export const socketS = singleton(()=> new Socket(CONFIG.plugsFolder))

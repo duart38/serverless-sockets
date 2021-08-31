@@ -9,7 +9,7 @@ export const CONFIG = Object.freeze({
      */
     preloadPlugs: false,
 
-    /** Indicates wether this server needs to load from TLS or not */
+    /** Indicates wether this server needs to use TLS or not */
     secure: false,
 
     plugsFolder: "./plugs",
