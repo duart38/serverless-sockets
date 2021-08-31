@@ -25,10 +25,8 @@ export async function HandleEvent(
 
     (Object.values(m) as GeneratorFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v))
     .forEach((fn)=>{
-        for(let v of fn(message, from)){
           // TODO: what if we return the gen functions and execute the send in socket itself?
-          Socket.sendMessage(from, message);
-        }
+        for(let v of fn(message, from)) Socket.sendMessage(from, v as socketMessage);
     });
   } catch (error) {
     console.log(error);
