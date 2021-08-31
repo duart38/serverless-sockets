@@ -34,7 +34,7 @@ export default class Socket {
    * @param str 
    * @returns 
    */
-  private decodeStringMessage(str: string, client: WebSocket): socketMessage {
+  private proxyIncoming(str: string, client: WebSocket): socketMessage {
     return $Log.getInstance().silent(()=>{
       const t: socketMessage = this.parseIncoming(str)
       return decorateAccessorsWP(t as any, async (v, p, obj)=>{
@@ -62,7 +62,7 @@ export default class Socket {
     try {
       for await (const ev of socket) {
         if (typeof ev === "string" && !payloadCeiling(ev)) {
-          HandleEvent(CONFIG.proxySyncIncomingData ? this.decodeStringMessage(ev, socket) : this.parseIncoming(ev), socket.conn.rid);
+          HandleEvent(CONFIG.proxySyncIncomingData ? this.proxyIncoming(ev, socket) : this.parseIncoming(ev), socket.conn.rid);
         } else if (isWebSocketCloseEvent(ev)) {
           this.handleClose(socket);
         }
