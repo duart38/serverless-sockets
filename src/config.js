@@ -12,6 +12,9 @@ export const CONFIG = Object.freeze({
     /** Indicates wether this server needs to use TLS or not */
     secure: false,
 
+    /**
+     * Where to store and get dynamic code to be executed
+     */
     plugsFolder: "./plugs",
 
     INSECURE: {
@@ -46,7 +49,7 @@ export const CONFIG = Object.freeze({
      * can significantly help.
      * @see https://v8.dev/blog/optimizing-proxies
      */
-    proxySyncIncomingData: true,
+    proxySyncIncomingData: false,
     /**
      * Only applies if proxySyncIncomingData is 'true'
      */
@@ -58,7 +61,12 @@ export const CONFIG = Object.freeze({
          * need to occur and responding with the instructions to do so.
          */
         instructionReply: true
-    }
+    },
 
-
+    /**
+     * Indicates wether we should validate the modular functions shape. this checks if the parameter count is according to the framework specifications.
+     * This does not need to be enabled as it only adds boilerplate code but it DOES improve perfomance by indicating to the v8 engine that this
+     * function will always have the same shape (done by enforcing shape thus always having the same shape for code marking to be included in the optmization pipelines)
+     */
+    validateFunctionShape: false
 })
