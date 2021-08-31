@@ -6,6 +6,8 @@ export class Watcher {
   private hash: Observe<string>;
   private dir: string;
 
+  // TODO: keep track of files in the folder and check against an array when someone calls an api... this removes the need for a try-catch when importing
+
   constructor(dir: string) {
     this.hash = new Observe(this.newHash());
     this.dir = dir;
