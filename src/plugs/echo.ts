@@ -1,17 +1,20 @@
-import type { PlugFunction } from "../interface/socketFunction.ts";
+import { socketMessage } from "../interface/message.ts";
+import { ModuleGenerator } from "../interface/socketFunction.ts";
 import Socket from "../server/Socket.ts";
-export const echo: PlugFunction = (message, _from) => {
+export function* broadcast(message: socketMessage, _from: number): ModuleGenerator{
   Socket.broadcast(message);
-};
-
-// supports multiple functions in one plug
-export const test: PlugFunction = (message, _from) => {
-  console.log("some other function")
-  for(let i = 0; i < 20; i++){
-    message.payload["name"] = "John" + i;
+  yield {
+    event: "",
+    payload: {}
   }
 }
 
-// export function* gen(message: any, _from: any){
-//   yield 1;
-// }
+// supports multiple functions in one plug
+// deno-lint-ignore require-yield
+export function* test(message: socketMessage, _from: number): ModuleGenerator{
+  console.log("some other test function")
+  for(let i = 0; i < 20; i++){
+    message.payload["name"] = "John" + i;
+  }
+  return undefined;
+}
