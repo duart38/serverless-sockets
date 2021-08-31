@@ -23,10 +23,10 @@ export async function HandleEvent(
   try {
     const m = await import(`../${fileWatcher.directory()}/${sanitizeEvent(message.event)}.ts?${fileWatcher.getHash()}`);
 
-    (Object.values(m) as GeneratorFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v))
-    .forEach((fn)=>{
+    (Object.values(m) as AsyncGeneratorFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v))
+    .forEach(async (fn)=>{
           // TODO: what if we return the gen functions and execute the send in socket itself?
-        for(let v of fn(message, from)) Socket.sendMessage(from, v as socketMessage);
+        for await(let v of fn(message, from)) Socket.sendMessage(from, v as socketMessage);
     });
   } catch (error) {
     console.log(error);
@@ -49,7 +49,7 @@ function sanitizeEvent(eventString: string): string {
  * @HOT
  * @param x function.
  */
-function validateFunctionShape(x: GeneratorFunction){
+function validateFunctionShape(x: AsyncGeneratorFunction){
   if(CONFIG.validateFunctionShape && x.length != PLUG_LENGTH){
     console.error(`shape of ${x.name} is wrong. parameter count of ${x.length} needs to be ${PLUG_LENGTH}`);
     return false;
