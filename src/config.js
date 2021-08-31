@@ -37,5 +37,16 @@ export const CONFIG = Object.freeze({
      * Proxying the payload will call itself to proxy any nested objects withing the incoming object.
      * Turning this on will have a small perfomance impact on deep nested objects to about O(log2n)
      */
-    nestedPayloadProxy: true
+    nestedPayloadProxy: true,
+
+    /**
+     * Modify the proxies of the incoming object to sync an object in the client-server..
+     * This has an initial perfomance impact, i.e. if you send allot of requests to the server this can slow things down a bit.
+     * With the above out of the way, if you send one or few requests and expect allot of data back in the client this option
+     * can significantly help.
+     * @see https://v8.dev/blog/optimizing-proxies
+     */
+    proxySyncIncomingData: false,
+
+
 })

@@ -25,6 +25,9 @@ export default class Socket {
     this.connections = new Map();
   }
 
+  private parseIncoming(str: string): socketMessage{
+    return JSON.parse(str);
+  }
   /**
    * Decodes a string message into a socketMessage shape. Also freezes the decoded object to prevent re-shaping
    * @todo check on shape.
@@ -33,7 +36,7 @@ export default class Socket {
    */
   private decodeStringMessage(str: string, client: WebSocket): socketMessage {
     return $Log.getInstance().silent(()=>{ // TODO: this is garbage...
-      const t: socketMessage = JSON.parse(str);
+      const t: socketMessage = this.parseIncoming(str)
       return decorateAccessorsWP(t as any, async (v, p)=>{ // TODO: proxies are fancy but slow.. use callbacks instead
         // TODO: could it be faster if we binary encode it immediately? since we don't make use of the stringified value
         // TODO: when someone disconnects this thing keeps floating (i think), so we might need to collect it manually
@@ -59,7 +62,7 @@ export default class Socket {
     try {
       for await (const ev of socket) {
         if (typeof ev === "string" && !payloadCeiling(ev)) {
-          HandleEvent(this.decodeStringMessage(ev, socket), socket.conn.rid);
+          HandleEvent(CONFIG.proxySyncIncomingData ? this.decodeStringMessage(ev, socket) : this.parseIncoming(ev), socket.conn.rid);
         } else if (isWebSocketCloseEvent(ev)) {
           this.handleClose(socket);
         }
