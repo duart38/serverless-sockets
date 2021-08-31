@@ -110,8 +110,14 @@ export default class Socket {
     this.connections.forEach(x=>this.handleClose(x))
   }
 
-  static sendMessage(to: number, msg: socketMessage){
-    socketS.getInstance().connections.get(to)?.send(JSON.stringify(msg));
+  /**
+   * Sends a message to a socket id
+   * @param to who to send it so
+   * @param msg the message to send
+   * @returns a promise to await for the sending to complete
+   */
+  static sendMessage(to: number, msg: socketMessage): Promise<void> | undefined{
+    return socketS.getInstance().connections.get(to)?.send(JSON.stringify(msg));
   }
 }
 
