@@ -121,3 +121,7 @@ deno run -A --v8-flags=--trace-opt,--trace-file-names,--always-opt,--trace-deopt
 - https://javascript.info/proxy
 - https://v8.dev/features/modules
 - https://v8.dev/features/weak-references
+
+# Generators:
+why?: https://dev.to/alekseiberezkin/es6-generators-vs-iterators-performance-1p7
+they're not 'faster' but closures are great!. it also makes code very easy .. where you see yield is where a value can come out.. multiple yields are allowed in the same scope (contrary to returns which exits the scope after)
