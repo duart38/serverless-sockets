@@ -10,7 +10,6 @@ export function* broadcast(message: socketMessage, _from: number): ModuleGenerat
 }
 
 // supports multiple functions in one plug
-// deno-lint-ignore require-yield
 export function* test(message: socketMessage, _from: number): ModuleGenerator{
   console.log("some other test function")
   for(let i = 0; i < 1000; i++){
@@ -22,5 +21,4 @@ export function* test(message: socketMessage, _from: number): ModuleGenerator{
       }
     }
   }
-  return undefined;
 }
