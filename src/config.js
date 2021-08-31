@@ -46,7 +46,19 @@ export const CONFIG = Object.freeze({
      * can significantly help.
      * @see https://v8.dev/blog/optimizing-proxies
      */
-    proxySyncIncomingData: false,
+    proxySyncIncomingData: true,
+    /**
+     * Only applies if proxySyncIncomingData is 'true'
+     */
+    proxySyncSettings: {
+        /**
+         * Indicates if we send back instructions on how to update the object instead of sending a duplicate.
+         * This can be used when the objects being synced are large, instead of replicating the entire object through the network
+         * this option responds with indexes and where to place what item.. Think of this as server side computing where in an object the update(s)
+         * need to occur and responding with the instructions to do so.
+         */
+        instructionReply: true
+    }
 
 
 })

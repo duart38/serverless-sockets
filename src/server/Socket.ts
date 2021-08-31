@@ -35,19 +35,19 @@ export default class Socket {
    * @returns 
    */
   private decodeStringMessage(str: string, client: WebSocket): socketMessage {
-    return $Log.getInstance().silent(()=>{ // TODO: this is garbage...
+    return $Log.getInstance().silent(()=>{
       const t: socketMessage = this.parseIncoming(str)
-      return decorateAccessorsWP(t as any, async (v, p)=>{ // TODO: proxies are fancy but slow.. use callbacks instead
+      return decorateAccessorsWP(t as any, async (v, p, obj)=>{
         // TODO: could it be faster if we binary encode it immediately? since we don't make use of the stringified value
         // TODO: when someone disconnects this thing keeps floating (i think), so we might need to collect it manually
-        await client.send(JSON.stringify({ // TODO: move json stringify to a method for hot func
+        await client.send(JSON.stringify(CONFIG.proxySyncSettings.instructionReply ? { // TODO: move json stringify to a method for hot func
           event: "",
           payload: {
             path: p,
             value: v,
             ins: syncInstruction.modify
           }
-        } as socketMessage))
+        } : obj as socketMessage))
       });
     }) || {event: "404", payload: {}};
   }
