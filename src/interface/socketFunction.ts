@@ -1,12 +1,6 @@
 import type { socketMessage } from "./message.ts";
-/**
- * Skeleton of the function that is called from EventHandler
- * @see HandleEvent
- */
-export type PlugFunction = (
-  message: socketMessage,
-  from: number
-) => void;
+
+export type ModuleGenerator =  Generator<socketMessage, socketMessage | void, socketMessage | void>
 
 /**
  * The length of the plug function, this allows shape checking to fail early.
