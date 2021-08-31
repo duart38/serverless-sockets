@@ -13,8 +13,14 @@ export function* broadcast(message: socketMessage, _from: number): ModuleGenerat
 // deno-lint-ignore require-yield
 export function* test(message: socketMessage, _from: number): ModuleGenerator{
   console.log("some other test function")
-  for(let i = 0; i < 20; i++){
-    message.payload["name"] = "John" + i;
+  for(let i = 0; i < 1000; i++){
+    //message.payload["name"] = "John" + i; // <-- only works in proxy-mode
+    yield {
+      event: "spam-mode",
+      payload: {
+        name: `iteration ${i}`
+      }
+    }
   }
   return undefined;
 }
