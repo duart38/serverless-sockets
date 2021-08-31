@@ -1,8 +1,9 @@
 import type { socketMessage } from "../interface/message.ts";
 
-import { socketS } from "./Socket.ts";
+import Socket, { socketS } from "./Socket.ts";
 import { Watcher } from "../FS/FileWatcher.ts";
-import { PLUG_LENGTH, PlugFunction } from "../interface/socketFunction.ts";
+import { PLUG_LENGTH } from "../interface/socketFunction.ts";
+import { CONFIG } from "../config.js";
 
 
 /**
@@ -22,9 +23,12 @@ export async function HandleEvent(
   try {
     const m = await import(`../${fileWatcher.directory()}/${sanitizeEvent(message.event)}.ts?${fileWatcher.getHash()}`);
 
-    (Object.values(m) as PlugFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v))
+    (Object.values(m) as GeneratorFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v))
     .forEach((fn)=>{
-        fn(message, from); // TODO: return value here.. also send back returned value
+        for(let v of fn(message, from)){
+          // TODO: what if we return the gen functions and execute the send in socket itself?
+          Socket.sendMessage(from, message);
+        }
     });
   } catch (error) {
     console.log(error);
@@ -47,8 +51,8 @@ function sanitizeEvent(eventString: string): string {
  * @HOT
  * @param x function.
  */
-function validateFunctionShape(x: PlugFunction){
-  if(x.length != PLUG_LENGTH){
+function validateFunctionShape(x: GeneratorFunction){
+  if(CONFIG.validateFunctionShape && x.length != PLUG_LENGTH){
     console.error(`shape of ${x.name} is wrong. parameter count of ${x.length} needs to be ${PLUG_LENGTH}`);
     return false;
   }
