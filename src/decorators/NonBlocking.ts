@@ -1,4 +1,3 @@
-import { PlugFunction } from "../interface/socketFunction.ts";
 
 export default class NonBlocking{
     /**
@@ -11,17 +10,8 @@ export default class NonBlocking{
      * @param func 
      * @param args 
      */
-    public static call(func: any, ...args: unknown[]){
+    public static call(func: (...x: unknown[])=>void, ...args: unknown[]){
         //setTimeout(function(...passed){passed[0](...passed.slice(1))},0, func, ...args) // keeping here for compatibility
         queueMicrotask(()=>func(...args)); // Deno has a built in rust-implemented version which is much safer.
-    }
-
-    /**
-     * Decorator to be used for non blocking PlugFunction(s). see call() method for details on how this works.
-     * @note this will still block other sockets from execution when it reaches the "slow" method..
-     * @see NonBlocking.call()
-     */
-    public static $Call(func: PlugFunction): PlugFunction {
-        return (socket, message) => NonBlocking.call(func, socket, message);
     }
 }
