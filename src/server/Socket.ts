@@ -14,9 +14,11 @@ import { syncInstruction } from "../interface/sync.ts";
 import { CONFIG } from "../config.js";
 
 import singleton from "https://raw.githubusercontent.com/grevend/singleton/main/mod.ts";
+import ProxyManager from "../MISC/ProxyManager.ts";
 
 export default class Socket {
   public connections: Map<number, WebSocket>;
+  private proxyManager = new ProxyManager();
   public directoryWatcher: Watcher;
   protected instanceID: string;
   constructor(plugsDir: string) {
@@ -36,11 +38,11 @@ export default class Socket {
    */
   private proxyIncoming(str: string, client: WebSocket): socketMessage {
     return $Log.getInstance().silent(()=>{
-      const t: socketMessage = this.parseIncoming(str)
-      return decorateAccessorsWP(t as any, async (v, p, obj)=>{
+      const incoming: socketMessage = this.parseIncoming(str)
+      const decorated = decorateAccessorsWP(incoming as any, async (v, p, obj)=>{
         // TODO: could it be faster if we binary encode it immediately? since we don't make use of the stringified value
         // TODO: when someone disconnects this thing keeps floating (i think), so we might need to collect it manually
-        await client.send(JSON.stringify(CONFIG.proxySyncSettings.instructionReply ? { // TODO: move json stringify to a method for hot func
+        await client.send(JSON.stringify(CONFIG.proxySyncSettings.instructionReply ? {
           event: "",
           payload: {
             path: p,
@@ -49,6 +51,8 @@ export default class Socket {
           }
         } : obj as socketMessage))
       });
+      this.proxyManager.add(client.conn.rid, ...decorated.revoke);
+      return decorated.value;
     }) || {event: "404", payload: {}};
   }
 
@@ -57,6 +61,7 @@ export default class Socket {
     if(!socket.isClosed) socket.close();
     this.connections.delete(socket.conn.rid);
     dispatchEvent(new Event(this.instanceID+"_disconnect"));
+    this.proxyManager.revokeAllFrom(socket.conn.rid);
   }
   private async waitForSocket(socket: WebSocket) {
     try {
@@ -118,6 +123,9 @@ export default class Socket {
    */
   static sendMessage(to: number, msg: socketMessage): Promise<void> | undefined{
     return socketS.getInstance().connections.get(to)?.send(JSON.stringify(msg));
+  }
+  static getInstance(){
+    return socketS.getInstance();
   }
 }
 
