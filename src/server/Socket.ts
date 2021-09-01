@@ -8,7 +8,7 @@ import {
 } from "https://deno.land/std@0.90.0/ws/mod.ts";
 import { Watcher } from "../FS/FileWatcher.ts";
 import { HandleEvent } from "./EventHandler.ts";
-import { $Log } from "../decorators/Log.ts";
+import { Log } from "../decorators/Log.ts";
 import { decorateAccessorsWP, payloadCeiling } from "../MISC/utils.ts";
 import { syncInstruction } from "../interface/sync.ts";
 import { CONFIG } from "../config.js";
@@ -37,7 +37,7 @@ export default class Socket {
    * @returns 
    */
   private proxyIncoming(str: string, client: WebSocket): socketMessage {
-    return $Log.getInstance().silent(()=>{
+    return Log.silent(()=>{
       const incoming: socketMessage = this.parseIncoming(str)
       const decorated = decorateAccessorsWP(incoming as any, async (v, p, obj)=>{
         // TODO: could it be faster if we binary encode it immediately? since we don't make use of the stringified value

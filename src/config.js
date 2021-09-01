@@ -1,3 +1,4 @@
+import {LogLevel} from "./decorators/Log.ts";
 export const CONFIG = Object.freeze({
     /**
      * Limits the allowed payload size. skips further operations if the incoming size is greater.
@@ -17,16 +18,19 @@ export const CONFIG = Object.freeze({
      */
     plugsFolder: "./plugs",
 
+    printLogToConsole: true,
+    logLevel: LogLevel.extreme,
+
     INSECURE: {
         /** The port to listen on. */
-        port: Number(Deno.args[0]) || 8080,
+        port: 8080,
         /** A literal IP address or host name that can be resolved to an IP address.
         * If not specified, defaults to `0.0.0.0`. */
         hostname: "0.0.0.0",
     },
     TLS: {
         /** The port to listen on. */
-        port: Number(Deno.args[0]) || 8080,
+        port: 8080,
         /** A literal IP address or host name that can be resolved to an IP address.
         * If not specified, defaults to `0.0.0.0`. */
         hostname: "0.0.0.0",
