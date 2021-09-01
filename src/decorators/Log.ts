@@ -19,7 +19,7 @@ export class Log {
         return null;
     }
     public getAllLogs(){
-        return new Promise<LogShape[]>((res,rej)=>{
+        return new Promise<LogShape[]>((res,_rej)=>{
             this.logThread.postMessage("flush")
             this.logThread.onmessage = ((e: MessageEvent<LogShape[]>) => res(e.data));
             this.logThread.onmessage = undefined;

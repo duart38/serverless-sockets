@@ -11,7 +11,7 @@ export async function* broadcast(message: socketMessage, _from: number): ModuleG
 }
 
 // supports multiple functions in one plug
-export async function* test(message: socketMessage, _from: number): ModuleGenerator{
+export async function* test(_message: socketMessage, _from: number): ModuleGenerator{
   Log.info({level: LogLevel.low, message: "some other test function"})
   for(let i = 0; i < 10; i++){
     //message.payload["name"] = "John" + i; // <-- only works in proxy-mode

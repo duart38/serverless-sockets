@@ -27,7 +27,7 @@ export class Watcher {
    */
   private async init() {
     const watcher = Deno.watchFs(this.dir);
-    for await (const event of watcher) {
+    for await (const _event of watcher) {
       this.hash.setValue(this.newHash());
     }
   }

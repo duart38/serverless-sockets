@@ -39,6 +39,7 @@ export default class Socket {
   private proxyIncoming(str: string, client: WebSocket): socketMessage {
     return Log.silent(()=>{
       const incoming: socketMessage = this.parseIncoming(str)
+      // deno-lint-ignore no-explicit-any
       const decorated = decorateAccessorsWP(incoming as any, async (v, p, obj)=>{
         // TODO: could it be faster if we binary encode it immediately? since we don't make use of the stringified value
         // TODO: when someone disconnects this thing keeps floating (i think), so we might need to collect it manually
