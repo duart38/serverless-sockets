@@ -1,4 +1,4 @@
-import {LogLevel} from "./decorators/Log.ts";
+import {LogLevel} from "./components/Log.ts";
 export const CONFIG = Object.freeze({
     /**
      * Limits the allowed payload size. skips further operations if the incoming size is greater.

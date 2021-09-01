@@ -1,4 +1,4 @@
-import { Log, LogLevel } from "../decorators/Log.ts";
+import { Log, LogLevel } from "../components/Log.ts";
 import { socketMessage } from "../interface/message.ts";
 import { ModuleGenerator } from "../interface/socketFunction.ts";
 import Socket from "../server/Socket.ts";

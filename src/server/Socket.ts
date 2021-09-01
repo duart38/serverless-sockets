@@ -8,7 +8,7 @@ import {
 } from "https://deno.land/std@0.90.0/ws/mod.ts";
 import { Watcher } from "../FS/FileWatcher.ts";
 import { HandleEvent } from "./EventHandler.ts";
-import { Log } from "../decorators/Log.ts";
+import { Log } from "../components/Log.ts";
 import { decorateAccessorsWP, payloadCeiling } from "../MISC/utils.ts";
 import { syncInstruction } from "../interface/sync.ts";
 import { CONFIG } from "../config.js";

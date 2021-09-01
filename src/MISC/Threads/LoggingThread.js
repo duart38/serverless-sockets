@@ -1,5 +1,5 @@
 import {CONFIG} from '../../config.js';
-import {LogLevel} from "../../decorators/Log.ts";
+import {LogLevel} from "../../components/Log.ts";
 
 let logs = [];
 
