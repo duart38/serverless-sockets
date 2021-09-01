@@ -15,31 +15,6 @@ Strongly typed JIT compilers have a crazy overhead.On top of that regular TS in 
 - [ ] Payload / Performance measuring (inbound, outbound payload sizes, plug execution time..)
 - [ ] CLI for generating functions! (e.g: $ ```socket add plug <name>```)
 
-# extra TODO(s):
-- [ ] Write tests
-- [ ] Error logging module (threaded, should take load away from printing to the console)
-- [ ] CORS!!!
-- [ ] Add pre-compiler to remove the initial slow call?
-- [ ] We could also compile/bundle on change, store in different directory, and then have the handler pick from the bundles (space/time tradeoff here as the FS will grow with all the self-contained JS modules in each bundled file... definitely faster tho..)
-- [ ] we need to build a front-end websocket wrapper that filters out events based on our messageEvent payload.. also an addition would be to listen for changes inside our accessor decorator and call the "set" method when the server responds.. this will introduce a shaping for the front-end
-- [x] Support sub directories in plugs to allow some structure to devs
-- [x] Global data management (start with localStorage but allow for branching to Redis, for system wide data access)
-- [x] What if we can have 2 exactly the same objects on the server and the client side and just keep them in sync? we can then instead of sending big objects between the server and the client just instruct one another on how things should be updated (CRUD ENUM representing?)? (NOTE: technically with a front-end lib accompanying this server we should already have similar functionality providing we figure out a way to solve the accessor performance issues)
-- [ ] As mentioned above.. decoration of accessors are hella slow in v8....
-- [ ] Force break reference chains for garbage collector to hit earlier (see below.. we can do this on the payload AFTER the method returns..)
-- [ ] Make methods able to return a value that is to be sent back to  the client.. this helps allot when we don't want to use real time data transfers and only want to respond with a static-ish object each time something is received..
-- [ ] My hypothesis is that this solution will have a bad decoration performance hit when a payload comes in but all subsequent sync operations on an object will have VERY low latency and payload sizes because of the instruction nature of the sync operations... (we need to test this).
-- [ ] It would be nice if we allow a config property that allows us to turn off the sync operations and thus does NOT decorate any incoming object but only takes the return value from a method to be sent back to the client...
--  [ ] Allow plugs to be loaded from the web with a link and provide a config that specifies the interval in which we clear the cache forcing the loader to pull from the web again.
-- [ ] Add check on uint8array payload if the first few bytes correspond to the >>> "events":"xx" .. if not pre-maturely return error..
-- [ ] Bundle, bundle,bundle... increases performance (see links)
-- [ ] Need method to simply "send" to the provided client with wathever info as long as it follows our shape..
-- [ ] Pause ever so slightly when someone is modifying plug functions? (prevents human mistakes from going to prod)
-- [ ] Figure out if dynamic imports ever trigger turbofan.. i have a feeling they do not.
-- [ ] Event listeners are strong references and must be explicitly removed!.. We could use Weak references instead for a cleaner and more automatic code (https://v8.dev/features/weak-references)
-- [ ] Add instruction "if the amount of changes you are going to make exceed the amount of keys your object has you might as well change the object as a whole and send it to the client..  the instruction system is for long running methods that require single (or small burst) instructions when they're in the event loop
-- [ ] Send RID back to client so they know who they are.
-- [ ] On socket connect and disconnect callback should contain the RID of the connected or disconnected.
 
 # some experiments
 Can we move the "for await (const ev of socket)" to a worker and when an event is received we parse it and decorate it then return it? we might need to re-construct the socket API inside the worker (using rid).
