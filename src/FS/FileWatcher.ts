@@ -5,13 +5,23 @@ import Observe from "https://raw.githubusercontent.com/duart38/Observe/master/Ob
 export class Watcher {
   private hash: Observe<string>;
   private dir: string;
-
-  // TODO: keep track of files in the folder and check against an array when someone calls an api... this removes the need for a try-catch when importing
+  private files: Map<string, string>;
 
   constructor(dir: string) {
     this.hash = new Observe(this.newHash());
+    this.files = new Map();
     this.dir = dir;
+    this.preLoadDir(this.dir);
     this.init();
+  }
+  private preLoadDir(dir: string){
+    for(const {isFile, name} of Deno.readDirSync(dir)){
+      if(isFile) {
+        const file = `${name.startsWith("/") ? "" : "/"}${name}${name.endsWith(".ts") ? "" : ".ts"}`
+        this.files.set(file, this.newHash());
+      }
+      // TODO: pre-load sub-directories
+    }
   }
 
   /**
@@ -29,6 +39,15 @@ export class Watcher {
     const watcher = Deno.watchFs(this.dir);
     for await (const _event of watcher) {
       this.hash.setValue(this.newHash());
+      this.handleFsEvent(_event);
+    }
+  }
+  private handleFsEvent(ev: Deno.FsEvent){
+    const path = ev.paths[0].replace(Deno.realPathSync(this.dir), "");
+    switch(ev.kind){
+      case "modify":
+      case "create": this.files.set(path, this.newHash()); break;
+      case "remove": this.files.delete(path);
     }
   }
 
@@ -40,11 +59,34 @@ export class Watcher {
     return this.hash;
   }
 
+  /**
+   * Gets the hash of the entire filewatcher. this hash is updated every time any event happens
+   */
   public getHash(): string {
     return this.hash.getValue();
   }
 
+  /**
+   * Gets the hash of a single file
+   * @param file the name of the file (including prepended directory pathway)
+   */
+  public getFileHash(file: string): string {
+    file = `${file.startsWith("/") ? "" : "/"}${file}${file.endsWith(".ts") ? "" : ".ts"}`
+    return this.files.get(file) || this.getHash();
+  }
+
+  /**
+   * Returns the path, as is, to the directory that this fileWatcher is register to watch.
+   */
   public directory(): string {
     return this.dir;
+  }
+
+  /**
+   * Returns the full path to the directory this fileWatcher is register to watch.
+   * @see {Deno.realPathSync}
+   */
+  public fullDirectory(): string {
+    return Deno.realPathSync(this.dir);
   }
 }

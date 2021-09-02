@@ -20,8 +20,9 @@ export async function HandleEvent(
 
   // TODO: try catch (slow) vs then.catch (probably does the same thing internally) ??? or we could get rid of both of them..
   // i believe promises provide more utility.. especially with the "finally()" allowing us to cleanup the proxied payload
+  const sanitized = sanitizeEvent(message.event);
   try {
-    const m = await import(`../${fileWatcher.directory()}/${sanitizeEvent(message.event)}.ts?${fileWatcher.getHash()}`);
+    const m = await import(`../${fileWatcher.directory()}/${sanitized}.ts?${fileWatcher.getFileHash(sanitized)}`);
 
     (Object.values(m) as AsyncGeneratorFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v))
     .forEach(async (fn)=>{
