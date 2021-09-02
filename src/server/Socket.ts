@@ -1,5 +1,5 @@
 import type { ServerRequest } from "https://deno.land/std@0.90.0/http/server.ts";
-import type { socketMessage } from "../interface/message.ts";
+import { Events, socketMessage } from "../interface/message.ts";
 
 import {
   acceptWebSocket,
@@ -42,9 +42,8 @@ export default class Socket {
       // deno-lint-ignore no-explicit-any
       const decorated = decorateAccessorsWP(incoming as any, async (v, p, obj)=>{
         // TODO: could it be faster if we binary encode it immediately? since we don't make use of the stringified value
-        // TODO: when someone disconnects this thing keeps floating (i think), so we might need to collect it manually
         await client.send(JSON.stringify(CONFIG.proxySyncSettings.instructionReply ? {
-          event: "",
+          event: Events.OBJ_SYNC,
           payload: {
             path: p,
             value: v,
@@ -106,7 +105,7 @@ export default class Socket {
   static broadcast(data: Omit<socketMessage, "event">){
     socketS.getInstance().connections.forEach((s)=>{if(!s.isClosed) s.send(JSON.stringify({
       ...data,
-      event: "#$_BC" // TODO: move to a method
+      event: Events.BROADCAST
     }))});
   }
   /**
