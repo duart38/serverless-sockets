@@ -1,4 +1,4 @@
-import type { socketMessage } from "../interface/message.ts";
+import { Events, socketMessage } from "../interface/message.ts";
 
 import Socket, { socketS } from "./Socket.ts";
 import { Watcher } from "../FS/FileWatcher.ts";
@@ -18,22 +18,20 @@ export async function HandleEvent(
   const socket = socketS.getInstance();
   const fileWatcher: Watcher = socket.directoryWatcher;
 
-  // TODO: try catch (slow) vs then.catch (probably does the same thing internally) ??? or we could get rid of both of them..
-  // i believe promises provide more utility.. especially with the "finally()" allowing us to cleanup the proxied payload
   const sanitized = sanitizeEvent(message.event);
-  try {
-    const m = await import(`../${fileWatcher.directory()}/${sanitized}.ts?${fileWatcher.getFileHash(sanitized)}`);
+    if(fileWatcher.containsFile(sanitized)){
+      const m = await import(`../${fileWatcher.directory()}/${sanitized}.ts?${fileWatcher.getFileHash(sanitized)}`);
 
-    (Object.values(m) as AsyncGeneratorFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v))
-    .forEach(async (fn)=>{
-          // TODO: what if we return the gen functions and execute the send in socket itself?
-        for await(const v of fn(message, from)) Socket.sendMessage(from, v as socketMessage);
-    });
-  } catch (error) {
-    console.log(error);
-  }
-  // i don't trust weakRefs for message because of possible long running methods, so this will do
-  (message as unknown) = null;
+      (Object.values(m) as AsyncGeneratorFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v))
+      .forEach(async (fn)=>{
+            // TODO: what if we return the gen functions and execute the send in socket itself?
+          for await(const v of fn(message, from)) Socket.sendMessage(from, v as socketMessage);
+      });
+    // i don't trust weakRefs for message because of possible long running methods, so this will do
+    (message as unknown) = null;
+    }else{
+      Socket.sendMessage(from, {event: Events.ERROR, payload: {}});
+    }
 }
 
 /**
