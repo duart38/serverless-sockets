@@ -1,5 +1,8 @@
 import {LogLevel} from "./components/Log.ts";
-export const CONFIG = Object.freeze({
+/**
+ * @type {Record<string, unkown>}
+ */
+export const CONFIG = {
     /**
      * Limits the allowed payload size. skips further operations if the incoming size is greater.
      */
@@ -73,4 +76,4 @@ export const CONFIG = Object.freeze({
      * function will always have the same shape (done by enforcing shape thus always having the same shape for code marking to be included in the optmization pipelines)
      */
     validateFunctionShape: false
-})
+};
