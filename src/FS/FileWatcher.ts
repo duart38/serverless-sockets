@@ -53,7 +53,6 @@ export class Watcher {
       }
       case "create": 
       case "remove": {
-        // TODO: does not seem to work on OSX
         this.files.delete(path);
         break;
       }
