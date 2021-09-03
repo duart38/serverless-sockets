@@ -8,5 +8,6 @@ export interface socketMessage {
 
 export enum Events {
   BROADCAST = "#$_BC",
-  OBJ_SYNC = "#$_OBJ_SYNC"
+  OBJ_SYNC = "#$_OBJ_SYNC",
+  ERROR = "#$_ERR"
 }
