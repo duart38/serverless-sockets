@@ -3,6 +3,9 @@ import { serve } from "https://deno.land/std@0.90.0/http/server.ts";
 import { CONFIG } from "../src/config.js";
 import { socketMessage } from "../src/interface/message.ts";
 import { socketS } from "../src/server/Socket.ts";
+
+CONFIG.plugsFolder = Deno.cwd() + "/src/plugs";
+
 const ws2 = new WebSocket("ws://localhost:8080");
 const socket = socketS.getInstance();
 for await (const req of serve(CONFIG.INSECURE)) {
