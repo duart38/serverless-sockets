@@ -4,8 +4,7 @@ import { CONFIG } from "./config.js";
 import { preLoadPlugs } from "./server/PreLoader.ts";
 import { socketS } from "./server/Socket.ts";
 
-// TODO: take plug function from CLI
-let cli = CLI.instance();
+const cli = CLI.instance();
 
 cli.onReady().then(async ()=>{
   if (import.meta.main) {

@@ -24,10 +24,10 @@ export class CLI {
         return this.ready;
     }
 
-    public printHelp(config: Object, preKey = ""){
+    public printHelp(config: Record<string, unknown>, preKey = ""){
         Object.entries(config).forEach(([key, v])=>{
             if(typeof v === "object"){
-                this.printHelp(v, preKey + `${key}.`);
+                this.printHelp(v as Record<string, unknown>, preKey + `${key}.`);
             }else{
                 console.log(`--${preKey}${key} ${typeof v}`)
             }
