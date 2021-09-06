@@ -20,7 +20,7 @@ export async function HandleEvent(
 
   const sanitized = sanitizeEvent(message.event);
     if(fileWatcher.containsFile(sanitized)){
-      const m = await import(`../${fileWatcher.directory()}/${sanitized}.ts?${fileWatcher.getFileHash(sanitized)}`);
+      const m = await import(`${fileWatcher.directory()}/${sanitized}.ts?${fileWatcher.getFileHash(sanitized)}`);
 
       (Object.values(m) as AsyncGeneratorFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v))
       .forEach(async (fn)=>{
