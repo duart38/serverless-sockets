@@ -8,7 +8,7 @@ import {
 } from "https://deno.land/std@0.90.0/ws/mod.ts";
 import { Watcher } from "../FS/FileWatcher.ts";
 import { HandleEvent } from "./EventHandler.ts";
-import { Log } from "../components/Log.ts";
+import { Log, LogLevel } from "../components/Log.ts";
 import { decorateAccessorsWP, payloadCeiling } from "../MISC/utils.ts";
 import { syncInstruction } from "../interface/sync.ts";
 import { CONFIG } from "../config.js";
@@ -22,6 +22,7 @@ export default class Socket {
   public directoryWatcher: Watcher;
   protected instanceID: string;
   constructor(plugsDir: string) {
+    Log.info({level: LogLevel.medium, message: `[+] Opening socket with function folder: ${plugsDir}`});
     this.directoryWatcher = new Watcher(plugsDir);
     this.instanceID = crypto.getRandomValues(new Uint32Array(2)).join("");
     this.connections = new Map();
