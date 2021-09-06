@@ -19,7 +19,7 @@ export const CONFIG = {
     /**
      * Where to store and get dynamic code to be executed
      */
-    plugsFolder: "./plugs",
+    plugsFolder: "/Users/duartasnel/Local/WORK/BusinessOne/socketstuff/src/plugs",
 
     printLogToConsole: true,
     logLevel: LogLevel.extreme,
