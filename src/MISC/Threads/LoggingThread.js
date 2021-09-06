@@ -5,7 +5,7 @@ let logs = [];
 
 function printLog(data){
     const logF = data.level === LogLevel.extreme ? console.warn : console.log;
-    logF(`[${data.timeStamp}] - ${data.level} - ${data.message}`);
+    logF(`[${new Date(data.timeStamp)}] - ${data.level} - ${data.message}`);
 }
 function pushLog(data, print = false){
     logs.push(data);
