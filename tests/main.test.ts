@@ -48,3 +48,8 @@ Deno.test("multi yields", () => {
   ws2.addEventListener("message", fn);
   ws2.send(JSON.stringify({ event: "multiyield", payload: {count: 4} }));
 });
+
+setTimeout(()=>{
+  console.log("Force quitting deno as the framework runs indefinitely")
+  Deno.exit(0)
+}, 10000);
