@@ -11,7 +11,7 @@ export const CONFIG = {
      * If this is enabled the initial start of the server will load in all the socket functions.
      * This will cache them resulting in the first request from a user being faster
      */
-    preloadPlugs: false,
+    preloadPlugs: true,
 
     /** Indicates wether this server needs to use TLS or not */
     secure: false,
