@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.106.0/testing/asserts.ts";
+import { assert, assertEquals, fail } from "https://deno.land/std@0.106.0/testing/asserts.ts";
 import { serve } from "https://deno.land/std@0.90.0/http/server.ts";
 import { CONFIG } from "../src/config.js";
 import { socketMessage } from "../src/interface/message.ts";
@@ -27,6 +27,21 @@ const isOpen = await new Promise<boolean>((res)=>ws2.addEventListener("open", ()
 console.log(isOpen);
 Deno.test("Payload and single yield works", async () => {
   const res = waitForMessage();
-  ws2.send(JSON.stringify({ event: "multiyield", payload: {count: 10} }));
+  ws2.send(JSON.stringify({ event: "multiyield", payload: {count: 1} }));
   assertEquals((await res).event, "spam-mode")
+});
+
+Deno.test("multi yields", () => {
+  const timeout = setTimeout(()=>fail("Timeout"), 8000);
+  let count = 0;
+  const fn = () => {
+    count++;
+    if(count > 3){
+      assert("SOLID");
+      clearTimeout(timeout);
+      ws2.removeEventListener("message",fn);
+    }
+  }
+  ws2.addEventListener("message", fn);
+  ws2.send(JSON.stringify({ event: "multiyield", payload: {count: 4} }));
 });
