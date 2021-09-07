@@ -23,12 +23,9 @@ export async function HandleEvent(
       const m = await import(`${fileWatcher.directory()}/${sanitized}.ts?${fileWatcher.getFileHash(sanitized)}`);
 
       (Object.values(m) as AsyncGeneratorFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v))
-      .forEach(async (fn)=>{
-            // TODO: what if we return the gen functions and execute the send in socket itself?
-          for await(const v of fn(message, from)) Socket.sendMessage(from, v as socketMessage);
-      });
-    // i don't trust weakRefs for message because of possible long running methods, so this will do
-    (message as unknown) = null;
+      .forEach(async (fn)=>{for await(const v of fn(message, from)) Socket.sendMessage(from, v as socketMessage);});
+      // i don't trust weakRefs for message because of possible long running methods, so this will do
+      (message as unknown) = null;
     }else{
       Socket.sendMessage(from, {event: Events.ERROR, payload: {}});
     }
