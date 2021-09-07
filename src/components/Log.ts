@@ -34,8 +34,6 @@ export class Log {
         return $Log.getInstance();
     }
 
-    // TODO: also add payload size logging here.. in threads ofc
-
 }
 
 export const $Log  = singleton(()=>new Log());

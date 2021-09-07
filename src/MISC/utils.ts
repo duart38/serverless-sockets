@@ -20,7 +20,7 @@ export function decorateAccessors<T extends Record<string, unknown>>(
   return new Proxy(obj, {
     set: (obj, modifiedKey, value) => {
       Reflect.set(obj, modifiedKey, value);
-      callBack(value); // TODO: we could accelerate ignition and turbofan if we ensure the same data shape here (i.e. don't mix numbers with string etc)
+      callBack(value);
       return true;
     },
   });
@@ -52,7 +52,7 @@ export function decorateAccessorsWP<T extends Record<string, unknown>>(
   const { proxy, revoke } = Proxy.revocable(obj, {
     set: (obj, modifiedKey, value) => {
       Reflect.set(obj, modifiedKey, value);
-      callBack(value, [...path, modifiedKey as string], obj); // TODO: we could accelerate ignition and turbofan if we ensure the same data shape here (i.e. don't mix numbers with string etc)
+      callBack(value, [...path, modifiedKey as string], obj);
       return true;
     },
   });
