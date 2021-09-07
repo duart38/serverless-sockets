@@ -42,7 +42,6 @@ export default class Socket {
       const incoming: socketMessage = this.parseIncoming(str)
       // deno-lint-ignore no-explicit-any
       const decorated = decorateAccessorsWP(incoming as any, async (v, p, obj)=>{
-        // TODO: could it be faster if we binary encode it immediately? since we don't make use of the stringified value
         await client.send(JSON.stringify(CONFIG.proxySyncSettings.instructionReply ? {
           event: Events.OBJ_SYNC,
           payload: {
