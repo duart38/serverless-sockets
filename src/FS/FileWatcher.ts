@@ -1,4 +1,5 @@
 import Observe from "https://raw.githubusercontent.com/duart38/Observe/master/Observe.ts";
+import { Log, LogLevel } from "../components/Log.ts";
 /**
  * TODO: add printing with verbosity support
  */
@@ -17,10 +18,12 @@ export class Watcher {
   private preLoadDir(dir: string){
     for(const {isFile, name} of Deno.readDirSync(dir)){
       if(isFile) {
+        Log.info({level: LogLevel.high, message: `[+] Generating file hash for: ${dir}/${name}`})
         const file = this._sanitizeIncoming(name);
         this.files.set(file, this.newHash());
+      }else{
+        this.preLoadDir(`${dir}/${name}`)
       }
-      // TODO: pre-load sub-directories
     }
   }
 
