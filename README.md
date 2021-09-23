@@ -106,6 +106,8 @@ We could scale on the same machine by building a manager that spawns and manages
 on something like an RPC system, this in term calls back to the main responder to shoot back data to the clients. This is a very powerful tool that can be used to scale a server to a large number of clients while allowing for the server to not block when a large request comes in (single core issues).
 https://deno.land/x/gentleRpc@v1.1
 
+alternative: https://deno.land/x/async_call_rpc@v4.0.0
+
 - We might need to pre-launch a few instances to not have to deal with the whole having to connect to a server of which might or might not be working.
 - we could also have a communication standard that indicates to the main server that a new sub-server has been launched on the same machine. this then means to connect to it and start sending requests to it based on load.
 
