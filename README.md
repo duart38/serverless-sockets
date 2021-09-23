@@ -116,6 +116,12 @@ A problem with the above solution is that when a socket function gets updated we
 2. we can just update the function and have the server restart ONE instance and pick up the new function(s). this is faster but now we need to keep track of which instance has which version of which function.. (confusing)
 3. [BETTER] -> have the instances all listen to one folder and update themselves (i.e. they ship with their own event-handler and FS watchers). this makes the newly spawned instances a bit more memory heavy but it allows them to be fully independant of the main server and also allows for a send and forget approach to the main server (i.e. send an event with some data and don't worry about getting data back.. "don't call us we will call you")
 
+> BIG NOTE: don't forget to kill the child instances when the main server is killed (hook on unload or something like that).
+
+Nice to-haves:
+1. Would be nice if each spawned instance has a 'timeout' that would kill it if it doesn't get a 'im-done' response within a certain time. this would also trigger a spawn of a new instance.
+2. Would also be nice if the spawned instances have a property which indicate how much load they are able to take (how many requests before we divert to a different spawned instance)
+3. Balance the percentage load across all instances (i.e. if there are 4 spawned instances we divide by 25,25,25,25 %). this can actually very easily be done by using a circular list.. especially if all the instances have the same functionality.
 ---
 
 We could also go full on crazy and make all the functions their own server instance and communicate with them somehow. this however has the limitation of possibly spawning a lot of servers and having to deal with all of them.
