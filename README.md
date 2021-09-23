@@ -110,3 +110,12 @@ https://deno.land/x/gentleRpc@v1.1
 - we could also have a communication standard that indicates to the main server that a new sub-server has been launched on the same machine. this then means to connect to it and start sending requests to it based on load.
 
 > Data to be moved around instances are to be handled with localStorage or some sort of internal communication on the system (probably not exposed to the outside world).
+
+A problem with the above solution is that when a socket function gets updated we have a few options:
+1. we can just update the function and have the server restart ALL ***THE INSTANCES*** and pick up the new function(s). this is slow and has an annoying downtime
+2. we can just update the function and have the server restart ONE instance and pick up the new function(s). this is faster but now we need to keep track of which instance has which version of which function.. (confusing)
+3. [BETTER] -> have the instances all listen to one folder and update themselves (i.e. they ship with their own event-handler and FS watchers). this makes the newly spawned instances a bit more memory heavy but it allows them to be fully independant of the main server and also allows for a send and forget approach to the main server (i.e. send an event with some data and don't worry about getting data back.. "don't call us we will call you")
+
+---
+
+We could also go full on crazy and make all the functions their own server instance and communicate with them somehow. this however has the limitation of possibly spawning a lot of servers and having to deal with all of them.
