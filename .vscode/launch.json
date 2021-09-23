@@ -7,7 +7,7 @@
         "request": "launch",
         "cwd": "${workspaceFolder}/src",
         "runtimeExecutable": "deno",
-        "runtimeArgs": ["run", "--inspect-brk", "-A", "server.ts"],
+        "runtimeArgs": ["run", "--inspect", "-A", "mod.ts"],
         "attachSimplePort": 9229
       }
     ]
