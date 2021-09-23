@@ -23,7 +23,7 @@ export async function HandleEvent(
       const m = await import(`${fileWatcher.directory()}/${sanitized}.ts?${fileWatcher.getFileHash(sanitized)}`);
 
       (Object.values(m) as AsyncGeneratorFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v))
-      .forEach(async (fn)=>{for await(const v of fn(message, from)) Socket.sendMessage(from, v as socketMessage);});
+      .forEach(async (fn)=>{for await(const v of fn(message, from)) Socket.sendMessage(from, v as socketMessage);}); // TODO: forEach loops are slow for no reason.
       // i don't trust weakRefs for message because of possible long running methods, so this will do
       (message as unknown) = null;
     }else{
