@@ -122,6 +122,10 @@ Nice to-haves:
 1. Would be nice if each spawned instance has a 'timeout' that would kill it if it doesn't get a 'im-done' response within a certain time. this would also trigger a spawn of a new instance.
 2. Would also be nice if the spawned instances have a property which indicate how much load they are able to take (how many requests before we divert to a different spawned instance)
 3. Balance the percentage load across all instances (i.e. if there are 4 spawned instances we divide by 25,25,25,25 %). this can actually very easily be done by using a circular list.. especially if all the instances have the same functionality.
+
+> if we use RPC we could take advantage of batching and have the main server send a batch of requests to the spawned instances and then wait for the responses.
+
+> ***NOTICE:*** we won't have access to the main sockets with their respective socket connections so we need a way to bi-directionaly send data to provide access to socket-specific api's like sending a message to a DIFFERENT socket or a broadcast or a kick event etc etc.. basically we need to read all the public functions in the Socket class and expose them on a RPC connection or something similar
 ---
 
 We could also go full on crazy and make all the functions their own server instance and communicate with them somehow. this however has the limitation of possibly spawning a lot of servers and having to deal with all of them.
