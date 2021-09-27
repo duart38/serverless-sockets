@@ -131,3 +131,7 @@ Nice to-haves:
 ---
 
 We could also go full on crazy and make all the functions their own server instance and communicate with them somehow. this however has the limitation of possibly spawning a lot of servers and having to deal with all of them.
+
+## LLJS (or LLTS)
+basically the adoption of a byte-interpreter like data flow for very fast operations.
+this will be inspired by my upcoming image format geared towards NFTS (TODO: put a link here)

@@ -7,7 +7,7 @@ import {
   WebSocket,
 } from "https://deno.land/std@0.90.0/ws/mod.ts";
 import { Watcher } from "../FS/FileWatcher.ts";
-import { HandleEvent } from "./EventHandler.ts";
+// import { HandleEvent } from "./EventHandler.ts";
 import { Log, LogLevel } from "../components/Log.ts";
 import { decorateAccessorsWP, payloadCeiling } from "../MISC/utils.ts";
 import { syncInstruction } from "../interface/sync.ts";
@@ -15,17 +15,28 @@ import { CONFIG } from "../config.js";
 
 import singleton from "https://raw.githubusercontent.com/grevend/singleton/main/mod.ts";
 import ProxyManager from "../MISC/ProxyManager.ts";
+import { $SocketCommsAssist, SocketCommsAssist } from "./MainInstance/SocketComsAssist.ts";
+import { chunkUp32 } from "../MISC/bits.ts";
 
 export default class Socket {
   public connections: Map<number, WebSocket>;
   private proxyManager = new ProxyManager();
   public directoryWatcher: Watcher;
   protected instanceID: string;
+  protected communicationAssistant: SocketCommsAssist;
   constructor(plugsDir: string) {
     Log.info({level: LogLevel.medium, message: `[+] Opening socket with function folder: ${plugsDir}`});
     this.directoryWatcher = new Watcher(plugsDir);
     this.instanceID = crypto.getRandomValues(new Uint32Array(2)).join("");
     this.connections = new Map();
+    this.communicationAssistant = $SocketCommsAssist.getInstance()
+    this.listenToModules();
+  }
+
+  private async listenToModules(){
+    for await(const response of this.communicationAssistant.fetchNext()){
+      console.log("response from module", response);
+    }
   }
 
   private parseIncoming(str: string): socketMessage{
@@ -66,8 +77,14 @@ export default class Socket {
   private async waitForSocket(socket: WebSocket) {
     try {
       for await (const ev of socket) {
-        if (typeof ev === "string" && !payloadCeiling(ev)) {
-          HandleEvent(CONFIG.proxySyncIncomingData ? this.proxyIncoming(ev, socket) : this.parseIncoming(ev), socket.conn.rid);
+        if (typeof ev === "string" && !payloadCeiling(ev)) {// TODO: make buffer (Blob)
+          //HandleEvent(CONFIG.proxySyncIncomingData ? this.proxyIncoming(ev, socket) : this.parseIncoming(ev), socket.conn.rid);
+          const bf = this.communicationAssistant.bestFit();
+          console.log("SOCKET sending to best fit module with id",bf.rid);
+          await this.communicationAssistant.send(
+              bf,
+              new Uint8Array([...chunkUp32(3), 1,2,3])
+            );
         } else if (isWebSocketCloseEvent(ev)) {
           this.handleClose(socket);
         }

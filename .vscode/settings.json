@@ -1,5 +1,12 @@
 {
   "deno.enable": true,
   "deno.lint": true,
-  "deno.unstable": false
+  "deno.unstable": false,
+  "deno.suggest.imports.hosts": {
+    "https://deno.land": false
+  },
+  "cSpell.words": [
+    "Comms",
+    "itter"
+  ]
 }

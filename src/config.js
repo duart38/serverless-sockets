@@ -43,6 +43,18 @@ export const CONFIG = {
         keyFile: "",
     },
     /**
+     * the IP-addr of the connection used to call methods on the socket instance.
+     * It's recommended that this is not exposed to the outside world as it allows for calling methods that are only to be executed by
+     * trusted developers. the option is still available for horizontal scaling on an internal network.
+     * @see {CONFIG.INTERCOM_PORT}
+     */
+    INTERCOM_IP: '127.0.0.1',
+    /**
+     * The port of the connection used to call methods on the socket instance.
+     * @see {CONFIG.INTERCOM_IP}
+     */
+     INTERCOM_PORT: '8000',
+    /**
      * Indicates wether incoming payloads should be recursively proxied. if true
      * Proxying the payload will call itself to proxy any nested objects withing the incoming object.
      * Turning this on will have a small perfomance impact on deep nested objects to about O(log2n)
@@ -68,6 +80,13 @@ export const CONFIG = {
          * need to occur and responding with the instructions to do so.
          */
         instructionReply: true
+    },
+    LLJS: {
+        COMM_ID_SIZE: 2
+    },
+    INTERCOM: {
+        host: '127.0.0.1',
+        port: 8000
     },
 
     /**
