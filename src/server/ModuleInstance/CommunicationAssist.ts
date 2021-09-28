@@ -25,8 +25,8 @@ export class ModuleCommunicationAssistant extends LLComms{
     static async sendMessage(to: number, msg: socketMessage){
         const msgD = new TextEncoder().encode(JSON.stringify(msg)); // the slow part... 
         const constr = [
-            ...ModuleCommunicationAssistant._setId(SocketMethodMap.SEND_MESSAGE), // id of method to call. we pre-maturely know the size and the type
-            4, LLDecodeType.NUMBER, ...chunkUp32(to), // 4 bytes, type of number and the 'to' representing who to send the message to
+            SocketMethodMap.SEND_MESSAGE, // id of method to call. we pre-maturely know the size and the type
+            ...chunkUp32(4), LLDecodeType.NUMBER, ...chunkUp32(to), // 4 bytes, type of number and the 'to' representing who to send the message to
             ...chunkUp32(msgD.byteLength), LLDecodeType.JSON, ...msgD // the size of the payload(msg), type of json, and the full data dumped
         ];
         ModuleCommunicationAssistant.prependSize(constr);

@@ -17,6 +17,8 @@ import singleton from "https://raw.githubusercontent.com/grevend/singleton/main/
 import ProxyManager from "../MISC/ProxyManager.ts";
 import { $SocketCommsAssist, SocketCommsAssist } from "./MainInstance/SocketComsAssist.ts";
 import { chunkUp32 } from "../MISC/bits.ts";
+import { LLComms } from "./LLComms/LLComms.ts";
+import { LLComsInterpreter } from "./LLComms/LLInterpreter.ts";
 
 export default class Socket {
   public connections: Map<number, WebSocket>;
@@ -33,9 +35,13 @@ export default class Socket {
     this.listenToModules();
   }
 
-  private async listenToModules(){
-    for await(const response of this.communicationAssistant.fetchNext()){
-      console.log("response from module", response);
+  private listenToModules(){
+    this.communicationAssistant.onReply = (response) =>{
+      // TODO: this is in the form of a method call. parse and call the required method
+      if(response.data){
+        let interp = new LLComsInterpreter(response.data);
+        interp.execImmediate();
+      }
     }
   }
 
@@ -77,14 +83,28 @@ export default class Socket {
   private async waitForSocket(socket: WebSocket) {
     try {
       for await (const ev of socket) {
-        if (typeof ev === "string" && !payloadCeiling(ev)) {// TODO: make buffer (Blob)
-          //HandleEvent(CONFIG.proxySyncIncomingData ? this.proxyIncoming(ev, socket) : this.parseIncoming(ev), socket.conn.rid);
-          const bf = this.communicationAssistant.bestFit();
-          console.log("SOCKET sending to best fit module with id",bf.rid);
-          await this.communicationAssistant.send(
-              bf,
-              new Uint8Array([...chunkUp32(3), 1,2,3])
-            );
+        // TODO: check back payload ceiling (&& !payloadCeiling(ev)
+        if (ev instanceof Uint8Array) {// TODO: instanceof checks are slow.. maybe try something else
+          // INCOMING: // [sizeOfAll(32), sizeOfEvent(32),  ...eventRaw(8), ...payload(8)]
+          const dv = new DataView(ev.buffer);
+
+          const sizeOfAll = dv.getUint32(0);
+          const sizeOfEvent = dv.getUint32(4);
+          if(sizeOfAll - sizeOfEvent <= CONFIG.payloadLimit){ // allowed in
+            const bestFit = this.communicationAssistant.bestFit();
+            const msgForModule: number[] = [ // [sizeOfAll(32), id(~), sizeOfEvent(32),  ...eventRaw(8), ...payload(8)]
+              //size
+              ...LLComms.chunkUpRID(socket.conn.rid),
+              ...ev.slice(4) // TODO: i believe spreading is not efficient at all. we could calculate and allocate and then set.
+            ];
+            LLComms.prependSize(msgForModule);
+            console.log(`Sending to module instance: ${bestFit.rid}. data ->`, msgForModule)
+            await this.communicationAssistant.send(
+              bestFit,
+                new Uint8Array(msgForModule)
+              );
+          }
+
         } else if (isWebSocketCloseEvent(ev)) {
           this.handleClose(socket);
         }
@@ -103,9 +123,13 @@ export default class Socket {
     const { conn, r: bufReader, w: bufWriter, headers } = req;
     acceptWebSocket({ conn, bufReader, bufWriter, headers })
       .then((socket) => {
-        this.connections.set(socket.conn.rid, socket);
-        dispatchEvent(new Event(this.instanceID+"_connect"));
-        this.waitForSocket(socket);
+        if(this.connections.size >= CONFIG.maxConnections){
+          socket.closeForce(); // TODO: more gracefully...
+        }else{
+          this.connections.set(socket.conn.rid, socket);
+          dispatchEvent(new Event(this.instanceID+"_connect"));
+          this.waitForSocket(socket);
+        }
       })
       .catch(async (err: unknown) => {
         console.error(`failed to accept websocket: ${err}`);
@@ -139,6 +163,7 @@ export default class Socket {
    * @returns a promise to await for the sending to complete
    */
   static sendMessage(to: number, msg: socketMessage): Promise<void> | undefined{
+    // TODO: no need to stringify here if the client already accepts uint8array. no need to decode either
     return socketS.getInstance().connections.get(to)?.send(JSON.stringify(msg));
   }
   static getInstance(){

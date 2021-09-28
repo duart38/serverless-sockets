@@ -6,7 +6,9 @@ import { Events, socketMessage } from "../../interface/message.ts";
 import { syncInstruction } from "../../interface/sync.ts";
 import ProxyManager from "../../MISC/ProxyManager.ts";
 import { decorateAccessorsWP } from "../../MISC/utils.ts";
+import { LLComms } from "../LLComms/LLComms.ts";
 import { $CommunicationAssist, ModuleCommunicationAssistant } from "./CommunicationAssist.ts";
+import { HandleEvent } from "./EventHandler.ts";
 
 // auto launch a listener
 // listen for events
@@ -56,9 +58,13 @@ export class ModuleInstance {
 
       async run(){
         for await(const data of this.CA.itter(await this.CA.conn)){
-            console.log("module side",data);
-            (await this.CA.conn).write(new Uint8Array())
-            // HandleEvent(CONFIG.proxySyncIncomingData ? this.proxyIncoming(ev, socket) : this.parseIncoming(ev), socket.conn.rid);
+          // [id(~), sizeOfEvent(32),  ...eventRaw(8), ...payload(8)]
+            const dv = new DataView(data.buffer);
+            const RID = LLComms.combineRID(data); // id(~)
+            const sizeOfEvent = dv.getUint32(LLComms.getRIDAllocation());
+            const event = new TextDecoder().decode(data.slice(LLComms.getRIDAllocation()+4, LLComms.getRIDAllocation()+4+sizeOfEvent))
+            const payload = JSON.parse(new TextDecoder().decode(data.slice(LLComms.getRIDAllocation()+4+sizeOfEvent)));
+            HandleEvent(event, payload, RID);
         }
       }
 

@@ -1,13 +1,16 @@
 // deno-lint-ignore-file no-explicit-any
 import { CONFIG } from "../../config.js";
 import Socket, { socketS } from "../Socket.ts";
+import { LLComms } from "./LLComms.ts";
 import { decode } from "./LLDecode.ts";
 
 export class LLComsInterpreter {
     dataView: DataView;
+    mem;
     cursor = 0;
     constructor(mem: Uint8Array){
-        this.dataView = new DataView(mem);
+        this.dataView = new DataView(mem.buffer);
+        this.mem = mem;
     }
 
     fetchNextU8(){
@@ -36,21 +39,27 @@ export class LLComsInterpreter {
         this.cursor += 4;
         return temp;
     }
+    fetchNext(from: number, to: number){
+        this.cursor += to - from;
+        return this.mem.slice(from, to);
+    }
 
     private _fetchID(){
         switch(CONFIG.LLJS.COMM_ID_SIZE){
             case 1: return this.fetchNextU8();
             case 2: return this.fetchNextU16();
-            case 3: return this.fetchNextU32();
-            default: return this.fetchNextU8();
+            case 4: return this.fetchNextU32();
+            default: return this.fetchNextU32();
         }
     }
 
 
-    private execSocketMethod(funcID:number, ...params: unknown[]){
+    private execSocketMethod(funcID:number, params: unknown[]){
         [
             /** SEND_MESSAGE */
-            ()=>{Socket.sendMessage.apply(null, params as any)},
+            ()=>{
+                Socket.sendMessage(params[0] as number, params[1] as any);
+            },
         ][funcID]()
     }
 
@@ -60,15 +69,24 @@ export class LLComsInterpreter {
      * Gets the socket instance and maps out + execute the methods with the provided params
      */
     execImmediate(){
-        // [id(16),  ...< pSize(32),pType(8),...pData(8) >]
-        const funcID = this._fetchID();
+        // [id(~),  ...< pSize(32),pType(8),...pData(8) >]
+        /**
+         const constr = [
+             SocketMethodMap.SEND_MESSAGE,, // id of method to call. we pre-maturely know the size and the type
+            4, LLDecodeType.NUMBER, ...chunkUp32(to), // 4 bytes, type of number and the 'to' representing who to send the message to
+            ...chunkUp32(msgD.byteLength), LLDecodeType.JSON, ...msgD // the size of the payload(msg), type of json, and the full data dumped
+        ];
+         */
+        const funcID = this.fetchNextU8();
         const params = [];
+
         
         while(this.cursor < this.dataView.byteLength){
             const pSize = this.fetchNextU32();
             const pType = this.fetchNextU8();
-            const pRaw = this.dataView.buffer.slice(this.cursor, this.cursor + pSize);
-            params.push(decode(pType, pRaw));
+            const pRaw = this.fetchNext(this.cursor, this.cursor + pSize) //this.dataView.buffer.slice(this.cursor, this.cursor + pSize);
+            const decoded = decode(pType, pRaw)
+            params.push(decoded);
         }
         this.execSocketMethod(funcID, params);
     }

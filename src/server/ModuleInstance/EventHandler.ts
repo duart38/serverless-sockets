@@ -1,9 +1,10 @@
 import { Events, socketMessage } from "../../interface/message.ts";
 
 import Socket, { socketS } from "../Socket.ts";
-import { Watcher } from "../../FS/FileWatcher.ts";
+import { moduleDirWatcher, Watcher } from "../../FS/FileWatcher.ts";
 import { PLUG_LENGTH } from "../../interface/socketFunction.ts";
 import { CONFIG } from "../../config.js";
+import { ModuleCommunicationAssistant } from "./CommunicationAssist.ts";
 
 
 /**
@@ -12,24 +13,26 @@ import { CONFIG } from "../../config.js";
  * @param from Represents the RID of the sender.
  */
 export async function HandleEvent(
+  event: string,
   message: socketMessage, 
   from: number,
 ) {
-  const socket = socketS.getInstance();
-  const fileWatcher: Watcher = socket.directoryWatcher;
+  // const socket = socketS.getInstance();
+  const fileWatcher: Watcher = moduleDirWatcher.getInstance();
 
-  const sanitized = sanitizeEvent(message.event);
+  const sanitized = sanitizeEvent(event);
     if(fileWatcher.containsFile(sanitized)){
+
       const m = await import(`${fileWatcher.directory()}/${sanitized}.ts?${fileWatcher.getFileHash(sanitized)}`);
 
       const gFn = (Object.values(m) as AsyncGeneratorFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v))
       for(let i = 0; i < gFn.length; i++) {
-        for await(const v of gFn[i](message, from)) Socket.sendMessage(from, v as socketMessage); // TODO: forEach loops are slow for no reason.
+        for await(const v of gFn[i](message, from)) ModuleCommunicationAssistant.sendMessage(from, v as socketMessage); // TODO: forEach loops are slow for no reason.
       }
       // i don't trust weakRefs for message because of possible long running methods, so this will do
       (message as unknown) = null;
     }else{
-      Socket.sendMessage(from, {event: Events.ERROR, payload: {}});
+      Socket.sendMessage(from, {payload: {}});
     }
 }
 

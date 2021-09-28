@@ -1,5 +1,8 @@
 import Observe from "https://raw.githubusercontent.com/duart38/Observe/master/Observe.ts";
 import { Log, LogLevel } from "../components/Log.ts";
+import singleton from "https://raw.githubusercontent.com/grevend/singleton/main/mod.ts";
+import { CONFIG } from "../config.js";
+
 /**
  * TODO: add printing with verbosity support
  */
@@ -9,6 +12,7 @@ export class Watcher {
   private files: Map<string, string>;
 
   constructor(dir: string) {
+    console.log(`watching dir: ${dir}`)
     this.hash = new Observe(this.newHash());
     this.files = new Map();
     this.dir = dir;
@@ -108,3 +112,5 @@ export class Watcher {
     return Deno.realPathSync(this.dir);
   }
 }
+
+export const moduleDirWatcher = singleton(()=> new Watcher(CONFIG.plugsFolder));
