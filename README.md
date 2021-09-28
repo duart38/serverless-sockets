@@ -101,7 +101,7 @@ deno run -A --v8-flags=--trace-opt,--trace-file-names,--always-opt,--trace-deopt
 why?: https://dev.to/alekseiberezkin/es6-generators-vs-iterators-performance-1p7
 they're not 'faster' but closures are great!. it also makes code very easy .. where you see yield is where a value can come out.. multiple yields are allowed in the same scope (contrary to returns which exits the scope after)
 
-# Auto scaling:
+# [SCRAPPED] Auto scaling:
 We could scale on the same machine by building a manager that spawns and manages new instances of a server that runs the code and pipes back results
 on something like an RPC system, this in term calls back to the main responder to shoot back data to the clients. This is a very powerful tool that can be used to scale a server to a large number of clients while allowing for the server to not block when a large request comes in (single core issues).
 https://deno.land/x/gentleRpc@v1.1
