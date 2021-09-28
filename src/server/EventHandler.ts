@@ -6,6 +6,14 @@ import { PLUG_LENGTH } from "../interface/socketFunction.ts";
 import { CONFIG } from "../config.js";
 
 
+function handleYields(generatorFunction: AsyncGenerator, from: number, message: socketMessage){
+  generatorFunction.next().then((reply)=>{
+    if(reply.done === true || reply.done === undefined) return
+    Socket.sendMessage(from,  reply.value as socketMessage);
+    handleYields(generatorFunction, from, message);
+  })
+}
+
 /**
  * 
  * @param message says it all dun' it
@@ -22,9 +30,10 @@ export async function HandleEvent(
     if(fileWatcher.containsFile(sanitized)){
       const m = await import(`${fileWatcher.directory()}/${sanitized}.ts?${fileWatcher.getFileHash(sanitized)}`);
 
-      const gFn = (Object.values(m) as AsyncGeneratorFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v))
+      const gFn = (Object.values(m) as AsyncGeneratorFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v));
       for(let i = 0; i < gFn.length; i++) {
-        for await(const v of gFn[i](message, from)) Socket.sendMessage(from, v as socketMessage); // TODO: forEach loops are slow for no reason.
+        // for await(const v of gFn[i](message, from)) Socket.sendMessage(from, v as socketMessage); // TODO: forEach loops are slow for no reason.
+        handleYields(gFn[i](message, from), from, message);
       }
       // i don't trust weakRefs for message because of possible long running methods, so this will do
       (message as unknown) = null;
