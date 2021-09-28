@@ -8,6 +8,12 @@ export const CONFIG = {
      */
     payloadLimit: 150,
     /**
+     * Maximum amount of connections allowed at the same time.
+     * Is also used for effeciency when allocating memory for the intercom communication standard
+     * > NOTE: changing this at runtime could result in unreadable delayed requests
+     */
+    maxConnections: 2000,
+    /**
      * If this is enabled the initial start of the server will load in all the socket functions.
      * This will cache them resulting in the first request from a user being faster
      */
@@ -42,6 +48,7 @@ export const CONFIG = {
         /** Server public key file. */
         keyFile: "",
     },
+    N_MODULES: 1,
     /**
      * the IP-addr of the connection used to call methods on the socket instance.
      * It's recommended that this is not exposed to the outside world as it allows for calling methods that are only to be executed by
