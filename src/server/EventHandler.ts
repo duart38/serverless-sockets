@@ -1,16 +1,16 @@
-import { Events, socketMessage } from "../interface/message.ts";
+import { Events, SocketMessage, socketMessage, yieldedSocketMessage } from "../interface/message.ts";
 
 import Socket, { socketS } from "./Socket.ts";
 import { Watcher } from "../FS/FileWatcher.ts";
-import { PLUG_LENGTH } from "../interface/socketFunction.ts";
+import { ModuleGenerator, PLUG_LENGTH } from "../interface/socketFunction.ts";
 import { CONFIG } from "../config.js";
 
 
-function handleYields(generatorFunction: AsyncGenerator, from: number, message: socketMessage){
+function handleYields(generatorFunction: AsyncGenerator, from: number){
   generatorFunction.next().then((reply)=>{
     if(reply.done === true || reply.done === undefined) return
-    Socket.sendMessage(from,  reply.value as socketMessage);
-    handleYields(generatorFunction, from, message);
+    Socket.sendMessage(from,  reply.value as yieldedSocketMessage);
+    handleYields(generatorFunction, from);
   })
 }
 
@@ -20,23 +20,22 @@ function handleYields(generatorFunction: AsyncGenerator, from: number, message: 
  * @param from Represents the RID of the sender.
  */
 export async function HandleEvent(
-  message: socketMessage, 
+  incoming: SocketMessage, 
   from: number,
 ) {
   const socket = socketS.getInstance();
   const fileWatcher: Watcher = socket.directoryWatcher;
 
-  const sanitized = sanitizeEvent(message.event);
+  const sanitized = sanitizeEvent(incoming.event);
     if(fileWatcher.containsFile(sanitized)){
       const m = await import(`${fileWatcher.directory()}/${sanitized}.ts?${fileWatcher.getFileHash(sanitized)}`);
 
       const gFn = (Object.values(m) as AsyncGeneratorFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v));
       for(let i = 0; i < gFn.length; i++) {
-        // for await(const v of gFn[i](message, from)) Socket.sendMessage(from, v as socketMessage); // TODO: forEach loops are slow for no reason.
-        handleYields(gFn[i](message, from), from, message);
+        handleYields(gFn[i](incoming, from), from);
       }
       // i don't trust weakRefs for message because of possible long running methods, so this will do
-      (message as unknown) = null;
+      (incoming as unknown) = null;
     }else{
       Socket.sendMessage(from, {event: Events.ERROR, payload: {}});
     }
