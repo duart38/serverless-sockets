@@ -1,5 +1,5 @@
 import type { ServerRequest } from "https://deno.land/std@0.90.0/http/server.ts";
-import { Events, socketMessage } from "../interface/message.ts";
+import { Events, SocketMessage, socketMessage, yieldedSocketMessage } from "../interface/message.ts";
 
 import {
   acceptWebSocket,
@@ -66,8 +66,12 @@ export default class Socket {
   private async waitForSocket(socket: WebSocket) {
     try {
       for await (const ev of socket) {
-        if (typeof ev === "string" && !payloadCeiling(ev)) {
-          HandleEvent(CONFIG.proxySyncIncomingData ? this.proxyIncoming(ev, socket) : this.parseIncoming(ev), socket.conn.rid);
+        if (ev.constructor === Uint8Array) {// TODO: instanceof checks are slow.. maybe try something else
+          // HandleEvent(CONFIG.proxySyncIncomingData ? this.proxyIncoming(ev, socket) : this.parseIncoming(ev), socket.conn.rid);
+          const incoming = SocketMessage.fromRaw(ev);
+          if(incoming.sizeOfMessage <= CONFIG.payloadLimit){
+            HandleEvent(incoming, socket.conn.rid);
+          }
         } else if (isWebSocketCloseEvent(ev)) {
           this.handleClose(socket);
         }
@@ -121,8 +125,8 @@ export default class Socket {
    * @param msg the message to send
    * @returns a promise to await for the sending to complete
    */
-  static sendMessage(to: number, msg: socketMessage): Promise<void> | undefined{
-    return socketS.getInstance().connections.get(to)?.send(JSON.stringify(msg));
+  static sendMessage(to: number, msg: yieldedSocketMessage): Promise<void> | undefined {
+    return socketS.getInstance().connections.get(to)?.send(SocketMessage.encode(msg));
   }
   static getInstance(){
     return socketS.getInstance();
