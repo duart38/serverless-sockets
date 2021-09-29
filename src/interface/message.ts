@@ -35,7 +35,7 @@ export class SocketMessage {
     // already loaded
     if(this._event) return this._event;
     // initial 8 because we are skipping the total size an the event size
-    this._event = new TextDecoder().decode(this.raw.slice(8, 8+this.sizeOfEvent));
+    this._event = new TextDecoder().decode(this.raw.slice(5, 5+this.sizeOfEvent));
     return this._event;
   }
   get sizeOfMessage(): number{
@@ -45,13 +45,13 @@ export class SocketMessage {
   }
   get sizeOfEvent(): number{
     if(this._sizeOfEvent) return this._sizeOfEvent;
-    this._sizeOfEvent = this.dv.getUint32(4);
+    this._sizeOfEvent = this.dv.getUint8(4);
     return this._sizeOfEvent;
   }
   get payload(): socketMessage {
     if(this._payload) return this._payload;
     // initial 8 because we are skipping the total size an the event size and then we skip the entire event with it's size
-    this._payload = JSON.parse(new TextDecoder().decode(this.raw.slice(8+this.sizeOfEvent))) as socketMessage;
+    this._payload = JSON.parse(new TextDecoder().decode(this.raw.slice(5+this.sizeOfEvent))) as socketMessage;
     return this._payload;
   }
   static encode(data: yieldedSocketMessage){
@@ -59,11 +59,11 @@ export class SocketMessage {
     const event = encoder.encode(data.event)
     const payload = encoder.encode(JSON.stringify(data.payload))
 
-    const temp = new Uint8Array(8 + event.length + payload.length)
+    const temp = new Uint8Array(5 + event.length + payload.length)
     temp.set(chunkUp32(temp.length), 0); // entire size
-    temp.set(chunkUp32(event.length), 4); // event size
-    temp.set(event, 8); // event itself
-    temp.set(payload, 8+event.length); // payload
+    temp[4] = event.length // event size
+    temp.set(event, 5); // event itself
+    temp.set(payload, 5+event.length); // payload
     return temp;
   }
   static fromRaw(data: Uint8Array){
