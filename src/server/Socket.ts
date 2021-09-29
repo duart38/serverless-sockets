@@ -106,11 +106,13 @@ export default class Socket {
   public onSocketDisconnect(callBack: ()=>void){
     addEventListener(this.instanceID+"_disconnect", callBack);
   }
-  static broadcast(data: Omit<socketMessage, "event">){
-    socketS.getInstance().connections.forEach((s)=>{if(!s.isClosed) s.send(JSON.stringify({
-      ...data,
-      event: Events.BROADCAST
-    }))});
+  static broadcast(data: yieldedSocketMessage, exclude?: number){ //TODO: allow for caller exclusion
+    socketS.getInstance().connections.forEach((s)=>{if(!s.isClosed  && s.conn.rid !== exclude) s.send(
+      SocketMessage.encode({
+        event: Events.BROADCAST,
+        payload: {...data.payload},
+      })
+    )});
   }
   /**
    * Ban hammer.
