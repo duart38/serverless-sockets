@@ -9,7 +9,7 @@ import {
 import { Watcher } from "../FS/FileWatcher.ts";
 import { HandleEvent } from "./EventHandler.ts";
 import { Log, LogLevel } from "../components/Log.ts";
-import { decorateAccessorsWP, payloadCeiling } from "../MISC/utils.ts";
+import { decorateAccessorsWP } from "../MISC/utils.ts";
 import { syncInstruction } from "../interface/sync.ts";
 import { CONFIG } from "../config.js";
 

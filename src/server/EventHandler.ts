@@ -1,8 +1,8 @@
-import { Events, SocketMessage, socketMessage, yieldedSocketMessage } from "../interface/message.ts";
+import { Events, SocketMessage, yieldedSocketMessage } from "../interface/message.ts";
 
 import Socket, { socketS } from "./Socket.ts";
 import { Watcher } from "../FS/FileWatcher.ts";
-import { ModuleGenerator, PLUG_LENGTH } from "../interface/socketFunction.ts";
+import { PLUG_LENGTH } from "../interface/socketFunction.ts";
 import { CONFIG } from "../config.js";
 
 

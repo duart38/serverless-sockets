@@ -62,12 +62,3 @@ export function decorateAccessorsWP<T extends Record<string, unknown>>(
     revoke: revokableAcc,
   };
 }
-
-/**
- * @returns true if the payload exceeds the limit set in CONFIG.payloadLimit
- */
-export function payloadCeiling(str: string): boolean {
-  // {"event":"x","payload":""} <-- baseline shape not included in limit calculation.
-  if (str.length > CONFIG.payloadLimit - 26) return true;
-  return false;
-}
