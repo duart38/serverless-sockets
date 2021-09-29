@@ -55,15 +55,16 @@ export class SocketMessage {
     return this._payload;
   }
   static encode(data: yieldedSocketMessage){
-    const event = new TextEncoder().encode(data.event)
-    const buff: number[] = [
-      /**  event size */
-      ...chunkUp32(event.length),
-      ...event,
-      ...new TextEncoder().encode(JSON.stringify(data.payload))
-    ]
-    buff.unshift(...chunkUp32(buff.length));
-    return new Uint8Array(buff);
+    const encoder = new TextEncoder();
+    const event = encoder.encode(data.event)
+    const payload = encoder.encode(JSON.stringify(data.payload))
+
+    const temp = new Uint8Array(8 + event.length + payload.length)
+    temp.set(chunkUp32(temp.length), 0); // entire size
+    temp.set(chunkUp32(event.length), 4); // event size
+    temp.set(event, 8); // event itself
+    temp.set(payload, 8+event.length); // payload
+    return temp;
   }
   static fromRaw(data: Uint8Array){
     return new SocketMessage(data);
