@@ -55,6 +55,8 @@ console.log(`size of our method: ${SocketMessage.encode(message).byteLength} byt
 console.log(`size of the default (built in) method: ${new TextEncoder().encode(JSON.stringify(message)).byteLength} bytes`)
 
 /**
+    RUN_TIMES = 50000;
+    ---
     # Last run stats:
 
     # builtInMethod_encode_decode: 1555ms
