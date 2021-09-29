@@ -1,8 +1,5 @@
-import { assert, assertEquals, fail } from "https://deno.land/std@0.106.0/testing/asserts.ts";
-import { serve } from "https://deno.land/std@0.90.0/http/server.ts";
-import { CONFIG } from "../src/config.js";
+import { assertEquals } from "https://deno.land/std@0.106.0/testing/asserts.ts";
 import { SocketMessage } from "../src/interface/message.ts";
-import { socketS } from "../src/server/Socket.ts";
 
 Deno.test("SocketMessage encoding and decoding works", () => {
     const payload = {
