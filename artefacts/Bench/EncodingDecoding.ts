@@ -57,11 +57,12 @@ console.log(`size of the default (built in) method: ${new TextEncoder().encode(J
 /**
     # Last run stats:
 
-    ## builtInMethod_encode_decode: 1572ms
-    ## ourMethod_encode_decode: 798ms
-    
-    > size of our method: 3151 bytes
+    # builtInMethod_encode_decode: 1555ms
+    # ourMethod_encode_decode: 795ms
+
+    > size of our method: 3148 bytes
     > size of the default (built in) method: 3166 bytes
 
     Our method is significantly faster due to lazy parsing of the event and payload sections.
+    Our method is also slightly smaller due to the removal of overhead related to the event string and the encapsulation of everything inside a strinigied json format.
  */
