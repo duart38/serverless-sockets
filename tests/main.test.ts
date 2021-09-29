@@ -1,7 +1,7 @@
 import { assert, assertEquals, fail } from "https://deno.land/std@0.106.0/testing/asserts.ts";
 import { serve } from "https://deno.land/std@0.90.0/http/server.ts";
 import { CONFIG } from "../src/config.js";
-import { socketMessage } from "../src/interface/message.ts";
+import { SocketMessage } from "../src/interface/message.ts";
 import { socketS } from "../src/server/Socket.ts";
 
 CONFIG.plugsFolder = Deno.cwd() + "/src/plugs";
@@ -15,11 +15,11 @@ for await (const req of serve(CONFIG.INSECURE)) {
 }
 
 function waitForMessage(){
-  return new Promise<socketMessage>((res)=>{
-    console.log("Waiting for message")
-    const fn = (ev: MessageEvent) => {
+  return new Promise<SocketMessage>((res)=>{
+    console.log("\n\n\t###Waiting for message\n\n")
+    const fn = async ({data}: MessageEvent) => {
       console.log("message received")
-      res(JSON.parse(ev.data));
+      res(SocketMessage.fromBuffer(await (data as Blob).arrayBuffer()));
       ws2.removeEventListener("message", fn);
     }
     ws2.addEventListener("message", fn);
@@ -30,7 +30,8 @@ const isOpen = await new Promise<boolean>((res)=>ws2.addEventListener("open", ()
 console.log(isOpen);
 Deno.test("Payload and single yield works", async () => {
   const res = waitForMessage();
-  ws2.send(JSON.stringify({ event: "multiyield", payload: {count: 1} }));
+  const payload = { event: "multiyield", payload: {count: 1} };
+  ws2.send(SocketMessage.encode(payload));
   assertEquals((await res).event, "spam-mode")
 });
 
@@ -46,7 +47,8 @@ Deno.test("multi yields", () => {
     }
   }
   ws2.addEventListener("message", fn);
-  ws2.send(JSON.stringify({ event: "multiyield", payload: {count: 4} }));
+  const payload = { event: "multiyield", payload: {count: 4} }
+  ws2.send(SocketMessage.encode(payload));
 });
 
 setTimeout(()=>{
