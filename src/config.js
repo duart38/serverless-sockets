@@ -6,7 +6,7 @@ export const CONFIG = {
     /**
      * Limits the allowed payload size. skips further operations if the incoming size is greater.
      */
-    payloadLimit: 150,
+    payloadLimit: 250000,
     /**
      * If this is enabled the initial start of the server will load in all the socket functions.
      * This will cache them resulting in the first request from a user being faster
