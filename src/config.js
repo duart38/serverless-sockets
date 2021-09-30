@@ -23,6 +23,12 @@ export const CONFIG = {
 
     printLogToConsole: true,
     logLevel: LogLevel.extreme,
+    /**
+     * Limit the length of the log buffer.
+     * - Any overflow of the log would result in the oldest value being popped from the buffer.
+     * - To keep the logSize low and make use of the log one could dump the log as they see fit.
+     */
+    logSizeLimit: 1,
 
     INSECURE: {
         /** The port to listen on. */
