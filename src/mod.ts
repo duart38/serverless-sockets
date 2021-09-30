@@ -10,7 +10,14 @@ export function start(){
   cli.onReady().then(async ()=>{
     if(CONFIG.memoryMetrics.isOn){
       setInterval(()=>{
-        Log.info({level: LogLevel.low, message: `${JSON.stringify(Deno.memoryUsage())}`})
+        const mem = Deno.memoryUsage()
+        Log.info({level: LogLevel.low, message: `
+        ----------- Process id: ${Deno.pid} -----------
+        |\tTotal heap size: ${(mem.heapTotal / 100000).toFixed(2)} MB\t|
+        |\tTotal heap used: ${(mem.heapUsed / 100000).toFixed(2)} MB\t|
+        |\tExternal       : ${(mem.external / 100000).toFixed(2)}  MB\t|
+        -----------------------------------------
+        `})
       },CONFIG.memoryMetrics.interval)
     }
     const socket = socketS.getInstance();
