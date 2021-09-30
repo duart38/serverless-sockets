@@ -9,6 +9,7 @@ function printLog(data){
 }
 function pushLog(data, print = false){
     logs.push(data);
+    if(logs.length > CONFIG.logSizeLimit) logs.shift();
     if(print) printLog(data);
 }
 /**
@@ -18,6 +19,7 @@ function pushLog(data, print = false){
 self.onmessage = (e) => {
     if(e.data === "flush"){
         postMessage(logs);
+        logs = [];
         return;
     }
     if(e.data === "clear"){
