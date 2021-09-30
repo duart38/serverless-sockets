@@ -110,12 +110,12 @@ export default class Socket {
     addEventListener(this.instanceID+"_disconnect", callBack);
   }
   static broadcast(data: yieldedSocketMessage, exclude?: number){ //TODO: allow for caller exclusion
-    socketS.getInstance().connections.forEach((s)=>{if(!s.isClosed  && s.conn.rid !== exclude) s.send(
-      SocketMessage.encode({
-        event: Events.BROADCAST,
-        payload: {...data.payload},
-      })
-    )});
+    const socket = socketS.getInstance();
+    socket.connections.forEach((s)=>{
+      if(!s.isClosed  && s.conn.rid !== exclude) {
+        s.send(SocketMessage.encode({event: Events.BROADCAST, payload: {...data.payload}})).catch(()=>socket.handleClose(s))
+      }
+  });
   }
   /**
    * Ban hammer.
@@ -131,7 +131,10 @@ export default class Socket {
    * @returns a promise to await for the sending to complete
    */
   static sendMessage(to: number, msg: yieldedSocketMessage): Promise<void> | undefined {
-    return socketS.getInstance().connections.get(to)?.send(SocketMessage.encode(msg));
+    const socket = socketS.getInstance().connections.get(to);
+    if(socket && !socket.isClosed){
+      return socket.send(SocketMessage.encode(msg)).catch(()=>socketS.getInstance().handleClose(socket));
+    }
   }
   static getInstance(){
     return socketS.getInstance();
