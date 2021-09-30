@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-var
 function chunkUp32(num) {
     const parts = [
         0,
