@@ -14,7 +14,7 @@ export const CONFIG = {
     preloadPlugs: true,
 
     /** Indicates wether this server needs to use TLS or not */
-    secure: false,
+    secure: true,
 
     /**
      * Where to store and get dynamic code to be executed
@@ -44,9 +44,9 @@ export const CONFIG = {
         * If not specified, defaults to `0.0.0.0`. */
         hostname: "0.0.0.0",
         /** Server certificate file. */
-        certFile: "",
+        certFile: "../.cert/cert.pem",
         /** Server public key file. */
-        keyFile: "",
+        keyFile: "../.cert/key.pem",
     },
     /**
      * Indicates wether incoming payloads should be recursively proxied. if true
