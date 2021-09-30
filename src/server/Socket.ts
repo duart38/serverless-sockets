@@ -64,6 +64,7 @@ export default class Socket {
     this.proxyManager.revokeAllFrom(socket.conn.rid);
   }
   private async waitForSocket(socket: WebSocket) {
+    if(socket.isClosed) return;
     try {
       for await (const ev of socket) {
         if (ev.constructor === Uint8Array) {// TODO: instanceof checks are slow.. maybe try something else
