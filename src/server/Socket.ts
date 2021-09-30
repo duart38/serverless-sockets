@@ -71,6 +71,8 @@ export default class Socket {
           const incoming = SocketMessage.fromRaw(ev);
           if(incoming.sizeOfMessage <= CONFIG.payloadLimit){
             HandleEvent(incoming, socket.conn.rid);
+          }else{
+            Log.info({level: LogLevel.extreme, message: `payload with size ${incoming.sizeOfMessage} was rejected entrance. RID: ${socket.conn.rid}`})
           }
         } else if (isWebSocketCloseEvent(ev)) {
           this.handleClose(socket);
