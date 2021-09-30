@@ -75,5 +75,9 @@ export const CONFIG = {
      * This does not need to be enabled as it only adds boilerplate code but it DOES improve perfomance by indicating to the v8 engine that this
      * function will always have the same shape (done by enforcing shape thus always having the same shape for code marking to be included in the optmization pipelines)
      */
-    validateFunctionShape: false
+    validateFunctionShape: false,
+    memoryMetrics: {
+        isOn: true,
+        interval: 5000
+    }
 };
