@@ -17,6 +17,9 @@ export enum Events {
 }
 
 export class SocketMessage {
+  /**
+   * The raw data in it's original form.
+   */
   raw: Uint8Array;
 
   private _sizeOfAll: number | undefined;
@@ -25,12 +28,20 @@ export class SocketMessage {
   private _payload: socketMessage | undefined;
 
   private dv;
+  /**
+   * Constructs a SocketMessage which can be used for lazy evaluation of certain sections of the raw message.
+   * @param incoming the raw incoming data
+   */
   constructor(incoming: Uint8Array){
     this.raw = incoming;
     this.dv = new DataView(incoming.buffer);
   }
   //TODO: proxy the payload when it is decoded for use if the CONFIG specifies this.
 
+  /**
+   * Lazily gets the event string from the raw data.
+   * NOTE: calls the ```sizeOfEvent();``` to determine the string length.
+   */
   get event(): string {
     // already loaded
     if(this._event) return this._event;
@@ -38,22 +49,39 @@ export class SocketMessage {
     this._event = new TextDecoder().decode(this.raw.slice(5, 5+this.sizeOfEvent));
     return this._event;
   }
+  /**
+   * Lazily gets the size of the entire raw data.
+   */
   get sizeOfMessage(): number{
     if(this._sizeOfAll) return this._sizeOfAll;
     this._sizeOfAll = this.dv.getUint32(0);
     return this._sizeOfAll;
   }
+  /**
+   * Lazily gets the size of the event string (used to decode the event string)
+   */
   get sizeOfEvent(): number{
     if(this._sizeOfEvent) return this._sizeOfEvent;
     this._sizeOfEvent = this.dv.getUint8(4);
     return this._sizeOfEvent;
   }
+
+  /**
+   * Lazily gets and decodes the payload of the raw data.
+   * NOTE: calls the ```sizeOfEvent();` to skip over it to the last sections which includes the payload data
+   */
   get payload(): socketMessage {
     if(this._payload) return this._payload;
     // initial 8 because we are skipping the total size an the event size and then we skip the entire event with it's size
     this._payload = JSON.parse(new TextDecoder().decode(this.raw.slice(5+this.sizeOfEvent))) as socketMessage;
     return this._payload;
   }
+
+  /**
+   * Encodes a JSON message to the byte array required to communicate between clients and servers.
+   * @param data 
+   * @returns 
+   */
   static encode(data: yieldedSocketMessage){
     const encoder = new TextEncoder();
     const event = encoder.encode(data.event)
