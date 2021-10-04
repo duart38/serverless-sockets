@@ -27,7 +27,7 @@ export class SocketMessage {
   private _event: string | undefined;
   private _payload: socketMessage | undefined;
 
-  private dv;
+  private dv: DataView;
   /**
    * Constructs a SocketMessage which can be used for lazy evaluation of certain sections of the raw message.
    * @param incoming the raw incoming data
@@ -36,7 +36,6 @@ export class SocketMessage {
     this.raw = incoming;
     this.dv = new DataView(incoming.buffer);
   }
-  //TODO: proxy the payload when it is decoded for use if the CONFIG specifies this.
 
   /**
    * Lazily gets the event string from the raw data.
