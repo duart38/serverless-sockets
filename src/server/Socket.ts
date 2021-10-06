@@ -67,7 +67,7 @@ export default class Socket {
     if(socket.isClosed) return;
     try {
       for await (const ev of socket) {
-        if (ev.constructor === Uint8Array) {// TODO: instanceof checks are slow.. maybe try something else
+        if (ev instanceof Uint8Array) {
           // HandleEvent(CONFIG.proxySyncIncomingData ? this.proxyIncoming(ev, socket) : this.parseIncoming(ev), socket.conn.rid);
           const incoming = SocketMessage.fromRaw(ev);
           if(incoming.sizeOfMessage <= CONFIG.payloadLimit){
