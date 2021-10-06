@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2021-10-06T13:43:29.979Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15" etag="ufp9hyBzE_HPm6rAXJ62" version="15.4.1" type="github">
+<mxfile host="app.diagrams.net" modified="2021-10-06T13:44:09.653Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15" etag="fd5AhG9nsN21XbWasnuJ" version="15.4.1" type="github">
   <diagram id="PVCjP2Ja7hSFD6S_QXmz" name="Page-1">
     <mxGraphModel dx="2253" dy="853" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -90,6 +90,9 @@
         </mxCell>
         <mxCell id="p0rb8kzi8biYvdozuG0Y-31" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;align=left;fillColor=#f8cecc;strokeColor=#b85450;" parent="p0rb8kzi8biYvdozuG0Y-6" vertex="1">
           <mxGeometry x="334.93" y="40" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="zy9sUhNwe44IWOCAH_Wx-2" value="&lt;div&gt;System events generate new internal file hashes&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;" vertex="1" parent="p0rb8kzi8biYvdozuG0Y-6">
+          <mxGeometry x="20" y="300" width="120.35" height="75" as="geometry" />
         </mxCell>
         <mxCell id="p0rb8kzi8biYvdozuG0Y-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=6;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;endArrow=blockThin;endFill=1;strokeColor=#000000;strokeWidth=2;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" parent="1" source="p0rb8kzi8biYvdozuG0Y-8" target="p0rb8kzi8biYvdozuG0Y-9" edge="1">
           <mxGeometry relative="1" as="geometry" />
