@@ -5,7 +5,7 @@ const variable = new Uint8Array(50);
 /**
  * This value needs to be high enough to be able o see the nano second differences due to big O complexity
  */
-const TIMES = 500000;
+let TIMES = 50000;
 
 function checkInstance(){
     let temp = 0;
@@ -28,7 +28,13 @@ function checkConstructor(){
     console.timeEnd('checkConstructor');
 }
 
-checkInstance(); // ~6ms
-checkConstructor(); // ~3ms
+for(let i = 0; i < 5; i++){
+    console.log("\n")
+    console.log(`--- simulation times ${TIMES}`);
+    checkInstance();
+    checkConstructor();
+    console.log("\n")
+    TIMES = TIMES * 10;
+}
 
 // conclusion, because we already have the constructor information built and instantiated it is faster to check against it rather than checking against the instance (which would not sample what is already there in memory but attempt to reflect it in the engine)
