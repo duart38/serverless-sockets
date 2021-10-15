@@ -33,9 +33,7 @@ export default class Socket {
   }
   /**
    * Decodes a string message into a socketMessage shape. Also freezes the decoded object to prevent re-shaping
-   * @todo check on shape.
-   * @param str 
-   * @returns 
+   * @deprecated not being used as of now, might re-introduce proxies in the future
    */
   private proxyIncoming(str: string, client: WebSocket): socketMessage {
     return Log.silent(()=>{
@@ -89,6 +87,9 @@ export default class Socket {
     }
   }
 
+  /**
+   * Accepts a request and upgrades it to a WebSocket connection.
+   */
   public accept(req: ServerRequest) {
     const { conn, r: bufReader, w: bufWriter, headers } = req;
     acceptWebSocket({ conn, bufReader, bufWriter, headers })
@@ -103,13 +104,26 @@ export default class Socket {
       });
   }
 
+  /**
+   * Calls the callBack when a socket connects.
+   */
   public onSocketConnect(callBack: ()=>void){
     addEventListener(this.instanceID+"_connect", callBack);
   }
+
+  /**
+   * Calls the callBack when a socket connects.
+   */
   public onSocketDisconnect(callBack: ()=>void){
     addEventListener(this.instanceID+"_disconnect", callBack);
   }
-  static broadcast(data: yieldedSocketMessage, exclude?: number){ //TODO: allow for caller exclusion
+
+  /**
+   * Broadcasts a message to all connected clients.
+   * @param data the data to send
+   * @param exclude the socket id to exclude (tip: exclude yourself)
+   */
+  static broadcast(data: yieldedSocketMessage, exclude?: number){
     const socket = socketS.getInstance();
     socket.connections.forEach((s)=>{
       if(!s.isClosed  && s.conn.rid !== exclude) {

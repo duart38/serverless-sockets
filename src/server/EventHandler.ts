@@ -5,7 +5,9 @@ import { Watcher } from "../FS/FileWatcher.ts";
 import { PLUG_LENGTH } from "../interface/socketFunction.ts";
 import { CONFIG } from "../config.js";
 
-
+/**
+ * Handle incoming yields from modules.
+ */
 function handleYields(generatorFunction: AsyncGenerator, from: number){
   generatorFunction.next().then((reply)=>{
     if(reply.done === true || reply.done === undefined) return
