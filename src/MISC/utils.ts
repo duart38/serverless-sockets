@@ -1,5 +1,8 @@
 import { CONFIG } from "../config.js";
 
+/**
+ * The shape of the return type of a proxy that can be revoked.
+ */
 export interface revokableProxy<T> {
   value: T;
   revoke: (() => void)[];
