@@ -5,12 +5,22 @@ type serializable = number | string | Array<unknown> | Record<string, unknown>;
  * Shared interface between the client and the server.. the payload should have the following shape
  */
 export type socketMessage = Record<string, serializable>;
+
+/**
+ * The shape of the message that is yielded from socket functions (modules)
+ */
 export interface yieldedSocketMessage {
   event: string;
   payload: Record<string, serializable>;
 }
 
+/**
+ * Global events that the socket server can send back to clients. depending on the value the client is to respond differently
+ */
 export enum Events {
+  /**
+   * A broadcast event is sent to all clients.3
+   */
   BROADCAST = "#$_BC",
   OBJ_SYNC = "#$_OBJ_SYNC",
   ERROR = "#$_ERR"
@@ -93,9 +103,19 @@ export class SocketMessage {
     temp.set(payload, 5+event.length); // payload
     return temp;
   }
+
+  /**
+   *  Makes a new SocketMessage from the given raw data.
+   * @returns SocketMessage
+   */
   static fromRaw(data: Uint8Array){
     return new SocketMessage(data);
   }
+
+  /**
+   * Makes a new SocketMessage from the given buffer.
+   * @returns SocketMessage
+   */
   static fromBuffer(data: ArrayBufferLike){
     return new SocketMessage(new Uint8Array(data));
   }
