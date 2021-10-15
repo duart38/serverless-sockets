@@ -1,11 +1,18 @@
 import Observe from "https://raw.githubusercontent.com/duart38/Observe/master/Observe.ts";
 import { Log, LogLevel } from "../components/Log.ts";
-/**
- * TODO: add printing with verbosity support
- */
+
 export class Watcher {
+  /**
+   * Global folder hash.
+   */
   private hash: Observe<string>;
+  /**
+   * The working directory of the watcher
+   */
   private dir: string;
+  /**
+   * The files along with their active hashes.
+   */
   private files: Map<string, string>;
 
   constructor(dir: string) {
@@ -15,6 +22,10 @@ export class Watcher {
     this.preLoadDir(this.dir);
     this.init();
   }
+  /**
+   * Preloads the directory hashes. this could potentially speed up the first connection as the hash has already been calculated.
+   * @param dir the directory to preload from.
+   */
   private preLoadDir(dir: string){
     for(const {isFile, name} of Deno.readDirSync(dir)){
       if(isFile) {
@@ -45,6 +56,11 @@ export class Watcher {
       this.handleFsEvent(_event);
     }
   }
+
+  /**
+   * Handles the filesystem event. This method deals with making new hashes for files that have changed but also removing files if the event indicates such.
+   * @param ev the FSEvent.
+   */
   private handleFsEvent(ev: Deno.FsEvent){
     const path = ev.paths[0].replace(Deno.realPathSync(this.dir), "");
     switch(ev.kind){
@@ -61,6 +77,11 @@ export class Watcher {
       }
     }
   }
+  /**
+   * Sanitises incoming strings to ensure they are valid file names.
+   * @param x the string
+   * @returns the new modified string
+   */
   private _sanitizeIncoming(x:string){
     return `${x.startsWith("/") ? "" : "/"}${x}${x.endsWith(".ts") ? "" : ".ts"}`
   }
@@ -96,6 +117,10 @@ export class Watcher {
     return this.dir;
   }
 
+  /**
+   * Checks if the Watchers storage contains a file.
+   * @param fn the file string
+   */
   public containsFile(fn: string){
     return this.files.has(this._sanitizeIncoming(fn));
   }
