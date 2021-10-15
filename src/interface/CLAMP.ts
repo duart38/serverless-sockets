@@ -37,3 +37,7 @@ type TupleOf<T, N extends number> = number extends N ? T[] : {
 
 type RangeOf<N extends number> = Partial<TupleOf<unknown, N>>["length"];
 export type U255 = RangeOf<256>
+
+/**
+ * Dont ask...
+ */
