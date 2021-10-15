@@ -1,12 +1,22 @@
 import singleton from "https://raw.githubusercontent.com/grevend/singleton/main/mod.ts";
-import { parse } from "https://deno.land/std@0.106.0/flags/mod.ts";
+import { Args, parse } from "https://deno.land/std@0.106.0/flags/mod.ts";
 import { CONFIG } from "../config.js";
 import { Log, LogLevel } from "./Log.ts";
 
 export class CLI {
-    private args;
+    /**
+     * Contains arguments parsed from the command line
+     */
+    private args: Args;
     private ready: Promise<void>;
 
+    /**
+     * Command Line Interface (CLI). used to parse command line arguments and set configuration values dynamically.
+     * NOTE: use the singleton method to get the CLI instance.
+     * NOTE: this instance needs to be run before the application starts as modifying the configuration is single threaded.
+     * @see {$CLI}
+     * @see {instance}
+     */
     constructor(){
         this.args = parse(Deno.args);
         this.ready = new Promise((res, rej)=> {
@@ -20,10 +30,20 @@ export class CLI {
         });
     }
 
+    /**
+     * A promise that resolves when the CLI has parsed the flags and updated the configuration.
+     * @returns {Promise<void>} resolved when all command line arguments have been parsed and configuration values have been set.
+     */
     public onReady(): Promise<void>{
         return this.ready;
     }
 
+    /**
+     * Prints the help text for the CLI. this text includes all the available flags.
+     * This method auto-generates the help text based on the configuration options by reading the file.
+     * @param config The config file in the form of an object.
+     * @param preKey DO NOT USE, this is to support recursive nesting in the object file.
+     */
     public printHelp(config: Record<string, unknown>, preKey = ""){
         Object.entries(config).forEach(([key, v])=>{
             if(typeof v === "object"){
@@ -33,10 +53,19 @@ export class CLI {
             }
         });
     }
+    /**
+     * Check if 2 types are equal
+     * @param a lhs object
+     * @param b rhs object
+     * @returns true if the types are equal, false otherwise.
+     */
     private _checkTypeEquals(a: unknown, b: unknown){
         return typeof a === typeof b;
     }
  
+    /**
+     * Parses the stored arguments (from the command line) and updates the configuration values.
+     */
     private parseArgs(){
         Object.entries(this.args).filter(([k])=>k!=="_").forEach(([key, val])=>{
             if(CONFIG[key]){
@@ -61,6 +90,10 @@ export class CLI {
     }
 
 
+    /**
+     * Helper method to return a singleton instance of the CLI.
+     * @returns a CLI instance.
+     */
     static instance(){
         return $CLI.getInstance();
     }
