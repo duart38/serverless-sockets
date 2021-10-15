@@ -1,9 +1,13 @@
+/**
+ * @deprecated Proxies are currently not being used.
+ */
 export default class ProxyManager {
     private proxies: Map<number, (()=>void)[]>;
 
     /**
      * The proxy manager class helps with storing generated proxies into a location that cam then be revoked easily.
      * This class is to be used to prevent floating references and causing a buffer overflow.
+     * @deprecated Proxies are currently not being used.
      */
     constructor(){
         this.proxies = new Map();
