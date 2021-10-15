@@ -1,4 +1,24 @@
 // deno-lint-ignore-file
+
+/**
+ * If you're here to try and understand what this does.. just dont... dont touch this code. dont breathe on this code.
+ * in fact you looking at this code right now will potentially cause it to break.. stop it...
+ * 
+ * 
+ * ...
+ * 
+ * 
+ * 
+ * ...
+ * 
+ * your'e still here arent you?....
+ * ...
+ * ok fine...
+ * 
+ * 
+ * here be dragons...
+ */
+
 type BuildPowersOf2LengthArrays<N extends number, R extends never[][]> =
   R[0][N] extends never ? R : BuildPowersOf2LengthArrays<N, [[...R[0], ...R[0]], ...R]>;
 
