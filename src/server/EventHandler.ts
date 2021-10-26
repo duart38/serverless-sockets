@@ -11,8 +11,7 @@ import { CONFIG } from "../config.js";
 function handleYields(generatorFunction: AsyncGenerator, from: number){
   generatorFunction.next().then((reply)=>{
     if(reply.done === true || reply.done === undefined) return
-    Socket.sendMessage(from,  reply.value as yieldedSocketMessage);
-    handleYields(generatorFunction, from);
+    Socket.sendMessage(from,  reply.value as yieldedSocketMessage)?.then(()=>handleYields(generatorFunction, from));
   })
 }
 
