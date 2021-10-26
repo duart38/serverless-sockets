@@ -33,9 +33,7 @@ export async function HandleEvent(
       const m = await import(`${fileWatcher.directory()}/${sanitized}.ts?${fileWatcher.getFileHash(sanitized)}`);
 
       const gFn = (Object.values(m) as AsyncGeneratorFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v));
-      for(let i = 0; i < gFn.length; i++) {
-        handleYields(gFn[i](incoming, from), from);
-      }
+      for(let i = 0; i < gFn.length; i++) handleYields(gFn[i](incoming, from), from);
       // i don't trust weakRefs for message because of possible long running methods, so this will do
       (incoming as unknown) = null;
     }else{
