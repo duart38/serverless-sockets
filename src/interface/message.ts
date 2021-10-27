@@ -1,4 +1,5 @@
 import { chunkUp32 } from "../MISC/bits.ts";
+import { FreeAble } from "./mem.ts";
 
 type serializable = number | string | Array<unknown> | Record<string, unknown>;
 /**
@@ -26,7 +27,7 @@ export enum Events {
   ERROR = "#$_ERR"
 }
 
-export class SocketMessage {
+export class SocketMessage implements FreeAble {
   /**
    * The raw data in it's original form.
    */
