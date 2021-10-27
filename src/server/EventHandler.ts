@@ -4,12 +4,13 @@ import Socket, { socketS } from "./Socket.ts";
 import { Watcher } from "../FS/FileWatcher.ts";
 import { PLUG_LENGTH } from "../interface/socketFunction.ts";
 import { CONFIG } from "../config.js";
+import { FreeAble } from "../interface/mem.ts";
 
 /**
  * Handle incoming yields from modules.
  * @param msgRef the reference to the incoming message to be freed-up when yielding is done.
  */
-function handleYields(generatorFunction: AsyncGenerator, from: number, msgRef: SocketMessage): void {
+function handleYields(generatorFunction: AsyncGenerator, from: number, msgRef: FreeAble): void {
   generatorFunction.next().then((reply)=>{
     if(reply.done === true || reply.done === undefined) return msgRef.free();
     /* 
