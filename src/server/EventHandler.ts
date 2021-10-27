@@ -7,11 +7,16 @@ import { CONFIG } from "../config.js";
 
 /**
  * Handle incoming yields from modules.
+ * @param msgRef the reference to the incoming message to be freed-up when yielding is done.
  */
-function handleYields(generatorFunction: AsyncGenerator, from: number){
+function handleYields(generatorFunction: AsyncGenerator, from: number, msgRef: SocketMessage): void {
   generatorFunction.next().then((reply)=>{
-    if(reply.done === true || reply.done === undefined) return
-    Socket.sendMessage(from,  reply.value as yieldedSocketMessage)?.then(()=>handleYields(generatorFunction, from));
+    if(reply.done === true || reply.done === undefined) return msgRef.free();
+    /* 
+      send before we recursively call this method because otherwise the main event-loop will block the sending of messages
+      which could potentially cause a memory overflow if the sum of yields are very large.
+     */
+    Socket.sendMessage(from,  reply.value as yieldedSocketMessage)?.then(()=>handleYields(generatorFunction, from, msgRef));
   })
 }
 
@@ -32,7 +37,7 @@ export async function HandleEvent(
       const m = await import(`${fileWatcher.directory()}/${sanitized}.ts?${fileWatcher.getFileHash(sanitized)}`);
 
       const gFn = (Object.values(m) as AsyncGeneratorFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v));
-      for(let i = 0; i < gFn.length; i++) handleYields(gFn[i](incoming, from), from);
+      for(let i = 0; i < gFn.length; i++) handleYields(gFn[i](incoming, from), from, incoming);
       // i don't trust weakRefs for message because of possible long running methods, so this will do
       (incoming as unknown) = null;
     }else{
