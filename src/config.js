@@ -44,9 +44,9 @@ export const CONFIG = {
         * If not specified, defaults to `0.0.0.0`. */
         hostname: "0.0.0.0",
         /** Server certificate file. */
-        certFile: "../.cert/cert.pem",
+        certFile: "/Users/duartasnel/Local/WORK/BusinessOne/socket_demos/.cert/cert.pem",
         /** Server public key file. */
-        keyFile: "../.cert/key.pem",
+        keyFile: "/Users/duartasnel/Local/WORK/BusinessOne/socket_demos/.cert/key.pem",
     },
     /**
      * Indicates wether incoming payloads should be recursively proxied. if true
@@ -83,7 +83,7 @@ export const CONFIG = {
      */
     validateFunctionShape: false,
     memoryMetrics: {
-        isOn: true,
+        isOn: false,
         interval: 5000
     }
 };
