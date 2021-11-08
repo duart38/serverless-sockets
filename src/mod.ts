@@ -6,6 +6,7 @@ import { preLoadPlugs } from "./server/PreLoader.ts";
 import { socketS } from "./server/Socket.ts";
 
 export function start(){
+  console.log("\n\n\tPID: "+Deno.pid)
   const cli = CLI.instance();
   cli.onReady().then(async ()=>{
     if(CONFIG.memoryMetrics.isOn){
