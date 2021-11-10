@@ -7,7 +7,7 @@ import { socketS } from "../src/server/Socket.ts";
 const tempDir = Deno.makeTempDirSync();
 function writeToTemp(file:string, toYield: yieldedSocketMessage){
     Deno.writeTextFileSync(`${tempDir}/${file}.ts`, `
-export async function* testFunc(){
+export async function* _${toYield.event}(){
     yield ${JSON.stringify(toYield)}
 }`)
 }
@@ -15,6 +15,7 @@ export async function* testFunc(){
 writeToTemp('test', {event: 'unchanged', payload: {}});
 
 CONFIG.plugsFolder = tempDir;
+CONFIG.secure = false;
 
 const ws2 = new WebSocket("ws://localhost:8080");
 const socket = socketS.getInstance();
@@ -46,6 +47,15 @@ Deno.test("Server re-loads changed files", async () => {
   assertEquals((await res).event, "changed")
 });
 
+
+writeToTemp('newfunc', {event: 'new', payload: {}});
+Deno.test("Server takes in newly added files", async () => {
+    const res = waitForMessage();
+    const payload = { event: "newfunc", payload: {} };
+    ws2.send(SocketMessage.encode(payload));
+    console.log((await res).payload)
+    assertEquals((await res).event, "new")
+});
 
 setTimeout(()=>{
     console.log("Force quitting deno as the framework runs indefinitely")
