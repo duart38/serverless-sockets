@@ -6,3 +6,4 @@
 - logging can export logged items
 
 - CLI configuration change works
+- CLI prints documentation
