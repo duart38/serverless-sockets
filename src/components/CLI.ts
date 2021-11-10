@@ -21,7 +21,13 @@ export class CLI {
         this.args = parse(Deno.args);
         this.ready = new Promise((res, rej)=> {
             if(this.args["h"] !== undefined || this.args["help"] !== undefined){
-                this.printHelp(CONFIG);
+                if(Object.keys(this.args).length > 2){
+                    delete this.args["h"];
+                    delete this.args["help"];
+                    this.printHelp(this.args);
+                }else{
+                    this.printHelp(CONFIG);
+                }
                 rej();
             }else{
                 this.parseArgs();
@@ -49,10 +55,17 @@ export class CLI {
             if(typeof v === "object"){
                 this.printHelp(v as Record<string, unknown>, preKey + `${key}.`);
             }else{
-                console.log(`--${preKey}${key} ${typeof v}`)
+                this.printDoc(`${preKey}${key}`);
+                console.log(`\u001b[31m--${preKey}${key}\u001b[0m \u001b[34m${typeof v}\u001b`)
             }
         });
     }
+    private printDoc(path: string){
+        Deno.run({
+            cmd: ['deno', 'doc', 'config.js', `${path}`]
+        })
+    }
+
     /**
      * Check if 2 types are equal
      * @param a lhs object

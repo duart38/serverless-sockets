@@ -1,6 +1,8 @@
 import {LogLevel} from "./components/Log.ts";
 
-
+/**
+ * configuration object
+ */
 export class configuration {
         /**
          * Limits the allowed payload size. skips further operations if the incoming size is greater.
