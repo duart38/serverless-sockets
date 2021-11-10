@@ -11524,6 +11524,208 @@
 					"guard": "property accessed by developer"
 				}
 			]
+		},
+		{
+			"_type": "UMLCollaboration",
+			"_id": "AAAAAAF9BLGMuWt15bE=",
+			"_parent": {
+				"$ref": "AAAAAAFF+h6SjaM2Hec="
+			},
+			"name": "Collaboration3",
+			"ownedElements": [
+				{
+					"_type": "UMLInteraction",
+					"_id": "AAAAAAF9BLGMumt2RSc=",
+					"_parent": {
+						"$ref": "AAAAAAF9BLGMuWt15bE="
+					},
+					"name": "Interaction1",
+					"ownedElements": [
+						{
+							"_type": "UMLCommunicationDiagram",
+							"_id": "AAAAAAF9BLGMumt3cVY=",
+							"_parent": {
+								"$ref": "AAAAAAF9BLGMumt2RSc="
+							},
+							"name": "SocketMessage communication diagram",
+							"ownedViews": [
+								{
+									"_type": "UMLFrameView",
+									"_id": "AAAAAAF9BLGMumt4jFU=",
+									"_parent": {
+										"$ref": "AAAAAAF9BLGMumt3cVY="
+									},
+									"model": {
+										"$ref": "AAAAAAF9BLGMumt3cVY="
+									},
+									"subViews": [
+										{
+											"_type": "LabelView",
+											"_id": "AAAAAAF9BLGMumt54SA=",
+											"_parent": {
+												"$ref": "AAAAAAF9BLGMumt4jFU="
+											},
+											"font": "Arial;13;0",
+											"left": 32.72998046875,
+											"top": 13,
+											"width": 235.10791015625,
+											"height": 13,
+											"text": "SocketMessage communication diagram"
+										},
+										{
+											"_type": "LabelView",
+											"_id": "AAAAAAF9BLGMumt6AQQ=",
+											"_parent": {
+												"$ref": "AAAAAAF9BLGMumt4jFU="
+											},
+											"font": "Arial;13;1",
+											"left": 13,
+											"top": 13,
+											"width": 14.72998046875,
+											"height": 13,
+											"text": "sd"
+										}
+									],
+									"font": "Arial;13;0",
+									"left": 8,
+									"top": 8,
+									"width": 692,
+									"height": 592,
+									"nameLabel": {
+										"$ref": "AAAAAAF9BLGMumt54SA="
+									},
+									"frameTypeLabel": {
+										"$ref": "AAAAAAF9BLGMumt6AQQ="
+									}
+								},
+								{
+									"_type": "UMLCommLifelineView",
+									"_id": "AAAAAAF9BLIICGuHGfM=",
+									"_parent": {
+										"$ref": "AAAAAAF9BLGMumt3cVY="
+									},
+									"model": {
+										"$ref": "AAAAAAF9BLIIB2uGjd4="
+									},
+									"subViews": [
+										{
+											"_type": "UMLNameCompartmentView",
+											"_id": "AAAAAAF9BLIICGuIR4Q=",
+											"_parent": {
+												"$ref": "AAAAAAF9BLIICGuHGfM="
+											},
+											"model": {
+												"$ref": "AAAAAAF9BLIIB2uGjd4="
+											},
+											"subViews": [
+												{
+													"_type": "LabelView",
+													"_id": "AAAAAAF9BLIICGuJlJc=",
+													"_parent": {
+														"$ref": "AAAAAAF9BLIICGuIR4Q="
+													},
+													"visible": false,
+													"font": "Arial;13;0",
+													"left": -208,
+													"height": 13
+												},
+												{
+													"_type": "LabelView",
+													"_id": "AAAAAAF9BLIICGuKvoI=",
+													"_parent": {
+														"$ref": "AAAAAAF9BLIICGuIR4Q="
+													},
+													"font": "Arial;13;1",
+													"left": 173,
+													"top": 119,
+													"width": 90,
+													"height": 13,
+													"text": "Lifeline1"
+												},
+												{
+													"_type": "LabelView",
+													"_id": "AAAAAAF9BLIICGuLj/s=",
+													"_parent": {
+														"$ref": "AAAAAAF9BLIICGuIR4Q="
+													},
+													"visible": false,
+													"font": "Arial;13;0",
+													"left": -208,
+													"width": 106.20263671875,
+													"height": 13,
+													"text": "(from Interaction1)"
+												},
+												{
+													"_type": "LabelView",
+													"_id": "AAAAAAF9BLIICGuMZu0=",
+													"_parent": {
+														"$ref": "AAAAAAF9BLIICGuIR4Q="
+													},
+													"visible": false,
+													"font": "Arial;13;0",
+													"left": -208,
+													"height": 13,
+													"horizontalAlignment": 1
+												}
+											],
+											"font": "Arial;13;0",
+											"left": 168,
+											"top": 112,
+											"width": 100,
+											"height": 25,
+											"stereotypeLabel": {
+												"$ref": "AAAAAAF9BLIICGuJlJc="
+											},
+											"nameLabel": {
+												"$ref": "AAAAAAF9BLIICGuKvoI="
+											},
+											"namespaceLabel": {
+												"$ref": "AAAAAAF9BLIICGuLj/s="
+											},
+											"propertyLabel": {
+												"$ref": "AAAAAAF9BLIICGuMZu0="
+											}
+										}
+									],
+									"font": "Arial;13;0",
+									"left": 168,
+									"top": 112,
+									"width": 100,
+									"height": 30,
+									"nameCompartment": {
+										"$ref": "AAAAAAF9BLIICGuIR4Q="
+									}
+								}
+							]
+						}
+					],
+					"participants": [
+						{
+							"_type": "UMLLifeline",
+							"_id": "AAAAAAF9BLIIB2uGjd4=",
+							"_parent": {
+								"$ref": "AAAAAAF9BLGMumt2RSc="
+							},
+							"name": "Lifeline1",
+							"represent": {
+								"$ref": "AAAAAAF9BLIIB2uFpXc="
+							},
+							"isMultiInstance": false
+						}
+					]
+				}
+			],
+			"attributes": [
+				{
+					"_type": "UMLAttribute",
+					"_id": "AAAAAAF9BLIIB2uFpXc=",
+					"_parent": {
+						"$ref": "AAAAAAF9BLGMuWt15bE="
+					},
+					"name": "Role1",
+					"type": ""
+				}
+			]
 		}
 	]
 }
