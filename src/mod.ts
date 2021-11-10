@@ -6,9 +6,9 @@ import { preLoadPlugs } from "./server/PreLoader.ts";
 import { socketS } from "./server/Socket.ts";
 
 export function start(){
-  console.log("\n\n\tPID: "+Deno.pid)
   const cli = CLI.instance();
   cli.onReady().then(async ()=>{
+    console.log("\n\n\tPID: "+Deno.pid)
     if(CONFIG.memoryMetrics.isOn){
       setInterval(()=>{
         const mem = Deno.memoryUsage()
@@ -31,7 +31,7 @@ export function start(){
       Log.info({level: LogLevel.low, message:`websocket server is running on :${CONFIG.INSECURE.port}`});
       for await (const req of serve(CONFIG.INSECURE)) socket.accept(req);
     }
-  }).catch((e)=>{Log.error({level: LogLevel.medium, message: e})});
+  }).catch(_=>{});
 }
 
 if(import.meta.main){

@@ -51,19 +51,21 @@ export class CLI {
      * @param preKey DO NOT USE, this is to support recursive nesting in the object file.
      */
     public printHelp(config: Record<string, unknown>, preKey = ""){
-        Object.entries(config).forEach(([key, v])=>{
+        Object.entries(config).forEach(async ([key, v])=>{
             if(typeof v === "object"){
                 this.printHelp(v as Record<string, unknown>, preKey + `${key}.`);
             }else{
-                this.printDoc(`${preKey}${key}`);
+                console.log("\n\t\t-------------------------")
                 console.log(`\u001b[31m--${preKey}${key}\u001b[0m \u001b[34m${typeof v}\u001b`)
+                await this.printDoc(`${preKey}${key}`);
             }
         });
     }
     private printDoc(path: string){
-        Deno.run({
+        if(!path.startsWith('configuration')) path = 'configuration.'+path;
+        return Deno.run({
             cmd: ['deno', 'doc', 'config.js', `${path}`]
-        })
+        }).status()
     }
 
     /**
