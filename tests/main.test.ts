@@ -54,4 +54,4 @@ Deno.test("multi yields", () => {
 setTimeout(()=>{
   console.log("Force quitting deno as the framework runs indefinitely")
   Deno.exit(0)
-}, 10000);
+}, 1000000);
