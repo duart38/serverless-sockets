@@ -35,7 +35,7 @@ function waitForMessage(){
   })
 }
 
-const isOpen = await new Promise<boolean>((res)=>ws2.addEventListener("open", () => res(true)));
+const _isOpen = await new Promise<boolean>((res)=>ws2.addEventListener("open", () => res(true)));
 
 Deno.test("Server re-loads changed files", async () => {
   const res = waitForMessage();
