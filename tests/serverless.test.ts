@@ -1,4 +1,4 @@
-import { assert, assertEquals, assertNotEquals, fail } from "https://deno.land/std@0.106.0/testing/asserts.ts";
+import { assertEquals, assertNotEquals } from "https://deno.land/std@0.106.0/testing/asserts.ts";
 import { serve } from "https://deno.land/std@0.90.0/http/server.ts";
 import { CONFIG } from "../src/config.js";
 import { SocketMessage, yieldedSocketMessage } from "../src/interface/message.ts";
