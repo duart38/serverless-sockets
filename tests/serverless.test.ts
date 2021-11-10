@@ -1,4 +1,4 @@
-import { assertEquals, assertNotEquals } from "https://deno.land/std@0.106.0/testing/asserts.ts";
+import { assert, assertEquals, assertNotEquals } from "https://deno.land/std@0.106.0/testing/asserts.ts";
 import { serve } from "https://deno.land/std@0.90.0/http/server.ts";
 import { CONFIG } from "../src/config.js";
 import { SocketMessage, yieldedSocketMessage } from "../src/interface/message.ts";
@@ -55,6 +55,25 @@ Deno.test("Server takes in newly added files", async () => {
     ws2.send(SocketMessage.encode(payload));
     console.log((await res).payload)
     assertEquals((await res).event, "new")
+});
+
+
+Deno.test("Server takes in newly added files", async () => {
+  const payload = { event: "test", payload: {} };
+  const temp = new Uint8Array(8);
+  // below to fake out size as the server rejects early on incorrect sizes
+  temp[0] = 0;
+  temp[0] = 0;
+  temp[0] = 0;
+  temp[0] = 10;
+
+  ws2.send("LOL"); // malformed 1 (we dont support this)
+  ws2.send(temp); // malformed 2
+  
+  
+  const res = waitForMessage();
+  ws2.send(SocketMessage.encode(payload));
+  assert((await res).event, "changed")
 });
 
 setTimeout(()=>{
