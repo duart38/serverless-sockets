@@ -15362,9 +15362,9 @@
 							],
 							"font": "Arial;13;0",
 							"left": 160,
-							"top": 504,
+							"top": 496,
 							"width": 457,
-							"height": 305
+							"height": 313
 						},
 						{
 							"_type": "UMLActionView",
