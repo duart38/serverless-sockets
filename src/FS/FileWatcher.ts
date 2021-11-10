@@ -64,13 +64,13 @@ export class Watcher {
   private handleFsEvent(ev: Deno.FsEvent){
     const path = ev.paths[0].replace(Deno.realPathSync(this.dir), "");
     switch(ev.kind){
+      case "create": 
       case "modify": {
         // OSX file deletion patch
         Deno.stat(ev.paths[0]).catch(()=> this.files.delete(path));
         this.files.set(path, this.newHash());
         break;
       }
-      case "create": 
       case "remove": {
         this.files.delete(path);
         break;
