@@ -15,7 +15,7 @@ export class configuration {
         preloadPlugs = true;
     
         /** Indicates wether this server needs to use TLS or not */
-        secure = true;
+        secure = false;
     
         /**
          * Where to store and get dynamic code to be executed
