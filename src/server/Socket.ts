@@ -28,31 +28,31 @@ export default class Socket {
     this.connections = new Map();
   }
 
-  private parseIncoming(str: string): socketMessage{
-    return JSON.parse(str);
-  }
-  /**
-   * Decodes a string message into a socketMessage shape. Also freezes the decoded object to prevent re-shaping
-   * @deprecated not being used as of now, might re-introduce proxies in the future
-   */
-  private proxyIncoming(str: string, client: WebSocket): socketMessage {
-    return Log.silent(()=>{
-      const incoming: socketMessage = this.parseIncoming(str)
-      // deno-lint-ignore no-explicit-any
-      const decorated = decorateAccessorsWP(incoming as any, async (v, p, obj)=>{
-        await client.send(JSON.stringify(CONFIG.proxySyncSettings.instructionReply ? {
-          event: Events.OBJ_SYNC,
-          payload: {
-            path: p,
-            value: v,
-            ins: syncInstruction.modify
-          }
-        } : obj as socketMessage))
-      });
-      this.proxyManager.add(client.conn.rid, ...decorated.revoke);
-      return decorated.value;
-    }) || {event: "404", payload: {}};
-  }
+  // private parseIncoming(str: string): socketMessage{
+  //   return JSON.parse(str);
+  // }
+  // /**
+  //  * Decodes a string message into a socketMessage shape. Also freezes the decoded object to prevent re-shaping
+  //  * @deprecated not being used as of now, might re-introduce proxies in the future
+  //  */
+  // private proxyIncoming(str: string, client: WebSocket): socketMessage {
+  //   return Log.silent(()=>{
+  //     const incoming: socketMessage = this.parseIncoming(str)
+  //     // deno-lint-ignore no-explicit-any
+  //     const decorated = decorateAccessorsWP(incoming as any, async (v, p, obj)=>{
+  //       await client.send(JSON.stringify(CONFIG.proxySyncSettings.instructionReply ? {
+  //         event: Events.OBJ_SYNC,
+  //         payload: {
+  //           path: p,
+  //           value: v,
+  //           ins: syncInstruction.modify
+  //         }
+  //       } : obj as socketMessage))
+  //     });
+  //     this.proxyManager.add(client.conn.rid, ...decorated.revoke);
+  //     return decorated.value;
+  //   }) || {event: "404", payload: {}};
+  // }
 
 
   private handleClose(socket: WebSocket){
@@ -61,6 +61,7 @@ export default class Socket {
     dispatchEvent(new Event(this.instanceID+"_disconnect"));
     this.proxyManager.revokeAllFrom(socket.conn.rid);
   }
+  
   private async waitForSocket(socket: WebSocket) {
     if(socket.isClosed) return;
     try {
