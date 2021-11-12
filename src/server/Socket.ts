@@ -1,5 +1,5 @@
 import type { ServerRequest } from "https://deno.land/std@0.90.0/http/server.ts";
-import { Events, SocketMessage, socketMessage, yieldedSocketMessage } from "../interface/message.ts";
+import { Events, SocketMessage, yieldedSocketMessage } from "../interface/message.ts";
 
 import {
   acceptWebSocket,
@@ -9,8 +9,6 @@ import {
 import { Watcher } from "../FS/FileWatcher.ts";
 import { HandleEvent } from "./EventHandler.ts";
 import { Log, LogLevel } from "../components/Log.ts";
-import { decorateAccessorsWP } from "../MISC/utils.ts";
-import { syncInstruction } from "../interface/sync.ts";
 import { CONFIG } from "../config.js";
 
 import singleton from "https://raw.githubusercontent.com/grevend/singleton/main/mod.ts";
