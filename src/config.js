@@ -1,5 +1,3 @@
-import {LogLevel} from "./components/Log.ts";
-
 /**
  * configuration object
  */
@@ -23,7 +21,12 @@ export class configuration {
         plugsFolder = "/Users/duartasnel/Local/WORK/BusinessOne/socketstuff/src/plugs";
     
         printLogToConsole = true;
-        logLevel = LogLevel.extreme;
+        /**
+         * Indicates the verbosity of the logger (what is to be logged) based on the log level.
+         * See the LogLevel enum to ensure the propper value here.
+         * @see {LogLevel}
+         */
+        logLevel = 4;
         /**
          * Limit the length of the log buffer.
          * - Any overflow of the log would result in the oldest value being popped from the buffer.

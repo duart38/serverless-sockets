@@ -1,10 +1,10 @@
 import {CONFIG} from '../../config.js';
-import {LogLevel} from "../../components/Log.ts";
+import {LogLevel, LogType} from "../../components/Log.ts";
 
 let logs = [];
 
 function printLog(data){
-    const logF = data.level === LogLevel.extreme ? console.warn : console.log;
+    const logF = data.type === LogType.error ? console.error : console.log;
     logF(`[${new Date(data.timeStamp)}] - ${data.level} - ${data.message}`);
 }
 function pushLog(data, print = false){
@@ -24,6 +24,11 @@ self.onmessage = (e) => {
     }
     if(e.data === "clear"){
         logs = [];
+        return;
+    }
+    if(e.data?.config){
+        delete e.data.config;
+        Object.assign(CONFIG, e.data);
         return;
     }
 

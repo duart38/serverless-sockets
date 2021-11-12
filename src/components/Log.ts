@@ -1,4 +1,5 @@
 import singleton from "https://raw.githubusercontent.com/grevend/singleton/main/mod.ts";
+import { CONFIG } from "../config.js";
 
 /**
  * The level of logging. the higher the level the more important the log is.
@@ -6,10 +7,14 @@ import singleton from "https://raw.githubusercontent.com/grevend/singleton/main/
 export enum LogLevel {
     hidden, low, medium, high, extreme
 }
+export enum LogType {
+    info, error
+}
 /**
  * The shape used to log messages using the custom Log class.
  */
 interface LogShape {
+    type?: LogType
     level: LogLevel,
     message: string
 }
@@ -21,9 +26,10 @@ export class Log {
      */
     constructor(){
         this.logThread = new Worker(new URL("../MISC/Threads/LoggingThread.js", import.meta.url).href, { type: "module" });
+        this.logThread.postMessage({config: true, ...CONFIG});
     }
-    public static info(t: LogShape){ $Log.getInstance().logThread.postMessage(t) }
-    public static error(t: LogShape){ $Log.getInstance().logThread.postMessage(t) }
+    public static info(t: LogShape){ $Log.getInstance().logThread.postMessage({type: LogType.info, ...t}) }
+    public static error(t: LogShape){ $Log.getInstance().logThread.postMessage({type: LogType.error, ...t}) }
 
     /**
      * Runs te provided method while catching for any errors, if an error is found it is logged silently (not displayed) to the logger.
@@ -39,9 +45,11 @@ export class Log {
      */
     public getAllLogs(){
         return new Promise<LogShape[]>((res,_rej)=>{
+            this.logThread.onmessage = ((e: MessageEvent<LogShape[]>) => {
+                res(e.data);
+                this.logThread.onmessage = undefined;
+            });
             this.logThread.postMessage("flush")
-            this.logThread.onmessage = ((e: MessageEvent<LogShape[]>) => res(e.data));
-            this.logThread.onmessage = undefined;
         });
     }
 
