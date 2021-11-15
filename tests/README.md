@@ -2,8 +2,8 @@
 - [x] when the file change, the update should be reflected.
 - [x] malformed code should not crash server.
 
-- [ ] logging works
-- [ ] logging can export logged items
+- [x] logging works
+- [x] logging can export logged items
 
 - [ ] CLI configuration change works
 - [ ] CLI prints documentation
