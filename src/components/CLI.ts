@@ -87,7 +87,6 @@ export class CLI {
                 if(this._checkTypeEquals(CONFIG[key], val) === false){
                     Log.error({level: LogLevel.low, message: `Supplied argument ${key}'s type (${typeof val}) does not match config values type (${typeof CONFIG[key]}).`})   
                 }
-                console.log(key, CONFIG[key], val)
                 if(typeof CONFIG[key] === "object"){
                     Object.entries(val).forEach(([eK, eV])=>{
                         if(this._checkTypeEquals(CONFIG[key][eK], eV) === false){
