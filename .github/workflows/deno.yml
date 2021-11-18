@@ -36,4 +36,4 @@ jobs:
         run: deno lint
 
       - name: Run tests
-        run: deno test -A --unstable
+        run: deno test -A --unstable --coverage=cov_profile && deno coverage cov_profile
