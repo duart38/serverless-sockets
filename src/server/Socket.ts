@@ -12,11 +12,9 @@ import { Log, LogLevel } from "../components/Log.ts";
 import { CONFIG } from "../config.js";
 
 import singleton from "https://raw.githubusercontent.com/grevend/singleton/main/mod.ts";
-import ProxyManager from "../MISC/ProxyManager.ts";
 
 export default class Socket {
   public connections: Map<number, WebSocket>;
-  private proxyManager = new ProxyManager();
   public directoryWatcher: Watcher;
   protected instanceID: string;
   constructor(plugsDir: string) {
@@ -26,38 +24,10 @@ export default class Socket {
     this.connections = new Map();
   }
 
-  // private parseIncoming(str: string): socketMessage{
-  //   return JSON.parse(str);
-  // }
-  // /**
-  //  * Decodes a string message into a socketMessage shape. Also freezes the decoded object to prevent re-shaping
-  //  * @deprecated not being used as of now, might re-introduce proxies in the future
-  //  */
-  // private proxyIncoming(str: string, client: WebSocket): socketMessage {
-  //   return Log.silent(()=>{
-  //     const incoming: socketMessage = this.parseIncoming(str)
-  //     // deno-lint-ignore no-explicit-any
-  //     const decorated = decorateAccessorsWP(incoming as any, async (v, p, obj)=>{
-  //       await client.send(JSON.stringify(CONFIG.proxySyncSettings.instructionReply ? {
-  //         event: Events.OBJ_SYNC,
-  //         payload: {
-  //           path: p,
-  //           value: v,
-  //           ins: syncInstruction.modify
-  //         }
-  //       } : obj as socketMessage))
-  //     });
-  //     this.proxyManager.add(client.conn.rid, ...decorated.revoke);
-  //     return decorated.value;
-  //   }) || {event: "404", payload: {}};
-  // }
-
-
   private handleClose(socket: WebSocket){
     if(!socket.isClosed) socket.close();
     this.connections.delete(socket.conn.rid);
     dispatchEvent(new Event(this.instanceID+"_disconnect"));
-    this.proxyManager.revokeAllFrom(socket.conn.rid);
   }
   
   private async waitForSocket(socket: WebSocket) {
@@ -65,7 +35,6 @@ export default class Socket {
     try {
       for await (const ev of socket) {
         if (ev instanceof Uint8Array) {
-          // HandleEvent(CONFIG.proxySyncIncomingData ? this.proxyIncoming(ev, socket) : this.parseIncoming(ev), socket.conn.rid);
           const incoming = SocketMessage.fromRaw(ev);
           if(incoming.sizeOfMessage <= CONFIG.payloadLimit){
             HandleEvent(incoming, socket.conn.rid);
