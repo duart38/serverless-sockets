@@ -3,3 +3,4 @@ src/x.ts
 src/v8dump.txt
 src/playground.ts
 .cert
+cov_profile
