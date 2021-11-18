@@ -5,5 +5,5 @@
 - [x] logging works
 - [x] logging can export logged items
 
-- [ ] CLI configuration change works
-- [ ] CLI prints documentation
+- [x] CLI configuration change works
+- [x] CLI prints documentation
