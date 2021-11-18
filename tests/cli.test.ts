@@ -1,5 +1,6 @@
-import { assertEquals } from "https://deno.land/std@0.106.0/testing/asserts.ts";
+import { assertEquals, assertStringIncludes } from "https://deno.land/std@0.106.0/testing/asserts.ts";
 import { CONFIG, configuration } from "../src/config.js";
+import { readLines } from "https://deno.land/std@0.115.1/io/mod.ts";
 
 
 async function parseStdout(p: Deno.Process): Promise<configuration>{
@@ -58,5 +59,28 @@ Deno.test("CLI allows for nested data manipulation", async () => {
 
     assertEquals(status, 0, 'exit code 0 in this test represent a success. any other exit code is an error');
     assertEquals(childOut.INSECURE.port, 6969);
+    p.close();
+});
+
+Deno.test("CLI prints documentation correctly", async () => {
+    const p = Deno.run({
+        cmd: [
+            'deno', 'run', '-A', 'tests/cli_test_doc_file.ts',
+             '-h'
+        ],
+        stdout: 'piped',
+    });
+    let childRawOut = "";
+    for await (const line of readLines(p.stdout)) childRawOut+=line+'\n';
+    
+    const status = (await p.status()).code;
+
+    assertEquals(status, 0, `finished with exit code ${status}`);
+    Object.keys(CONFIG).forEach((key)=>{
+        console.log(`\t\ttesting if ${key} is printed in the help`)
+        assertStringIncludes(childRawOut, key);
+    });
+
+    p.stdout?.close();
     p.close();
 });
