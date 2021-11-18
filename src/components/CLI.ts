@@ -92,7 +92,7 @@ export class CLI {
                         if(this._checkTypeEquals(CONFIG[key][eK], eV) === false){
                             Log.error({level: LogLevel.low, message: `Supplied argument ${key}.${eK}'s type (${typeof eV}) does not match config values type (${typeof CONFIG[key][eK]}).`})   
                         }
-                        CONFIG[key][eK] = eV; // TODO: only supports one level deep, make recursive
+                        CONFIG[key][eK] = eV;
                     })
                 }else{
                     CONFIG[key] = val;
