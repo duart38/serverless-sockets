@@ -1,7 +1,8 @@
 import { assertEquals } from "https://deno.land/std@0.106.0/testing/asserts.ts";
+import { CONFIG, configuration } from "../src/config.js";
 
 
-async function parseStdout(p: Deno.Process){
+async function parseStdout(p: Deno.Process): Promise<configuration>{
     const ret = new Uint8Array(2500);
     await p.stdout?.read(ret);
     p.stdout?.close();
@@ -22,5 +23,40 @@ Deno.test("CLI responds to value change from flag", async () => {
 
     assertEquals(status, 0, 'exit code 0 in this test represent a success. any other exit code is an error');
     assertEquals(childOut.payloadLimit, 10);
+    p.close();
+});
+
+Deno.test("CLI retains shape after some value change", async () => {
+    const p = Deno.run({
+        cmd: [
+            'deno', 'run', '-A', 'tests/cli_test_file.ts',
+            '--payloadLimit', '10',
+             '--INSECURE.port', '6969'
+        ],
+        stdout: 'piped'
+    });
+    
+    const childOut = await parseStdout(p);
+    const status = (await p.status()).code;
+
+    assertEquals(status, 0, 'exit code 0 in this test represent a success. any other exit code is an error');
+    assertEquals(Object.keys(childOut).length, Object.keys(CONFIG).length);
+    p.close();
+});
+
+Deno.test("CLI allows for nested data manipulation", async () => {
+    const p = Deno.run({
+        cmd: [
+            'deno', 'run', '-A', 'tests/cli_test_file.ts',
+             '--INSECURE.port', '6969'
+        ],
+        stdout: 'piped'
+    });
+    
+    const childOut = await parseStdout(p);
+    const status = (await p.status()).code;
+
+    assertEquals(status, 0, 'exit code 0 in this test represent a success. any other exit code is an error');
+    assertEquals(childOut.INSECURE.port, 6969);
     p.close();
 });
