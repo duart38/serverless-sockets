@@ -34,6 +34,9 @@ export class configuration {
          */
         logSizeLimit = 1;
     
+        /**
+         * Configuration options for the insecure (HTTP, WS) version of the server.
+         */
         INSECURE = {
             /** The port to listen on. */
             port: 8080,
@@ -41,6 +44,11 @@ export class configuration {
             * If not specified, defaults to `0.0.0.0`. */
             hostname: "0.0.0.0",
         };
+
+        /**
+         * Configuration options for the secure (HTTPS, WSS) version of the server.
+         * This version requires the certification and key files to spin up a secure web server.
+         */
         TLS = {
             /** The port to listen on. */
             port: 8080,
@@ -86,8 +94,18 @@ export class configuration {
          * function will always have the same shape (done by enforcing shape thus always having the same shape for code marking to be included in the optmization pipelines)
          */
         validateFunctionShape = false;
+        /**
+         * Includes options to turn on and adapt memory metric printouts in the console.
+         * This can be used to view things like the external and internal heap size. (I.E. how much memory we're using)
+         */
         memoryMetrics = {
+            /**
+             * Turns the memoryMetrics on or off.
+             */
             isOn: false,
+            /**
+             * The interval in which the program should print out heap information.
+             */
             interval: 5000
         }
 }
