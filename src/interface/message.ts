@@ -11,6 +11,7 @@ export type socketMessage = Record<string, serializable>;
  * The shape of the message that is yielded from socket functions (modules)
  */
 export interface yieldedSocketMessage {
+  type?: EventType
   event: string;
   payload: Record<string, serializable>;
 }
@@ -18,13 +19,24 @@ export interface yieldedSocketMessage {
 /**
  * Global events that the socket server can send back to clients. depending on the value the client is to respond differently
  */
-export enum Events {
+export enum EventType {
+  /**
+   * a regular message. oftentimes a reply to whoever sent the last message.
+   */
+  MESSAGE,
   /**
    * A broadcast event is sent to all clients.3
    */
-  BROADCAST = "#$_BC",
-  OBJ_SYNC = "#$_OBJ_SYNC",
-  ERROR = "#$_ERR"
+  BROADCAST,
+  AUTH,
+  ERROR,
+  NOT_FOUND,
+
+  CUSTOM_1,
+  CUSTOM_2,
+  CUSTOM_3,
+  CUSTOM_4,
+  CUSTOM_5,
 }
 
 export class SocketMessage implements FreeAble {
@@ -33,6 +45,7 @@ export class SocketMessage implements FreeAble {
    */
   raw: Uint8Array;
 
+  private _eventType: EventType | undefined;
   private _sizeOfAll: number | undefined;
   private _sizeOfEvent: number | undefined;
   private _event: string | undefined;
@@ -52,11 +65,22 @@ export class SocketMessage implements FreeAble {
    * Lazily gets the event string from the raw data.
    * NOTE: calls the ```sizeOfEvent();``` to determine the string length.
    */
+    get eventType(): EventType {
+      // already loaded
+      if(this._eventType) return this._eventType;
+      // initial 8 because we are skipping the total size an the event size
+      this._eventType = this.dv.getUint8(4)
+      return this._eventType;
+    }
+  /**
+   * Lazily gets the event string from the raw data.
+   * NOTE: calls the ```sizeOfEvent();``` to determine the string length.
+   */
   get event(): string {
     // already loaded
     if(this._event) return this._event;
     // initial 8 because we are skipping the total size an the event size
-    this._event = new TextDecoder().decode(this.raw.slice(5, 5+this.sizeOfEvent));
+    this._event = new TextDecoder().decode(this.raw.slice(6, 6+this.sizeOfEvent));
     return this._event;
   }
   /**
@@ -72,7 +96,7 @@ export class SocketMessage implements FreeAble {
    */
   get sizeOfEvent(): number{
     if(this._sizeOfEvent) return this._sizeOfEvent;
-    this._sizeOfEvent = this.dv.getUint8(4);
+    this._sizeOfEvent = this.dv.getUint8(5);
     return this._sizeOfEvent;
   }
 
@@ -83,7 +107,7 @@ export class SocketMessage implements FreeAble {
   get payload(): socketMessage {
     if(this._payload) return this._payload;
     // initial 8 because we are skipping the total size an the event size and then we skip the entire event with it's size
-    this._payload = JSON.parse(new TextDecoder().decode(this.raw.slice(5+this.sizeOfEvent))) as socketMessage;
+    this._payload = JSON.parse(new TextDecoder().decode(this.raw.slice(6+this.sizeOfEvent))) as socketMessage;
     return this._payload;
   }
 
@@ -103,6 +127,8 @@ export class SocketMessage implements FreeAble {
     // deno-lint-ignore no-explicit-any
     (this._payload as any) = null;
     // deno-lint-ignore no-explicit-any
+    (this._eventType as any) = null;
+    // deno-lint-ignore no-explicit-any
     (this.dv as any) = null;
   }
 
@@ -116,11 +142,12 @@ export class SocketMessage implements FreeAble {
     const event = encoder.encode(data.event)
     const payload = encoder.encode(JSON.stringify(data.payload))
 
-    const temp = new Uint8Array(5 + event.length + payload.length)
+    const temp = new Uint8Array(6 + event.length + payload.length)
     temp.set(chunkUp32(temp.length), 0); // entire size
-    temp[4] = event.length // event size
-    temp.set(event, 5); // event itself
-    temp.set(payload, 5+event.length); // payload
+    temp[4] = data.type || EventType.MESSAGE; // event type
+    temp[5] = event.length // event string size
+    temp.set(event, 6); // event itself
+    temp.set(payload, 6+event.length); // payload
     return temp;
   }
 
