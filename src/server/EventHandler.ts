@@ -17,9 +17,14 @@ function handleYields(generatorFunction: ModuleGenerator, from: number, msgRef: 
       send before we recursively call this method because otherwise the main event-loop will block the sending of messages
       which could potentially cause a memory overflow if the sum of yields are very large.
      */
-    if(!reply.value.type) reply.value.type = EventType.MESSAGE;
-    Socket.sendMessage(from,  reply.value)
-    ?.then(()=>handleYields(generatorFunction, from, msgRef));
+
+    if(reply.value.type === EventType.BROADCAST){
+      Socket.broadcast(reply.value, CONFIG.excludeSenderOnBroadcast ? from : undefined);
+      handleYields(generatorFunction, from, msgRef);
+    }else{
+      Socket.sendMessage(from,  reply.value)
+      ?.then(()=>handleYields(generatorFunction, from, msgRef));
+    }
   })
 }
 
