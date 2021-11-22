@@ -1,13 +1,15 @@
 import { assertEquals } from "https://deno.land/std@0.106.0/testing/asserts.ts";
-import { SocketMessage } from "../src/interface/message.ts";
+import { EventType } from "../src/interface/message.ts";
+import { SocketMessage, yieldedSocketMessage } from "../src/interface/message.ts";
 
 Deno.test("SocketMessage encoding and decoding works", () => {
-    const payload = {
+    const payload: yieldedSocketMessage = {
+        type: EventType.MESSAGE,
         event: "test",
         payload: {count: 5}
     }
     const encoded = SocketMessage.encode(payload);
-    const decoded = SocketMessage.fromRaw(encoded)
+    const decoded = SocketMessage.fromRaw(encoded);
 
     assertEquals(decoded.event, "test");
     assertEquals(decoded.payload.count, 5);
