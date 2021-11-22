@@ -57,11 +57,30 @@ Deno.test("SocketMessage sizeOfMessage getter works", () => {
     assertEquals(read.sizeOfMessage, dv.getUint32(0));
 });
 
-Deno.test("SocketMessage sizeOfEventgetter works", () => {
+Deno.test("SocketMessage sizeOfEvent getter works", () => {
     const raw = SocketMessage.encode({
         event: "test",
         payload: {count: 5}
     });
     const read = SocketMessage.fromRaw(raw);
     assertEquals(read.sizeOfEvent, "test".length);
+});
+
+Deno.test("SocketMessage eventType getter works", () => {
+    const raw = SocketMessage.encode({
+        event: "test",
+        payload: {count: 5},
+        type: EventType.ERROR
+    });
+    const read = SocketMessage.fromRaw(raw);
+    assertEquals(read.eventType, EventType.ERROR);
+});
+
+Deno.test("SocketMessage eventType auto-populates on absence", () => {
+    const raw = SocketMessage.encode({
+        event: "test",
+        payload: {count: 5},
+    });
+    const read = SocketMessage.fromRaw(raw);
+    assertEquals(read.eventType, EventType.MESSAGE);
 });
