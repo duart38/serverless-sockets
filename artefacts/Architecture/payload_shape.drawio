@@ -1,11 +1,14 @@
-<mxfile host="app.diagrams.net" modified="2021-11-22T14:03:51.734Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15" etag="Tt_qH2PV34lpvY1lQx_D" version="15.8.3" type="github">
+<mxfile host="app.diagrams.net" modified="2021-11-22T14:44:03.060Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15" etag="maHA7PiDXlbWL355NqHI" version="15.8.3" type="github">
   <diagram id="SwRV0uEczVV8MqBAX64z" name="Page-1">
-    <mxGraphModel dx="449" dy="327" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="542" dy="395" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="a4_cbmze4R0DbBTKldTj-1" value="" style="rounded=0;whiteSpace=wrap;html=1;fontSize=13;align=left;strokeWidth=2;" parent="1" vertex="1">
+        <mxCell id="a4_cbmze4R0DbBTKldTj-1" value="" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;align=left;strokeWidth=2;perimeterSpacing=0;" parent="1" vertex="1">
           <mxGeometry x="80" y="240" width="720" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="a4_cbmze4R0DbBTKldTj-35" value="8 bit" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;strokeWidth=2;fillColor=#E6E6E6;gradientColor=none;align=center;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="760" y="280" width="40" height="50" as="geometry" />
         </mxCell>
         <mxCell id="a4_cbmze4R0DbBTKldTj-2" value="" style="shape=crossbar;whiteSpace=wrap;html=1;rounded=1;direction=south;fontSize=13;strokeWidth=2;fillColor=#E6E6E6;gradientColor=none;align=left;" parent="1" vertex="1">
           <mxGeometry x="150" y="240" width="20" height="90" as="geometry" />
@@ -84,9 +87,6 @@
         </mxCell>
         <mxCell id="a4_cbmze4R0DbBTKldTj-34" value="8 bit" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;strokeWidth=2;fillColor=#E6E6E6;gradientColor=none;align=center;strokeColor=default;dashed=1;" parent="1" vertex="1">
           <mxGeometry x="680" y="280" width="40" height="50" as="geometry" />
-        </mxCell>
-        <mxCell id="a4_cbmze4R0DbBTKldTj-35" value="8 bit" style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;strokeWidth=2;fillColor=#E6E6E6;gradientColor=none;align=center;dashed=1;" parent="1" vertex="1">
-          <mxGeometry x="760" y="280" width="40" height="50" as="geometry" />
         </mxCell>
         <mxCell id="a4_cbmze4R0DbBTKldTj-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fontSize=13;startArrow=none;startFill=0;endArrow=none;endFill=0;strokeWidth=1;" parent="1" source="a4_cbmze4R0DbBTKldTj-36" target="a4_cbmze4R0DbBTKldTj-33" edge="1">
           <mxGeometry relative="1" as="geometry" />
