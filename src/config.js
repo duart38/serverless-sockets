@@ -11,6 +11,11 @@ export class configuration {
          * This will cache them resulting in the first request from a user being faster
          */
         preloadPlugs = true;
+        /**
+         * Indicates if broadcast messages (sent to all connected clients) shjould exclude the client that initiated the
+         * broadcast event.
+         */
+        excludeSenderOnBroadcast = false;
     
         /** Indicates wether this server needs to use TLS or not */
         secure = false;
