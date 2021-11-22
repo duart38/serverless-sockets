@@ -1,5 +1,5 @@
 import type { ServerRequest } from "https://deno.land/std@0.90.0/http/server.ts";
-import { Events, SocketMessage, yieldedSocketMessage } from "../interface/message.ts";
+import { EventType, SocketMessage, yieldedSocketMessage } from "../interface/message.ts";
 
 import {
   acceptWebSocket,
@@ -95,7 +95,8 @@ export default class Socket {
     const socket = socketS.getInstance();
     socket.connections.forEach((s)=>{
       if(!s.isClosed  && s.conn.rid !== exclude) {
-        s.send(SocketMessage.encode({event: Events.BROADCAST, payload: {...data.payload}})).catch(()=>socket.handleClose(s))
+        s.send(SocketMessage.encode(Object.assign(data, {type: EventType.BROADCAST, payload: {...data.payload}})))
+        .catch(()=>socket.handleClose(s))
       }
   });
   }
