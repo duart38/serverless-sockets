@@ -37,6 +37,7 @@ export async function* test(message: SocketMessage, _from: number): ModuleGenera
 ```
 
 Esentially you 'yield' back values to the client side every time you want to send them an update.
+If you're unfamiliar with generator functions take a look at [this page](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*)
 
 # CLI
 > Note: Configurations adapted on the command line are only active for the duration of the program. I.E. they will not persist.
