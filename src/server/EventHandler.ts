@@ -1,8 +1,8 @@
-import { Events, SocketMessage, yieldedSocketMessage } from "../interface/message.ts";
+import { EventType, SocketMessage, yieldedSocketMessage } from "../interface/message.ts";
 
 import Socket, { socketS } from "./Socket.ts";
 import { Watcher } from "../FS/FileWatcher.ts";
-import { PLUG_LENGTH } from "../interface/socketFunction.ts";
+import { ModuleGenerator, PLUG_LENGTH } from "../interface/socketFunction.ts";
 import { CONFIG } from "../config.js";
 import { FreeAble } from "../interface/mem.ts";
 
@@ -10,14 +10,16 @@ import { FreeAble } from "../interface/mem.ts";
  * Handle incoming yields from modules.
  * @param msgRef the reference to the incoming message to be freed-up when yielding is done.
  */
-function handleYields(generatorFunction: AsyncGenerator, from: number, msgRef: FreeAble): void {
+function handleYields(generatorFunction: ModuleGenerator, from: number, msgRef: FreeAble): void {
   generatorFunction.next().then((reply)=>{
     if(reply.done === true || reply.done === undefined) return msgRef.free();
     /* 
       send before we recursively call this method because otherwise the main event-loop will block the sending of messages
       which could potentially cause a memory overflow if the sum of yields are very large.
      */
-    Socket.sendMessage(from,  reply.value as yieldedSocketMessage)?.then(()=>handleYields(generatorFunction, from, msgRef));
+    if(!reply.value.type) reply.value.type = EventType.MESSAGE;
+    Socket.sendMessage(from,  reply.value)
+    ?.then(()=>handleYields(generatorFunction, from, msgRef));
   })
 }
 
@@ -38,11 +40,11 @@ export async function HandleEvent(
       const m = await import(`${fileWatcher.directory()}/${sanitized}.ts?${fileWatcher.getFileHash(sanitized)}`);
 
       const gFn = (Object.values(m) as AsyncGeneratorFunction[]).filter(v=>typeof v === "function" && validateFunctionShape(v));
-      for(let i = 0; i < gFn.length; i++) handleYields(gFn[i](incoming, from), from, incoming);
+      for(let i = 0; i < gFn.length; i++) handleYields(gFn[i](incoming, from) as ModuleGenerator, from, incoming);
       // i don't trust weakRefs for message because of possible long running methods, so this will do
       (incoming as unknown) = null;
     }else{
-      Socket.sendMessage(from, {event: Events.ERROR, payload: {}});
+      Socket.sendMessage(from, {type: EventType.NOT_FOUND, event: incoming.event, payload: {}});
     }
 }
 
