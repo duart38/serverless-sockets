@@ -14,22 +14,45 @@ export enum LogType {
  * The shape used to log messages using the custom Log class.
  */
 interface LogShape {
-    type?: LogType
+    type?: LogType,
+    timeStamp?: string | number,
     level: LogLevel,
     message: string
 }
 export class Log {
-    private logThread: Worker;
+    private logs: LogShape[] = [];
+
 
     /**
      * The constructor for the Log class. Use the static methods to log messages.
      */
-    constructor(){
-        this.logThread = new Worker(new URL("../MISC/Threads/LoggingThread.js", import.meta.url).href, { type: "module" });
-        this.logThread.postMessage({config: true, ...CONFIG});
+    constructor(){}
+    private printLog(data: LogShape){
+        const logF = data.type === LogType.error ? console.error : console.log;
+        logF(`[${new Date(data.timeStamp || Date.now())}] - ${data.level} - ${data.message}`);
     }
-    public static info(t: LogShape){ $Log.getInstance().logThread.postMessage({type: LogType.info, ...t}) }
-    public static error(t: LogShape){ $Log.getInstance().logThread.postMessage({type: LogType.error, ...t}) }
+    private pushLog(data: LogShape, print = false){
+        this.logs.push(data);
+        if(this.logs.length > CONFIG.logSizeLimit) this.logs.shift();
+        if(print) this.printLog(data);
+    }
+    private log(data: LogShape){
+        return new Promise<void>((res)=>{
+            setTimeout(()=>{
+                if(CONFIG.logLevel >= data.level){
+                    switch(data.level){
+                        case LogLevel.hidden: this.pushLog(data, false); break;
+                        default: this.pushLog(data, CONFIG.printLogToConsole);
+                    }
+                }
+                res();
+            }, 0)
+        })
+    }
+
+
+    public static info(t: LogShape){ return $Log.getInstance().log({type: LogType.info, timeStamp: Date.now(), ...t}) }
+    public static error(t: LogShape){ return $Log.getInstance().log({type: LogType.error, timeStamp: Date.now(), ...t}) }
 
     /**
      * Runs te provided method while catching for any errors, if an error is found it is logged silently (not displayed) to the logger.
@@ -44,20 +67,14 @@ export class Log {
      * @returns all the messages stored in the Logs storage. flushes the storage.
      */
     public getAllLogs(){
-        return new Promise<LogShape[]>((res,_rej)=>{
-            this.logThread.onmessage = ((e: MessageEvent<LogShape[]>) => {
-                res(e.data);
-                this.logThread.onmessage = undefined;
-            });
-            this.logThread.postMessage("flush")
-        });
+        return this.logs;
     }
 
     /**
      * Says it all....
      */
-    public clearLogs(){
-        this.logThread.postMessage("clear")
+    static clearLogs(){
+        Log.getInstance().logs = [];
     }
 
     static getInstance(){
