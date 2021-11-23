@@ -66,22 +66,26 @@ Deno.test({
 });
 
 
-Deno.test("Server does not crash on malformed request", async () => {
-  const payload = { event: "test", payload: {} };
-  const temp = new Uint8Array(8);
-  // below to fake out size as the server rejects early on incorrect sizes
-  temp[0] = 0;
-  temp[0] = 0;
-  temp[0] = 0;
-  temp[0] = 10;
+Deno.test({
+  name: "Server does not crash on malformed request",
+  sanitizeOps: false,
+  async fn() {
+    const payload = { event: "test", payload: {} };
+    const temp = new Uint8Array(8);
+    // below to fake out size as the server rejects early on incorrect sizes
+    temp[0] = 0;
+    temp[0] = 0;
+    temp[0] = 0;
+    temp[0] = 10;
 
-  ws2.send("LOL"); // malformed 1 (we dont support this)
-  ws2.send(temp); // malformed 2
-  
-  
-  const res = waitForMessage();
-  ws2.send(SocketMessage.encode(payload));
-  assert((await res).event, "changed")
+    ws2.send("LOL"); // malformed 1 (we dont support this)
+    ws2.send(temp); // malformed 2
+    
+    
+    const res = waitForMessage();
+    ws2.send(SocketMessage.encode(payload));
+    assert((await res).event, "changed")
+  }
 });
 
 setTimeout(()=>{
