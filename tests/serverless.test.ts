@@ -58,7 +58,7 @@ Deno.test("Server takes in newly added files", async () => {
 });
 
 
-Deno.test("Server takes in newly added files", async () => {
+Deno.test("Server does not crash on malformed request", async () => {
   const payload = { event: "test", payload: {} };
   const temp = new Uint8Array(8);
   // below to fake out size as the server rejects early on incorrect sizes
