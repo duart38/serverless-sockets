@@ -38,23 +38,31 @@ function waitForMessage(){
 
 const _isOpen = await new Promise<boolean>((res)=>ws2.addEventListener("open", () => res(true)));
 
-Deno.test("Server re-loads changed files", async () => {
-  const res = waitForMessage();
-  const payload = { event: "test", payload: {} };
-  ws2.send(SocketMessage.encode(payload));
-  writeToTemp('test', {event: 'changed', payload: {}});
-  assertNotEquals((await res).event, "unchanged")
-  assertEquals((await res).event, "changed")
+Deno.test({
+  sanitizeOps: false,
+  name: "Server re-loads changed files", 
+  async fn () {
+    const res = waitForMessage();
+    const payload = { event: "test", payload: {} };
+    ws2.send(SocketMessage.encode(payload));
+    writeToTemp('test', {event: 'changed', payload: {}});
+    assertNotEquals((await res).event, "unchanged");
+    assertEquals((await res).event, "changed");
+  }
 });
 
 
 writeToTemp('newfunc', {event: 'new', payload: {}});
-Deno.test("Server takes in newly added files", async () => {
+Deno.test({
+  name: "Server takes in newly added files",
+  sanitizeOps: false,
+  async fn() {
     const res = waitForMessage();
     const payload = { event: "newfunc", payload: {} };
     ws2.send(SocketMessage.encode(payload));
     console.log((await res).payload)
     assertEquals((await res).event, "new")
+  }
 });
 
 
