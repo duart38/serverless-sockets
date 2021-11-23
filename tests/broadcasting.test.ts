@@ -9,6 +9,8 @@ CONFIG.secure = false;
 
 const ws2 = new WebSocket("ws://localhost:8080");
 const ws3 = new WebSocket("ws://localhost:8080");
+const isOpen1 = new Promise<boolean>((res)=>ws2.addEventListener("open", () => res(true)));
+const isOpen2 = new Promise<boolean>((res)=>ws3.addEventListener("open", () => res(true)));
 
 const socket = socketS.getInstance();
 let connected = 0;
@@ -32,8 +34,6 @@ function waitForMessage(){
   })
 }
 
-const isOpen1 = new Promise<boolean>((res)=>ws2.addEventListener("open", () => res(true)));
-const isOpen2 = new Promise<boolean>((res)=>ws3.addEventListener("open", () => res(true)));
 await Promise.all([isOpen1, isOpen2]);
 console.log(isOpen1, isOpen2);
 
