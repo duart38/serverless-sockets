@@ -57,7 +57,7 @@ export async function HandleEvent(
  * @param eventString 
  * @returns 
  */
-function sanitizeEvent(eventString: string): string {
+export function sanitizeEvent(eventString: string): string {
   return eventString.replaceAll(/(\.{0,}|\r|\t|\n|\s|[!@#$%^&*()])+/g, "");
 }
 
@@ -66,7 +66,7 @@ function sanitizeEvent(eventString: string): string {
  * @HOT
  * @param x function.
  */
-function validateFunctionShape(x: AsyncGeneratorFunction){
+export function validateFunctionShape(x: AsyncGeneratorFunction){
   if(CONFIG.validateFunctionShape && x.length != PLUG_LENGTH){
     console.error(`shape of ${x.name} is wrong. parameter count of ${x.length} needs to be ${PLUG_LENGTH}`);
     return false;
