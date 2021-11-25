@@ -140,20 +140,7 @@ export class SocketMessage implements FreeAble {
    * > NOTE: There is no guarantee that this will be cleaned up nor can you (or us) predict WHEN it will be cleaned up.
    */
   free(){
-    // deno-lint-ignore no-explicit-any
-    (this.raw as any) = null;
-    // deno-lint-ignore no-explicit-any
-    (this._sizeOfAll as any) = null;
-    // deno-lint-ignore no-explicit-any
-    (this._sizeOfEvent as any) = null;
-    // deno-lint-ignore no-explicit-any
-    (this._event as any) = null;
-    // deno-lint-ignore no-explicit-any
-    (this._payload as any) = null;
-    // deno-lint-ignore no-explicit-any
-    (this._eventType as any) = null;
-    // deno-lint-ignore no-explicit-any
-    (this.dv as any) = null;
+    Object.keys(this).forEach((k)=>(this as Record<string, unknown>)[k] = null);
   }
 
   /**
