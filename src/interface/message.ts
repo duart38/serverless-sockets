@@ -28,14 +28,38 @@ export enum EventType {
    * A broadcast event is sent to all clients.3
    */
   BROADCAST,
+  /**
+   * Reserved for authentication, cleans up code a bit.
+   */
   AUTH,
+  /**
+   * Reserved for unknown errors
+   */
   ERROR,
+  /**
+   * Sent back when the event was not found
+   */
   NOT_FOUND,
 
+  /**
+   * Custom message, developers are free to do what they please here
+   */
   CUSTOM_1,
+  /**
+   * Custom message, developers are free to do what they please here
+   */
   CUSTOM_2,
+  /**
+   * Custom message, developers are free to do what they please here
+   */
   CUSTOM_3,
+  /**
+   * Custom message, developers are free to do what they please here
+   */
   CUSTOM_4,
+  /**
+   * Custom message, developers are free to do what they please here
+   */
   CUSTOM_5,
 }
 
