@@ -75,6 +75,56 @@ export async function* broadcast(message: SocketMessage, _from: number): ModuleG
 Socket.sendMessage(/*client ID*/5, {event: "ev", payload: {}});
 ```
 
+## The eventType
+```TypeScript
+/**
+ * Global events that the socket server can send back to clients. depending on the value the client is to respond differently
+ */
+export enum EventType {
+  /**
+   * a regular message. oftentimes a reply to whoever sent the last message.
+   */
+  MESSAGE,
+  /**
+   * A broadcast event is sent to all clients.3
+   */
+  BROADCAST,
+  /**
+   * Reserved for authentication, cleans up code a bit.
+   */
+  AUTH,
+  /**
+   * Reserved for unknown errors
+   */
+  ERROR,
+  /**
+   * Sent back when the event was not found
+   */
+  NOT_FOUND,
+
+  /**
+   * Custom message, developers are free to do what they please here
+   */
+  CUSTOM_1,
+  /**
+   * Custom message, developers are free to do what they please here
+   */
+  CUSTOM_2,
+  /**
+   * Custom message, developers are free to do what they please here
+   */
+  CUSTOM_3,
+  /**
+   * Custom message, developers are free to do what they please here
+   */
+  CUSTOM_4,
+  /**
+   * Custom message, developers are free to do what they please here
+   */
+  CUSTOM_5,
+}
+```
+
 
 # CLI
 > Note: Configurations adapted on the command line are only active for the duration of the program. I.E. they will not persist.
@@ -110,8 +160,12 @@ The configuration class in this file should contian all the information and docu
 
 
 
-## payload
+# Payload shape
+> This section is only needed if you are modifying the framework.
+
+This is how a message is encoded when the client communicates with the server and vice versa.
 ![payload_shape-2](https://user-images.githubusercontent.com/30909481/143445150-e1c3ad2e-bb3f-4392-8984-c46dee58a23a.png)
+
 
 # Testing
 ```sh
