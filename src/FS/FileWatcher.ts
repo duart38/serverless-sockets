@@ -1,11 +1,10 @@
-import Observe from "https://raw.githubusercontent.com/duart38/Observe/master/Observe.ts";
 import { Log, LogLevel } from "../components/Log.ts";
 
 export class Watcher {
   /**
    * Global folder hash.
    */
-  private hash: Observe<string>;
+  private hash: string;
   /**
    * The working directory of the watcher
    */
@@ -16,7 +15,7 @@ export class Watcher {
   private files: Map<string, string>;
 
   constructor(dir: string) {
-    this.hash = new Observe(this.newHash());
+    this.hash = "";
     this.files = new Map();
     this.dir = dir;
     this.preLoadDir(this.dir);
@@ -52,7 +51,7 @@ export class Watcher {
   private async init() {
     const watcher = Deno.watchFs(this.dir);
     for await (const _event of watcher) {
-      this.hash.setValue(this.newHash());
+      this.hash = this.newHash();
       this.handleFsEvent(_event);
     }
   }
@@ -87,18 +86,10 @@ export class Watcher {
   }
 
   /**
-   * Get the observable value attached to this instance.
-   * @see https://github.com/duart38/Observe
-   */
-  public getObservable(): Observe<string> {
-    return this.hash;
-  }
-
-  /**
    * Gets the hash of the entire filewatcher. this hash is updated every time any event happens
    */
   public getHash(): string {
-    return this.hash.getValue();
+    return this.hash;
   }
 
   /**
