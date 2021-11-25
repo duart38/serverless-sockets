@@ -172,3 +172,12 @@ This is how a message is encoded when the client communicates with the server an
 deno test -A --unstable --coverage=cov_profile && deno coverage cov_profile
 ```
 
+# Considerations and limitations
+When developing modules keep in mind that the idea of the module is for it to be spawned, to yield it's messages and then to be cleaned up aftwerwards.
+This means that you need to be careful when creating any floating references in the method that would prevent it from being cleaned up. 
+These are things like refering to an object somewhere else that is never cleaned up (I.E. always in use by something else) or an interval timer.
+
+> Modules that are not cleaned up will continue to exist and for each client that calls the module (via it's event string) a new instance of that module is spawned and is also kept in memory indefinitely thus causing a memory leak.
+
+
+
