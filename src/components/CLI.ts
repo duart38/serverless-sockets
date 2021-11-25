@@ -2,6 +2,7 @@ import singleton from "https://raw.githubusercontent.com/grevend/singleton/main/
 import { Args, parse } from "https://deno.land/std@0.106.0/flags/mod.ts";
 import { CONFIG } from "../config.js";
 import { Log, LogLevel } from "./Log.ts";
+import { moduleTemplate } from "../MISC/moduleTemplate.ts";
 
 export class CLI {
     /**
@@ -21,14 +22,20 @@ export class CLI {
         this.args = parse(Deno.args);
         this.ready = new Promise((res, rej)=> {
             if(this.args["h"] !== undefined || this.args["help"] !== undefined){
+                console.log(`\n\n
+--generate <name of module> \t\t\t |generates an endpoint module with the name provided, the name is the name of the event|\n\n
+Available configurations:`)
                 if(Object.keys(this.args).length > 2){
                     delete this.args["h"];
                     delete this.args["help"];
+                    
                     this.printHelp(this.args);
                 }else{
                     this.printHelp(CONFIG);
                 }
                 rej();
+            }else if(this.args["generate"] && typeof this.args["generate"] === "string"){
+                Deno.writeTextFileSync(`${CONFIG.plugsFolder}/${this.args["generate"]}.ts`, moduleTemplate());
             }else{
                 this.parseArgs();
                 res();
