@@ -14381,6 +14381,26 @@
 					"name": "FileWatcher activity diagram",
 					"ownedViews": [
 						{
+							"_type": "UMLInterruptibleActivityRegionView",
+							"_id": "AAAAAAF9CfO5jtEQkFU=",
+							"_parent": {
+								"$ref": "AAAAAAF9Cejc0c+y6bs="
+							},
+							"model": {
+								"$ref": "AAAAAAF9CfO5jtEO3Uw="
+							},
+							"containedViews": [
+								{
+									"$ref": "AAAAAAF9Cfe4iNG72wU="
+								}
+							],
+							"font": "Arial;13;0",
+							"left": 160,
+							"top": 496,
+							"width": 457,
+							"height": 313
+						},
+						{
 							"_type": "UMLControlNodeView",
 							"_id": "AAAAAAF9CekVsM/RG/c=",
 							"_parent": {
@@ -14918,10 +14938,10 @@
 								"$ref": "AAAAAAF9Cejc0c+y6bs="
 							},
 							"font": "Arial;13;0",
-							"left": 184,
+							"left": 208,
 							"top": 568,
-							"width": 158,
-							"height": 51,
+							"width": 118,
+							"height": 64,
 							"text": "CRUD stands for Create, Read, Update, Delete"
 						},
 						{
@@ -15593,26 +15613,6 @@
 							}
 						},
 						{
-							"_type": "UMLInterruptibleActivityRegionView",
-							"_id": "AAAAAAF9CfO5jtEQkFU=",
-							"_parent": {
-								"$ref": "AAAAAAF9Cejc0c+y6bs="
-							},
-							"model": {
-								"$ref": "AAAAAAF9CfO5jtEO3Uw="
-							},
-							"containedViews": [
-								{
-									"$ref": "AAAAAAF9Cfe4iNG72wU="
-								}
-							],
-							"font": "Arial;13;0",
-							"left": 160,
-							"top": 496,
-							"width": 457,
-							"height": 313
-						},
-						{
 							"_type": "UMLActionView",
 							"_id": "AAAAAAF9CfQVyNEYPJI=",
 							"_parent": {
@@ -16037,6 +16037,113 @@
 							"propertyLabel": {
 								"$ref": "AAAAAAF9CfjYctIwhHE="
 							}
+						},
+						{
+							"_type": "UMLControlFlowView",
+							"_id": "AAAAAAF9gGV26ovrTMU=",
+							"_parent": {
+								"$ref": "AAAAAAF9Cejc0c+y6bs="
+							},
+							"model": {
+								"$ref": "AAAAAAF9gGV26YvqaKc="
+							},
+							"subViews": [
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAF9gGV26ovsa78=",
+									"_parent": {
+										"$ref": "AAAAAAF9gGV26ovrTMU="
+									},
+									"model": {
+										"$ref": "AAAAAAF9gGV26YvqaKc="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"left": 161,
+									"top": 625,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAF9gGV26ovrTMU="
+									},
+									"edgePosition": 1
+								},
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAF9gGV26ovtWyw=",
+									"_parent": {
+										"$ref": "AAAAAAF9gGV26ovrTMU="
+									},
+									"model": {
+										"$ref": "AAAAAAF9gGV26YvqaKc="
+									},
+									"visible": null,
+									"font": "Arial;13;0",
+									"left": 146,
+									"top": 625,
+									"height": 13,
+									"alpha": 1.5707963267948966,
+									"distance": 30,
+									"hostEdge": {
+										"$ref": "AAAAAAF9gGV26ovrTMU="
+									},
+									"edgePosition": 1
+								},
+								{
+									"_type": "EdgeLabelView",
+									"_id": "AAAAAAF9gGV26ovuwK8=",
+									"_parent": {
+										"$ref": "AAAAAAF9gGV26ovrTMU="
+									},
+									"model": {
+										"$ref": "AAAAAAF9gGV26YvqaKc="
+									},
+									"visible": false,
+									"font": "Arial;13;0",
+									"left": 191,
+									"top": 626,
+									"height": 13,
+									"alpha": -1.5707963267948966,
+									"distance": 15,
+									"hostEdge": {
+										"$ref": "AAAAAAF9gGV26ovrTMU="
+									},
+									"edgePosition": 1
+								}
+							],
+							"font": "Arial;13;0",
+							"head": {
+								"$ref": "AAAAAAF9CexVttAnxs8="
+							},
+							"tail": {
+								"$ref": "AAAAAAF9Ce3eWNBl2Go="
+							},
+							"lineStyle": 2,
+							"points": "272:728;176:728;176:536;264:536",
+							"showVisibility": true,
+							"nameLabel": {
+								"$ref": "AAAAAAF9gGV26ovsa78="
+							},
+							"stereotypeLabel": {
+								"$ref": "AAAAAAF9gGV26ovtWyw="
+							},
+							"propertyLabel": {
+								"$ref": "AAAAAAF9gGV26ovuwK8="
+							}
+						},
+						{
+							"_type": "UMLNoteView",
+							"_id": "AAAAAAF9gGa8TowKbCE=",
+							"_parent": {
+								"$ref": "AAAAAAF9Cejc0c+y6bs="
+							},
+							"font": "Arial;13;0",
+							"left": 632,
+							"top": 504,
+							"width": 193,
+							"height": 90,
+							"text": "Once started the file watcher continues to listen for changes and does not stop until a manual keyboard interrupt is triggered (CTRL + c)"
 						}
 					]
 				}
@@ -16243,6 +16350,19 @@
 					},
 					"target": {
 						"$ref": "AAAAAAF9CfR6d9EwUAU="
+					}
+				},
+				{
+					"_type": "UMLControlFlow",
+					"_id": "AAAAAAF9gGV26YvqaKc=",
+					"_parent": {
+						"$ref": "AAAAAAF9Cejc0c+x15M="
+					},
+					"source": {
+						"$ref": "AAAAAAF9Ce3eWNBjNv8="
+					},
+					"target": {
+						"$ref": "AAAAAAF9CexVttAlNn0="
 					}
 				}
 			],
