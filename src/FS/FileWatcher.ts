@@ -25,14 +25,14 @@ export class Watcher {
    * Preloads the directory hashes. this could potentially speed up the first connection as the hash has already been calculated.
    * @param dir the directory to preload from.
    */
-  private preLoadDir(dir: string){
-    for(const {isFile, name} of Deno.readDirSync(dir)){
-      if(isFile) {
-        Log.info({level: LogLevel.high, message: `[+] Generating file hash for: ${dir}/${name}`})
+  private preLoadDir(dir: string) {
+    for (const { isFile, name } of Deno.readDirSync(dir)) {
+      if (isFile) {
+        Log.info({ level: LogLevel.high, message: `[+] Generating file hash for: ${dir}/${name}` });
         const file = this._sanitizeIncoming(name);
         this.files.set(file, this.newHash());
-      }else{
-        this.preLoadDir(`${dir}/${name}`)
+      } else {
+        this.preLoadDir(`${dir}/${name}`);
       }
     }
   }
@@ -60,13 +60,13 @@ export class Watcher {
    * Handles the filesystem event. This method deals with making new hashes for files that have changed but also removing files if the event indicates such.
    * @param ev the FSEvent.
    */
-  private handleFsEvent(ev: Deno.FsEvent){
+  private handleFsEvent(ev: Deno.FsEvent) {
     const path = ev.paths[0].replace(Deno.realPathSync(this.dir), "");
-    switch(ev.kind){
-      case "create": 
+    switch (ev.kind) {
+      case "create":
       case "modify": {
         // OSX file deletion patch
-        Deno.stat(ev.paths[0]).catch(()=> this.files.delete(path));
+        Deno.stat(ev.paths[0]).catch(() => this.files.delete(path));
         this.files.set(path, this.newHash());
         break;
       }
@@ -81,8 +81,8 @@ export class Watcher {
    * @param x the string
    * @returns the new modified string
    */
-  private _sanitizeIncoming(x:string){
-    return `${x.startsWith("/") ? "" : "/"}${x}${x.endsWith(".ts") ? "" : ".ts"}`
+  private _sanitizeIncoming(x: string) {
+    return `${x.startsWith("/") ? "" : "/"}${x}${x.endsWith(".ts") ? "" : ".ts"}`;
   }
 
   /**
@@ -97,7 +97,7 @@ export class Watcher {
    * @param file the name of the file (including prepended directory pathway)
    */
   public getFileHash(file: string): string {
-    file = `${file.startsWith("/") ? "" : "/"}${file}${file.endsWith(".ts") ? "" : ".ts"}`
+    file = `${file.startsWith("/") ? "" : "/"}${file}${file.endsWith(".ts") ? "" : ".ts"}`;
     return this.files.get(file) || this.getHash();
   }
 
@@ -112,7 +112,7 @@ export class Watcher {
    * Checks if the Watchers storage contains a file.
    * @param fn the file string
    */
-  public containsFile(fn: string){
+  public containsFile(fn: string) {
     return this.files.has(this._sanitizeIncoming(fn));
   }
 

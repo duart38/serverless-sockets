@@ -1,11 +1,7 @@
 import type { ServerRequest } from "https://deno.land/std@0.90.0/http/server.ts";
 import { EventType, SocketMessage, yieldedSocketMessage } from "../interface/message.ts";
 
-import {
-  acceptWebSocket,
-  isWebSocketCloseEvent,
-  WebSocket,
-} from "https://deno.land/std@0.90.0/ws/mod.ts";
+import { acceptWebSocket, isWebSocketCloseEvent, WebSocket } from "https://deno.land/std@0.90.0/ws/mod.ts";
 import { Watcher } from "../FS/FileWatcher.ts";
 import { HandleEvent } from "./EventHandler.ts";
 import { Log, LogLevel } from "../components/Log.ts";
@@ -18,28 +14,31 @@ export default class Socket {
   public directoryWatcher: Watcher;
   protected instanceID: string;
   constructor(plugsDir: string) {
-    Log.info({level: LogLevel.medium, message: `[+] Opening socket with function folder: ${plugsDir}`});
+    Log.info({ level: LogLevel.medium, message: `[+] Opening socket with function folder: ${plugsDir}` });
     this.directoryWatcher = new Watcher(plugsDir);
     this.instanceID = crypto.getRandomValues(new Uint32Array(2)).join("");
     this.connections = new Map();
   }
 
-  private handleClose(socket: WebSocket){
-    if(!socket.isClosed) socket.close();
+  private handleClose(socket: WebSocket) {
+    if (!socket.isClosed) socket.close();
     this.connections.delete(socket.conn.rid);
-    dispatchEvent(new Event(this.instanceID+"_disconnect"));
+    dispatchEvent(new Event(this.instanceID + "_disconnect"));
   }
-  
+
   private async waitForSocket(socket: WebSocket) {
-    if(socket.isClosed) return;
+    if (socket.isClosed) return;
     try {
       for await (const ev of socket) {
         if (ev instanceof Uint8Array) {
           const incoming = SocketMessage.fromRaw(ev);
-          if(incoming.sizeOfMessage <= CONFIG.payloadLimit){
+          if (incoming.sizeOfMessage <= CONFIG.payloadLimit) {
             HandleEvent(incoming, socket.conn.rid);
-          }else{
-            Log.info({level: LogLevel.extreme, message: `payload with size ${incoming.sizeOfMessage} was rejected entrance. RID: ${socket.conn.rid}`})
+          } else {
+            Log.info({
+              level: LogLevel.extreme,
+              message: `payload with size ${incoming.sizeOfMessage} was rejected entrance. RID: ${socket.conn.rid}`,
+            });
           }
         } else if (isWebSocketCloseEvent(ev)) {
           this.handleClose(socket);
@@ -63,7 +62,7 @@ export default class Socket {
     acceptWebSocket({ conn, bufReader, bufWriter, headers })
       .then((socket) => {
         this.connections.set(socket.conn.rid, socket);
-        dispatchEvent(new Event(this.instanceID+"_connect"));
+        dispatchEvent(new Event(this.instanceID + "_connect"));
         this.waitForSocket(socket);
       })
       .catch(async (err: unknown) => {
@@ -75,15 +74,15 @@ export default class Socket {
   /**
    * Calls the callBack when a socket connects.
    */
-  public onSocketConnect(callBack: ()=>void){
-    addEventListener(this.instanceID+"_connect", callBack);
+  public onSocketConnect(callBack: () => void) {
+    addEventListener(this.instanceID + "_connect", callBack);
   }
 
   /**
    * Calls the callBack when a socket connects.
    */
-  public onSocketDisconnect(callBack: ()=>void){
-    addEventListener(this.instanceID+"_disconnect", callBack);
+  public onSocketDisconnect(callBack: () => void) {
+    addEventListener(this.instanceID + "_disconnect", callBack);
   }
 
   /**
@@ -91,20 +90,20 @@ export default class Socket {
    * @param data the data to send
    * @param exclude the socket id to exclude (tip: exclude yourself)
    */
-  static broadcast(data: yieldedSocketMessage, exclude?: number){
+  static broadcast(data: yieldedSocketMessage, exclude?: number) {
     const socket = socketS.getInstance();
-    socket.connections.forEach((s)=>{
-      if(!s.isClosed  && s.conn.rid !== exclude) {
-        s.send(SocketMessage.encode(Object.assign(data, {type: EventType.BROADCAST, payload: {...data.payload}})))
-        .catch(()=>socket.handleClose(s))
+    socket.connections.forEach((s) => {
+      if (!s.isClosed && s.conn.rid !== exclude) {
+        s.send(SocketMessage.encode(Object.assign(data, { type: EventType.BROADCAST, payload: { ...data.payload } })))
+          .catch(() => socket.handleClose(s));
       }
-  });
+    });
   }
   /**
    * Ban hammer.
    */
-  public kickAll(){
-    this.connections.forEach(x=>this.handleClose(x))
+  public kickAll() {
+    this.connections.forEach((x) => this.handleClose(x));
   }
 
   /**
@@ -115,13 +114,13 @@ export default class Socket {
    */
   static sendMessage(to: number, msg: yieldedSocketMessage): Promise<void> | undefined {
     const socket = socketS.getInstance().connections.get(to);
-    if(socket && !socket.isClosed){
-      return socket.send(SocketMessage.encode(msg)).catch(()=>socketS.getInstance().handleClose(socket));
+    if (socket && !socket.isClosed) {
+      return socket.send(SocketMessage.encode(msg)).catch(() => socketS.getInstance().handleClose(socket));
     }
   }
-  static getInstance(){
+  static getInstance() {
     return socketS.getInstance();
   }
 }
 
-export const socketS = singleton(()=> new Socket(CONFIG.plugsFolder))
+export const socketS = singleton(() => new Socket(CONFIG.plugsFolder));

@@ -1,5 +1,5 @@
-export function moduleTemplate(){
-    return `import { Log, LogLevel } from "../components/Log.ts";
+export function moduleTemplate() {
+  return `import { Log, LogLevel } from "../components/Log.ts";
 import { SocketMessage } from "../interface/message.ts";
 import { ModuleGenerator } from "../interface/socketFunction.ts";
 

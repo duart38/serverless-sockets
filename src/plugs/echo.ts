@@ -5,7 +5,6 @@ export async function* broadcast(message: SocketMessage, _from: number): ModuleG
   yield {
     type: EventType.BROADCAST,
     event: "broadcast-1",
-    payload: message.payload
-  }
+    payload: message.payload,
+  };
 }
-

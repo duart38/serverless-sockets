@@ -3,5 +3,5 @@
  * I.E. will accelerate the GC process of the V8 Engine
  */
 export interface FreeAble {
-    free(): void;
+  free(): void;
 }
