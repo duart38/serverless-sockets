@@ -97,6 +97,26 @@ export async function* broadcast(message: SocketMessage, _from: number): ModuleG
 Socket.sendMessage(/*client ID*/5, {event: "ev", payload: {}});
 ```
 
+## Synchronizing big objects with clients
+> NOTE: this method is only recommended if you have big objects that need to be synchronized between the server and the client!!. it also requires some extra logic on the client-side to make sure everything is in sync.
+
+Oftentimes we tend to abuse the websocket protocol by sending really big objects with small changed to the client to keep things in sync.. this is .. well... bad.
+
+To mitigate this the framework offers a method to synchronize big objects with the client by sending only the required instructions to the client which will then update it's local object.
+
+To use this method you simply need to add ```type: EventType.SYNC,``` to your **yield**s.
+example: 
+```TypeScript
+export async function* sync(message: SocketMessage, _from: number): ModuleGenerator {
+  yield {
+    type: EventType.SYNC,
+    event: "sync-1",
+    payload: {} // some big message here
+  }
+}
+```
+
+
 ## The eventType
 ```TypeScript
 /**
