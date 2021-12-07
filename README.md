@@ -209,6 +209,25 @@ The configuration class in this file should contian all the information and docu
 This is how a message is encoded when the client communicates with the server and vice versa.
 ![payload_shape-2](https://user-images.githubusercontent.com/30909481/143445150-e1c3ad2e-bb3f-4392-8984-c46dee58a23a.png)
 
+# SYNC payload shape
+> This section is only needed if you are modifying the framework.
+
+The payload shape for the SYNC event will return the difference between the last sent or received object in the form of a multi-dimensional array.
+
+```TypeScript
+[
+  [number], // the difference between the 2 known arrays, will be negative if the size decreases and positive otherwise
+  [indexToStart, number, number, ...], // subsequent arrays start with the index of where to start placing each item and this is then followed by all the items to be placed.
+  ...
+  ...
+]
+```
+
+The
+```TypeScript
+SocketMessage.syncIncoming(msg: Uint8Array)
+```
+message  will take in a SYNC style payload and synchronize the already existing object with the new one.
 
 # Testing
 ```sh
