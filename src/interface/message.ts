@@ -173,7 +173,7 @@ export class SocketMessage implements FreeAble {
 
       const newRaw = hasNewSize ? new Uint8Array(this.raw.length + sizeDifference) : this.raw;
       if(hasNewSize){
-        newRaw.set(this.raw,0);
+        newRaw.set(this.raw.slice(0, newRaw.length < this.raw.length ? newRaw.length : this.raw.length), 0);
       }
       incomingPayload.forEach((instr)=>{
         const pos = instr.shift();
