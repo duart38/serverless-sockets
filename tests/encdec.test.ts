@@ -1,6 +1,7 @@
 import { assertEquals } from "https://deno.land/std@0.106.0/testing/asserts.ts";
 import { EventType } from "../src/interface/message.ts";
 import { SocketMessage, yieldedSocketMessage } from "../src/interface/message.ts";
+import { calculateUpdatePaths } from "../src/MISC/utils.ts";
 
 Deno.test("SocketMessage encoding and decoding works", () => {
     const payload: yieldedSocketMessage = {
@@ -83,4 +84,47 @@ Deno.test("SocketMessage eventType auto-populates on absence", () => {
     });
     const read = SocketMessage.fromRaw(raw);
     assertEquals(read.eventType, EventType.MESSAGE);
+});
+
+Deno.test("SocketMessage SYNC works", () => {
+    const originalMessage = SocketMessage.encode({
+        event: "test",
+        type: EventType.SYNC,
+        payload: {
+            name: "Duart Snel",
+            age: 23,
+            numbers: [1,2,3,4,5],
+            nest: {
+                nested: "hey"
+            }
+        }
+    });
+    
+    const newMessage = SocketMessage.encode({
+        event: "test",
+        type: EventType.SYNC,
+        payload: {
+            name: "John Snel", // this changed
+            age: 23,
+            numbers: [1,2,3,4,5],
+            nest: {
+                nested: "hello world" // this changed
+            }
+        }
+    });
+    
+    const syncingMessage: yieldedSocketMessage = {
+        event: "test",
+        type: EventType.SYNC,
+        payload: calculateUpdatePaths(originalMessage, newMessage)
+    }
+    
+    
+    const old = SocketMessage.fromRaw(originalMessage);
+    old.syncIncoming(SocketMessage.encode(syncingMessage));
+
+    assertEquals(old.event, "test");
+    assertEquals(old.eventType, EventType.SYNC);
+    assertEquals(old.payload.name, "John Snel"  );
+    assertEquals((old.payload.nest as Record<string, string>).nested, "hello world");
 });
