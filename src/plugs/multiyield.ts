@@ -6,7 +6,6 @@ export async function* test(message: SocketMessage, _from: number): ModuleGenera
   Log.info({ level: LogLevel.low, message: "some other test function" });
   for (let i = 0; i < message.payload.count; i++) {
     yield {
-      event: "spam-mode",
       payload: {
         name: `iteration ${i}`,
       },
