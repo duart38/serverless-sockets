@@ -15,6 +15,7 @@
   * [Generating modules](#generating-modules)
 - [Configuration](#configuration)
 - [Payload shape](#payload-shape)
+- [SYNC payload shape](#sync-payload-shape)
 - [Testing](#testing)
 - [Considerations and limitations](#considerations-and-limitations)
 
