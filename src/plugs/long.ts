@@ -4,7 +4,6 @@ export async function* long(message: socketMessage): ModuleGenerator {
   console.log("reached");
   await new Promise((resolve) => setTimeout(resolve, (message.payload as Record<string, unknown>).ms as number));
   yield {
-    event: "waiting",
     payload: {},
   };
 }
