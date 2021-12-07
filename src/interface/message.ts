@@ -13,7 +13,7 @@ export type socketMessage = Record<string, serializable>;
 export interface yieldedSocketMessage {
   type?: EventType;
   event: string;
-  payload: Record<string, serializable>;
+  payload: unknown[] | Record<string, serializable>;
 }
 
 /**
@@ -32,6 +32,10 @@ export enum EventType {
    * Reserved for authentication, cleans up code a bit.
    */
   AUTH,
+  /**
+   * Sync request to update a portion of the client side data rather than sending back the entire object.
+   */
+  SYNC,
   /**
    * Reserved for unknown errors
    */
@@ -141,6 +145,47 @@ export class SocketMessage implements FreeAble {
    */
   free() {
     Object.keys(this).forEach((k) => (this as Record<string, unknown>)[k] = null);
+  }
+
+  private _resetGetters() {
+    this._eventType = undefined;
+    this._sizeOfAll = undefined;
+    this._sizeOfEvent = undefined;
+    this._event = undefined;
+    this._payload = undefined;
+  }
+
+  /**
+   * Synchronies an incoming raw message into the current message.
+   * > Message type must be of type SYNC and must follow the synchronization standard.
+   * ---
+   * > NOTE: Sync system is to be used when dealing with large or growing objects to avoid sending big data over a socket connection.
+   * 
+   * @param msg The raw message to sync with the current one.
+   */
+  public syncIncoming(msg: Uint8Array){
+    const message = SocketMessage.fromRaw(msg);
+    if(message.eventType === EventType.SYNC){
+      const incomingPayload = message.payload as unknown as number[][];
+      const sizeDifference = incomingPayload[0][0];
+      incomingPayload.shift();
+      const hasNewSize = sizeDifference !== 0;
+
+      const newRaw = hasNewSize ? new Uint8Array(this.raw.length + sizeDifference) : this.raw;
+      if(hasNewSize){
+        newRaw.set(this.raw,0);
+      }
+      incomingPayload.forEach((instr)=>{
+        const pos = instr.shift();
+        newRaw.set(instr, pos);
+      });
+      
+      if(hasNewSize) {
+        this.raw = newRaw;
+        this.dv = new DataView(newRaw.buffer);
+      }
+      this._resetGetters();
+    }
   }
 
   /**
