@@ -8,6 +8,7 @@
       - [yielding a broadcast (Recommended)](#yielding-a-broadcast--recommended-)
       - [method-based broadcast (avoid if possible)](#method-based-broadcast--avoid-if-possible-)
   * [Sending to specific client](#sending-to-specific-client)
+  * [Synchronizing big objects with clients](#synchronizing-big-objects-with-clients)
   * [The eventType](#the-eventtype)
 - [CLI](#cli)
   * [Inline configuration (will not persist)](#inline-configuration--will-not-persist-)
