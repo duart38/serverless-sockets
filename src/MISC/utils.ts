@@ -65,3 +65,30 @@
 //     revoke: revokableAcc,
 //   };
 // }
+
+
+export function calculateUpdatePaths(oldArr: Uint8Array, newArr: Uint8Array){
+    const pathInstructions: number[][] = []; // [[newArrLength], ..., ..., ...]
+    pathInstructions.push([newArr.length - oldArr.length]);
+
+    let groupMode = false;
+    let currentInstruction: number[] = []; // [startIdx, ..., ..., ..., ...]
+    for(let i = 0; i < newArr.length; i++){
+        if(oldArr[i] !== newArr[i]){
+            if(!groupMode){
+                currentInstruction[0] = i;
+                groupMode = true;
+            }
+            const byte = newArr.at(i);
+            if(byte) currentInstruction.push(byte);
+        }else{
+            if(groupMode){ // was previously true... push current instruction
+                pathInstructions.push(currentInstruction);
+            }
+            groupMode = false;
+            currentInstruction = [];
+        }
+    }
+    if(currentInstruction.length > 0) pathInstructions.push(currentInstruction); // tail reached with changed value
+    return pathInstructions;
+}
