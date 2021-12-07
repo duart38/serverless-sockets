@@ -52,7 +52,7 @@ Here's an example of how the modular functions look like.
 export async function* test(message: SocketMessage, _from: number): ModuleGenerator { // _from is the id of the client
     for(let i = 0; i<message.payload.count; i++){ // message.payload.count is what the client sends us
       yield { // returning data back to the client
-        event: "spam-mode",
+        event: "spam-mode", // this is optional. will default to the event name of this module
         payload: {
           name: `iteration ${i}`
         }
