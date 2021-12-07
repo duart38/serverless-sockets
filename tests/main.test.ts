@@ -33,7 +33,7 @@ Deno.test("Payload and single yield works", async () => {
   const res = waitForMessage();
   const payload = { event: "multiyield", payload: {count: 1} };
   ws2.send(SocketMessage.encode(payload));
-  assertEquals((await res).event, "spam-mode")
+  assertEquals((await res).event, "multiyield")
 });
 
 Deno.test("multi yields", () => {

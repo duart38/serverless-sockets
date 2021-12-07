@@ -17,6 +17,7 @@ function handleYields(generatorFunction: ModuleGenerator, from: number, msgRef: 
       which could potentially cause a memory overflow if the sum of yields are very large.
      */
 
+    if(!reply.value.event) reply.value.event = msgRef.event;
     switch(reply.value.type){
       case EventType.MESSAGE: {
         Socket.sendMessage(from, reply.value)

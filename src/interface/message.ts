@@ -12,7 +12,7 @@ export type socketMessage = Record<string, serializable>;
  */
 export interface yieldedSocketMessage {
   type?: EventType;
-  event: string;
+  event?: string;
   payload: unknown[] | Record<string, serializable>;
 }
 
