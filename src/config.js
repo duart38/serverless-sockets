@@ -12,10 +12,10 @@ export class configuration {
    */
   preloadPlugs = true;
   /**
-   * Indicates if broadcast messages (sent to all connected clients) shjould exclude the client that initiated the
+   * Indicates if broadcast messages (sent to all connected clients) should exclude the client that initiated the
    * broadcast event.
    */
-  excludeSenderOnBroadcast = false;
+  excludeSenderOnBroadcast = true;
 
   /** Indicates wether this server needs to use TLS or not */
   secure = false;
