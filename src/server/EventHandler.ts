@@ -1,15 +1,15 @@
-import { EventType, SocketMessage } from "../interface/message.ts";
+import { EventType, SocketMessage, yieldedSocketMessage } from "../interface/message.ts";
 import Socket, { socketS } from "./Socket.ts";
 import { Watcher } from "../FS/FileWatcher.ts";
 import { ModuleGenerator, PLUG_LENGTH } from "../interface/socketFunction.ts";
 import { CONFIG } from "../config.js";
-import { FreeAble } from "../interface/mem.ts";
+import { calculateUpdatePaths } from "../MISC/utils.ts";
 
 /**
  * Handle incoming yields from modules.
  * @param msgRef the reference to the incoming message to be freed-up when yielding is done.
  */
-function handleYields(generatorFunction: ModuleGenerator, from: number, msgRef: FreeAble): void {
+function handleYields(generatorFunction: ModuleGenerator, from: number, msgRef: SocketMessage, prev: yieldedSocketMessage | undefined = undefined): void {
   generatorFunction.next().then((reply) => {
     if (reply.done === true || reply.done === undefined) return msgRef.free();
     /*
@@ -17,12 +17,29 @@ function handleYields(generatorFunction: ModuleGenerator, from: number, msgRef: 
       which could potentially cause a memory overflow if the sum of yields are very large.
      */
 
-    if (reply.value.type === EventType.BROADCAST) {
-      Socket.broadcast(reply.value, CONFIG.excludeSenderOnBroadcast ? from : undefined);
-      handleYields(generatorFunction, from, msgRef);
-    } else {
-      Socket.sendMessage(from, reply.value)
+    switch(reply.value.type){
+      case EventType.MESSAGE: {
+        Socket.sendMessage(from, reply.value)
         ?.then(() => handleYields(generatorFunction, from, msgRef));
+        break;
+      }
+      case EventType.BROADCAST: {
+        Socket.broadcast(reply.value, CONFIG.excludeSenderOnBroadcast ? from : undefined);
+        handleYields(generatorFunction, from, msgRef);
+        break;
+      }
+      case EventType.SYNC: {
+        const toSend = {
+          ...reply.value,
+          payload: calculateUpdatePaths(prev !== undefined ? SocketMessage.encode(prev) : msgRef.raw, SocketMessage.encode(reply.value))
+        }
+        Socket.sendMessage(from, toSend)?.then(() => handleYields(generatorFunction, from, msgRef, reply.value));
+        break;
+      }
+      default: {
+        Socket.sendMessage(from, reply.value)
+        ?.then(() => handleYields(generatorFunction, from, msgRef));
+      }
     }
   });
 }
