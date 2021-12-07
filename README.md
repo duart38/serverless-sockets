@@ -229,6 +229,10 @@ SocketMessage.syncIncoming(msg: Uint8Array)
 ```
 message  will take in a SYNC style payload and synchronize the already existing object with the new one.
 
+Here's how this all looks:
+![sync_payload_shape](https://github.com/duart38/serverless-sockets/blob/main/artefacts/Architecture/SYNC_payload.jpg)
+
+
 # Testing
 ```sh
 deno test -A --unstable --coverage=cov_profile && deno coverage cov_profile
