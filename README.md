@@ -29,6 +29,7 @@ Bringing serverless functionality and extendability to a websocket server.
 - no server config modifications required.. just add a function and you're done..
 - Hide the messy webscoket implementation and work with easy functions
 - wrap existing APIs into a websocket interface for legacy codebases (familiar interface)
+- Reduce websocket abuse (e.g. sending very large objects) by allowing for clever synchronization methods.
 
 
 # Running locally
