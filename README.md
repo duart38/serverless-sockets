@@ -232,7 +232,11 @@ SocketMessage.syncIncoming(msg: Uint8Array)
 message  will take in a SYNC style payload and synchronize the already existing object with the new one.
 
 Here's how this all looks:
+
 ![sync_payload_shape](https://github.com/duart38/serverless-sockets/blob/main/artefacts/Architecture/SYNC_payload.jpg)
+
+![SYNC_payload_example](https://user-images.githubusercontent.com/30909481/145262574-8a171c28-0f1d-4002-a966-152656c4904e.jpg)
+
 
 
 # Testing
