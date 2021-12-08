@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.106.0/testing/asserts.ts";
+import { assertEquals, assertThrows } from "https://deno.land/std@0.106.0/testing/asserts.ts";
 import { EventType } from "../src/interface/message.ts";
 import { SocketMessage, yieldedSocketMessage } from "../src/interface/message.ts";
 import { calculateUpdatePaths } from "../src/MISC/utils.ts";
@@ -127,4 +127,20 @@ Deno.test("SocketMessage SYNC works", () => {
     assertEquals(old.eventType, EventType.SYNC);
     assertEquals(old.payload.name, "John Snel"  );
     assertEquals((old.payload.nest as Record<string, string>).nested, "hello world");
+});
+
+Deno.test("SocketMessage free method cleans up properly", () => {
+    const raw = SocketMessage.encode({
+        event: "test",
+        payload: {count: 5},
+    });
+    const read = SocketMessage.fromRaw(raw);
+    read.free();
+    assertThrows(()=>{read.event});
+    assertThrows(()=>{read.eventType});
+    assertThrows(()=>{read.payload});
+    assertThrows(()=>{read.sizeOfEvent});
+    assertThrows(()=>{read.sizeOfMessage});
+
+    assertEquals(read.raw, null);
 });
