@@ -1,6 +1,7 @@
 # TOC
 - [The idea](#the-idea)
   * [But why??](#but-why--)
+- [Installing](#installing)
 - [Running locally](#running-locally)
 - [How it works](#how-it-works)
   * [Simple return message(s)](#simple-return-message-s-)
@@ -22,6 +23,7 @@
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 
+
 # The idea
 Bringing serverless functionality and extendability to a websocket server.
 ## But why??
@@ -30,6 +32,26 @@ Bringing serverless functionality and extendability to a websocket server.
 - Hide the messy webscoket implementation and work with easy functions
 - wrap existing APIs into a websocket interface for legacy codebases (familiar interface)
 - Reduce websocket abuse (e.g. sending very large objects) by allowing for clever synchronization methods.
+
+# Installing
+Requirements: [Deno](https://deno.land)
+To install run the command:
+```bash
+deno install -A -f -n ssocket https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/mod.ts
+```
+
+After this you can use the server in any folder with the command:
+```bash
+ssocket
+```
+
+it's also possible to pre-configure the server before installing it to make sure the configurations persist every time the command is run.
+To do this use the command to install and prepend the configuration flags to the command:
+```bash
+deno install -A -f -n ssocket https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/mod.ts <flags-goes-here>
+```
+
+> See configuration documentation (CLI) on how to configure the server.
 
 
 # Running locally
