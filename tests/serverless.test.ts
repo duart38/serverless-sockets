@@ -3,10 +3,10 @@ import { serve } from "https://deno.land/std@0.90.0/http/server.ts";
 import { CONFIG } from "../src/config.js";
 import { SocketMessage, yieldedSocketMessage } from "../src/interface/message.ts";
 import { socketS } from "../src/server/Socket.ts";
-
-const tempDir = Deno.makeTempDirSync();
+const plugsDir = './tests/testPlugs';
+Deno.mkdirSync(plugsDir, {});
 function writeToTemp(file:string, toYield: yieldedSocketMessage){
-    Deno.writeTextFileSync(`${tempDir}/${file}.ts`, `
+    Deno.writeTextFileSync(`${plugsDir}/${file}.ts`, `
 export async function* _${toYield.event}(){
     yield ${JSON.stringify(toYield)}
 }`)
@@ -14,7 +14,7 @@ export async function* _${toYield.event}(){
 
 writeToTemp('test', {event: 'unchanged', payload: {}});
 
-CONFIG.plugsFolder = tempDir;
+CONFIG.plugsFolder = plugsDir;
 CONFIG.secure = false;
 
 const ws2 = new WebSocket("ws://localhost:8080");
@@ -38,6 +38,7 @@ function waitForMessage(){
 
 const _isOpen = await new Promise<boolean>((res)=>ws2.addEventListener("open", () => res(true)));
 
+
 Deno.test({
   sanitizeOps: false,
   name: "Server re-loads changed files", 
@@ -52,16 +53,16 @@ Deno.test({
 });
 
 
-writeToTemp('newfunc', {event: 'new', payload: {}});
 Deno.test({
   name: "Server takes in newly added files",
   sanitizeOps: false,
   async fn() {
+    writeToTemp('newfunc', {payload: {}});
     const res = waitForMessage();
     const payload = { event: "newfunc", payload: {} };
     ws2.send(SocketMessage.encode(payload));
     console.log((await res).payload)
-    assertEquals((await res).event, "new")
+    assertEquals((await res).event, "newfunc")
   }
 });
 
@@ -88,6 +89,9 @@ Deno.test({
   }
 });
 
+window.addEventListener("unload", ()=>{
+  Deno.removeSync(plugsDir, {recursive: true});
+});
 setTimeout(()=>{
     console.log("Force quitting deno as the framework runs indefinitely")
     Deno.exit(0)

@@ -4,7 +4,7 @@ import { CONFIG } from "../src/config.js";
 import { SocketMessage } from "../src/interface/message.ts";
 import { socketS } from "../src/server/Socket.ts";
 
-CONFIG.plugsFolder = Deno.cwd() + "/src/plugs";
+CONFIG.plugsFolder = "src/plugs";
 CONFIG.secure = false;
 
 const ws2 = new WebSocket("ws://localhost:8080");
