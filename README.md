@@ -35,6 +35,7 @@ Bringing serverless functionality and extendability to a websocket server.
 
 # Installing
 Requirements: [Deno](https://deno.land)
+
 To install run the command:
 ```bash
 deno install -A -f -n ssocket https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/mod.ts
@@ -44,6 +45,7 @@ After this you can use the server in any folder with the command:
 ```bash
 ssocket
 ```
+> The server expects a folder called "plugs" to be present in the current directory.
 
 it's also possible to pre-configure the server before installing it to make sure the configurations persist every time the command is run.
 To do this use the command to install and prepend the configuration flags to the command:
