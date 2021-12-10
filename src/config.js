@@ -23,7 +23,7 @@ export class configuration {
   /**
    * Where to store and get dynamic code to be executed
    */
-  plugsFolder = "/Users/duartasnel/Local/WORK/BusinessOne/socketstuff/src/plugs";
+  plugsFolder = "./plugs";
 
   printLogToConsole = true;
   /**
