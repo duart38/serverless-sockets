@@ -28,14 +28,18 @@ export class Watcher {
    * @param dir the directory to preload from.
    */
   private preLoadDir(dir: string) {
-    for (const { isFile, name } of Deno.readDirSync(dir)) {
-      if (isFile) {
-        Log.info(`[+] Generating file hash for: ${dir}/${name}`);
-        const file = this._sanitizeIncoming(name);
-        this.files.set(file, this.newHash());
-      } else {
-        this.preLoadDir(`${dir}/${name}`);
+    try{
+      for (const { isFile, name } of Deno.readDirSync(dir)) {
+        if (isFile) {
+          Log.info(`[+] Generating file hash for: ${dir}/${name}`);
+          const file = this._sanitizeIncoming(name);
+          this.files.set(file, this.newHash());
+        } else {
+          this.preLoadDir(`${dir}/${name}`);
+        }
       }
+    }catch(e){
+      Log.error(e);
     }
   }
 
