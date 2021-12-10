@@ -1,4 +1,4 @@
-import { Log, LogLevel } from "../components/Log.ts";
+import { Log } from "../components/Log.ts";
 
 export class Watcher {
   /**
@@ -28,7 +28,7 @@ export class Watcher {
   private preLoadDir(dir: string) {
     for (const { isFile, name } of Deno.readDirSync(dir)) {
       if (isFile) {
-        Log.info({ level: LogLevel.high, message: `[+] Generating file hash for: ${dir}/${name}` });
+        Log.info(`[+] Generating file hash for: ${dir}/${name}`);
         const file = this._sanitizeIncoming(name);
         this.files.set(file, this.newHash());
       } else {
