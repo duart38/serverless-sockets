@@ -15,6 +15,8 @@ export class Watcher {
   private files: Map<string, string>;
 
   constructor(dir: string) {
+    // TODO: remove log here or replace with info log
+    console.log("FileWatcher watching dir:",dir);
     this.hash = "";
     this.files = new Map();
     this.dir = dir;
