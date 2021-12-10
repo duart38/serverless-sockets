@@ -29,9 +29,10 @@ export class configuration {
   /**
    * Indicates the verbosity of the logger (what is to be logged) based on the log level.
    * See the LogLevel enum to ensure the propper value here.
+   * > NOTE: keeping this low (e.g. 0) slightly improves performance.
    * @see {LogLevel}
    */
-  logLevel = 4;
+  logLevel = 0;
   /**
    * Limit the length of the log buffer.
    * - Any overflow of the log would result in the oldest value being popped from the buffer.
