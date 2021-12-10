@@ -58,7 +58,7 @@ export async function HandleEvent(
 
   const sanitized = sanitizeEvent(incoming.event);
   if (fileWatcher.containsFile(sanitized)) {
-    const m = await import(`${fileWatcher.directory()}/${sanitized}.ts?${fileWatcher.getFileHash(sanitized)}`);
+    const m = await import(`file://${fileWatcher.directory()}/${sanitized}.ts?${fileWatcher.getFileHash(sanitized)}`);
 
     const gFn = (Object.values(m) as AsyncGeneratorFunction[]).filter((v) => typeof v === "function" && validateFunctionShape(v));
     for (let i = 0; i < gFn.length; i++) handleYields(gFn[i](incoming, from) as ModuleGenerator, from, incoming);
