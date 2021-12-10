@@ -1,4 +1,4 @@
-import { Log, LogLevel } from "../components/Log.ts";
+import { Log } from "../components/Log.ts";
 
 /**
  * Pre-loads files into memory. could speed up initial socket message processing

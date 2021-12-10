@@ -1,7 +1,7 @@
 import singleton from "https://raw.githubusercontent.com/grevend/singleton/main/mod.ts";
 import { Args, parse } from "https://deno.land/std@0.106.0/flags/mod.ts";
 import { CONFIG } from "../config.js";
-import { Log, LogLevel } from "./Log.ts";
+import { Log } from "./Log.ts";
 import { moduleTemplate } from "../MISC/moduleTemplate.ts";
 
 export class CLI {
