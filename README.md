@@ -55,6 +55,8 @@ deno install -A -f -n ssocket https://raw.githubusercontent.com/duart38/serverle
 
 > See configuration documentation (CLI) on how to configure the server.
 
+For more information on installing scripts [check this page out](https://deno.land/manual@v1.16.4/tools/script_installer)
+
 
 # Running locally
 Requirements: [Deno](https://deno.land)
