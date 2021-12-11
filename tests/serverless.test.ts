@@ -89,7 +89,7 @@ Deno.test({
   }
 });
 
-window.addEventListener("unload", ()=>{
+self.addEventListener("unload", ()=>{
   Deno.removeSync(plugsDir, {recursive: true});
 });
 setTimeout(()=>{
