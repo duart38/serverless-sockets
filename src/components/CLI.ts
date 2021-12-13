@@ -56,7 +56,7 @@ Available configurations:`);
    * @param config The config file in the form of an object.
    * @param preKey DO NOT USE, this is to support recursive nesting in the object file.
    */
-  public printHelp(config: Record<string, unknown>, preKey = "") {
+  private printHelp(config: Record<string, unknown>, preKey = "") {
     Object.entries(config).forEach(async ([key, v]) => {
       if (typeof v === "object") {
         this.printHelp(v as Record<string, unknown>, preKey + `${key}.`);
