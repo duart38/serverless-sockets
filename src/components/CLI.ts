@@ -1,7 +1,6 @@
 import singleton from "https://raw.githubusercontent.com/grevend/singleton/main/mod.ts";
 import { Args, parse } from "https://deno.land/std@0.106.0/flags/mod.ts";
 import { CONFIG } from "../config.js";
-import { Log } from "./Log.ts";
 import { moduleTemplate } from "../MISC/moduleTemplate.ts";
 
 export class CLI {
@@ -92,12 +91,12 @@ Available configurations:`);
     Object.entries(this.args).filter(([k]) => k !== "_").forEach(([key, val]) => {
       if (CONFIG[key]) {
         if (this._checkTypeEquals(CONFIG[key], val) === false) {
-          Log.error(`Supplied argument ${key}'s type (${typeof val}) does not match config values type (${typeof CONFIG[key]}).`);
+          console.error(`Supplied argument ${key}'s type (${typeof val}) does not match config values type (${typeof CONFIG[key]}).`);
         }
         if (typeof CONFIG[key] === "object") {
           Object.entries(val).forEach(([eK, eV]) => {
             if (this._checkTypeEquals(CONFIG[key][eK], eV) === false) {
-              Log.error(`Supplied argument ${key}.${eK}'s type (${typeof eV}) does not match config values type (${typeof CONFIG[key][eK]}).`);
+              console.error(`Supplied argument ${key}.${eK}'s type (${typeof eV}) does not match config values type (${typeof CONFIG[key][eK]}).`);
             }
             CONFIG[key][eK] = eV;
           });
@@ -105,7 +104,7 @@ Available configurations:`);
           CONFIG[key] = val;
         }
       } else {
-        Log.error(`Supplied argument ${key} is not a valid configuration option, run with -h to see available options`);
+        console.error(`Supplied argument ${key} is not a valid configuration option, run with -h to see available options`);
       }
     });
   }
