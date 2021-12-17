@@ -70,6 +70,7 @@ Deno.test({
 Deno.test({
   name: "Server does not crash on malformed request",
   sanitizeOps: false,
+  sanitizeResources: false,
   async fn() {
     const payload = { event: "test", payload: {} };
     const temp = new Uint8Array(8);
