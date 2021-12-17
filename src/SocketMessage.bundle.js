@@ -11,7 +11,7 @@ function chunkUp32(num) {
     parts[3] = num & 255;
     return parts;
 }
-var EventType1;
+let EventType1;
 (function(EventType) {
     EventType[EventType["MESSAGE"] = 0] = "MESSAGE";
     EventType[EventType["BROADCAST"] = 1] = "BROADCAST";
