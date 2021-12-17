@@ -41,7 +41,7 @@ Deno.test({
   sanitizeOps: false,
   sanitizeResources: false,
   name: "multi yields", 
-  async fn () {
+  fn () {
     const timeout = setTimeout(()=>fail("Timeout"), 8000);
     let count = 0;
     const fn = () => {
@@ -57,22 +57,6 @@ Deno.test({
     ws2.send(SocketMessage.encode(payload));
   }
 });
-
-// Deno.test("multi yields", () => {
-//   const timeout = setTimeout(()=>fail("Timeout"), 8000);
-//   let count = 0;
-//   const fn = () => {
-//     count++;
-//     if(count > 3){
-//       assert("SOLID");
-//       clearTimeout(timeout);
-//       ws2.removeEventListener("message",fn);
-//     }
-//   }
-//   ws2.addEventListener("message", fn);
-//   const payload = { event: "multiyield", payload: {count: 4} }
-//   ws2.send(SocketMessage.encode(payload));
-// });
 
 setTimeout(()=>{
   console.log("Force quitting deno as the framework runs indefinitely")
