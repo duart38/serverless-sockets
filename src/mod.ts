@@ -33,7 +33,7 @@ export function start() {
       Log.info(`websocket server is running on :${CONFIG.INSECURE.port}`);
       for await (const req of serve(CONFIG.INSECURE)) socket.accept(req);
     }
-  }).catch((_) => {});
+  }).catch((_: unknown) => {});
 }
 
 if (import.meta.main) {
