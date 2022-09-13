@@ -5,15 +5,15 @@ type serializable = number | string | Array<unknown> | Record<string, unknown>;
 /**
  * Shared interface between the client and the server.. the payload should have the following shape
  */
-export type socketMessage = Record<string, serializable>;
+export type socketMessage<T = Record<string, serializable>> = T;
 
 /**
  * The shape of the message that is yielded from socket functions (modules)
  */
-export interface yieldedSocketMessage {
+export interface yieldedSocketMessage<T = Record<string, unknown>> {
   type?: EventType;
   event?: string;
-  payload: unknown[] | Record<string, serializable>;
+  payload: unknown[] | Record<string, serializable> | T;
 }
 
 /**
@@ -67,7 +67,7 @@ export enum EventType {
   CUSTOM_5,
 }
 
-export class SocketMessage implements FreeAble {
+export class SocketMessage<T = Record<string, unknown>> implements FreeAble {
   /**
    * The raw data in it's original form.
    */
@@ -77,7 +77,7 @@ export class SocketMessage implements FreeAble {
   private _sizeOfAll: number | undefined;
   private _sizeOfEvent: number | undefined;
   private _event: string | undefined;
-  private _payload: socketMessage | undefined;
+  private _payload: socketMessage<T> | undefined;
 
   private dv: DataView;
   /**
@@ -132,10 +132,10 @@ export class SocketMessage implements FreeAble {
    * Lazily gets and decodes the payload of the raw data.
    * NOTE: calls the ```sizeOfEvent();` to skip over it to the last sections which includes the payload data
    */
-  get payload(): socketMessage {
+  get payload(): socketMessage<T> {
     if (this._payload) return this._payload;
     // initial 8 because we are skipping the total size an the event size and then we skip the entire event with it's size
-    this._payload = JSON.parse(new TextDecoder().decode(this.raw.slice(6 + this.sizeOfEvent))) as socketMessage;
+    this._payload = JSON.parse(new TextDecoder().decode(this.raw.slice(6 + this.sizeOfEvent))) as socketMessage<T>;
     return this._payload;
   }
 
