@@ -6,6 +6,7 @@ import { socketS } from "../src/server/Socket.ts";
 const plugsDir = './tests/testPlugs';
 try{
   Deno.mkdirSync(plugsDir, {});
+// deno-lint-ignore no-empty
 }catch(_){}
 function writeToTemp(file:string, toYield: yieldedSocketMessage){
     Deno.writeTextFileSync(`${plugsDir}/${file}.ts`, `
