@@ -62,9 +62,9 @@ export class configuration {
      * If not specified, defaults to `0.0.0.0`. */
     hostname: "0.0.0.0",
     /** Server certificate file. */
-    certFile: "/Users/duartasnel/Local/WORK/BusinessOne/socket_demos/.cert/cert.pem",
+    certFile: "./cert.pem",
     /** Server public key file. */
-    keyFile: "/Users/duartasnel/Local/WORK/BusinessOne/socket_demos/.cert/key.pem",
+    keyFile: "./key.pem",
   };
 
   /**
