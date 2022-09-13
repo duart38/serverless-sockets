@@ -4,7 +4,9 @@ import { CONFIG } from "../src/config.js";
 import { SocketMessage, yieldedSocketMessage } from "../src/interface/message.ts";
 import { socketS } from "../src/server/Socket.ts";
 const plugsDir = './tests/testPlugs';
-Deno.mkdirSync(plugsDir, {});
+try{
+  Deno.mkdirSync(plugsDir, {});
+}catch(_){}
 function writeToTemp(file:string, toYield: yieldedSocketMessage){
     Deno.writeTextFileSync(`${plugsDir}/${file}.ts`, `
 export async function* _${toYield.event}(){
