@@ -45,3 +45,4 @@ export * from "./interface/message.ts";
 export * from "./interface/socketFunction.ts";
 export * from "./interface/sync.ts";
 export * from "./server/Socket.ts";
+export * from "./components/Log.ts";
