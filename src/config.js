@@ -88,7 +88,5 @@ export class configuration {
     interval: 5000,
   };
 }
-/**
- * @type {Record<string, unkown>}
- */
+
 export const CONFIG = new configuration();

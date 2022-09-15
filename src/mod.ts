@@ -2,7 +2,6 @@ import { serve, serveTLS } from "https://deno.land/std@0.90.0/http/server.ts";
 import { CLI } from "./components/CLI.ts";
 import { Log } from "./components/Log.ts";
 import { CONFIG } from "./config.js";
-import { INIT } from "./INIT.ts";
 import { preLoadPlugs } from "./server/PreLoader.ts";
 import { socketS } from "./server/Socket.ts";
 
@@ -23,7 +22,9 @@ export function start() {
       }, CONFIG.memoryMetrics.interval);
     }
     const socket = socketS.getInstance();
-    INIT();
+    const init = await import("./INIT.ts");
+    init?.INIT(socket);
+
     CONFIG.preloadPlugs && preLoadPlugs(CONFIG.plugsFolder);
     // ... other http code goes here ...
     if (CONFIG.secure) {
