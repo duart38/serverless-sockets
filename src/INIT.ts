@@ -6,6 +6,6 @@ import Socket from "./server/Socket.ts";
  *
  * EXAMPLE: listen for incoming connection from the socket and send each of them a message.
  */
-export function INIT(socket: Socket) {
+export function INIT(_socket: Socket) {
   console.log("initial function called");
 }
