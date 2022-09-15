@@ -23,7 +23,9 @@ export function start() {
       }, CONFIG.memoryMetrics.interval);
     }
     const socket = socketS.getInstance();
-    INIT();
+    const init = await import("./INIT.ts");
+    init?.INIT(socket);
+
     CONFIG.preloadPlugs && preLoadPlugs(CONFIG.plugsFolder);
     // ... other http code goes here ...
     if (CONFIG.secure) {
