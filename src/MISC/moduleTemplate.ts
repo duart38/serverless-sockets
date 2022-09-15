@@ -1,7 +1,5 @@
 export function moduleTemplate() {
-  return `import { Log } from "../components/Log.ts";
-import { SocketMessage } from "../interface/message.ts";
-import { ModuleGenerator } from "../interface/socketFunction.ts";
+  return `import { Log, SocketMessage, ModuleGenerator } from "https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/mod.ts";
 
 export async function* renameMe(message: SocketMessage, from: number): ModuleGenerator {
     Log.info(\`Message from \${from}, \${message.payload}\`);
