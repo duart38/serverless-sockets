@@ -1,7 +1,7 @@
 import { chunkUp32 } from "../MISC/bits.ts";
 import { FreeAble } from "./mem.ts";
 
-type serializable = number | string | Array<unknown> | Record<string, unknown>;
+export type serializable = number | string | Array<unknown> | Record<string, unknown>;
 /**
  * Shared interface between the client and the server.. the payload should have the following shape
  */
@@ -10,10 +10,10 @@ export type socketMessage<T = Record<string, serializable>> = T;
 /**
  * The shape of the message that is yielded from socket functions (modules)
  */
-export interface yieldedSocketMessage<T = Record<string, unknown>> {
+export interface yieldedSocketMessage<T extends serializable = Record<string, unknown>> {
   type?: EventType;
   event?: string;
-  payload: unknown[] | Record<string, serializable> | T;
+  payload: T;
 }
 
 /**
@@ -193,7 +193,7 @@ export class SocketMessage<T = Record<string, unknown>> implements FreeAble {
    * @param data
    * @returns
    */
-  static encode(data: yieldedSocketMessage) {
+  static encode<K extends serializable>(data: yieldedSocketMessage<K>) {
     const encoder = new TextEncoder();
     const event = encoder.encode(data.event);
     const payload = encoder.encode(JSON.stringify(data.payload));

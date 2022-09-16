@@ -1,5 +1,5 @@
 import type { ServerRequest } from "https://deno.land/std@0.90.0/http/server.ts";
-import { EventType, SocketMessage, yieldedSocketMessage } from "../interface/message.ts";
+import { EventType, serializable, SocketMessage, yieldedSocketMessage } from "../interface/message.ts";
 
 import { acceptWebSocket, isWebSocketCloseEvent, WebSocket } from "https://deno.land/std@0.90.0/ws/mod.ts";
 import { Watcher } from "../FS/FileWatcher.ts";
@@ -109,7 +109,7 @@ export default class Socket {
    * @param msg the message to send
    * @returns a promise to await for the sending to complete
    */
-  static sendMessage(to: number, msg: yieldedSocketMessage): Promise<void> | undefined {
+  static sendMessage<K extends serializable>(to: number, msg: yieldedSocketMessage<K>): Promise<void> | undefined {
     const socket = socketS.getInstance().connections.get(to);
     if (socket && !socket.isClosed) {
       return socket.send(SocketMessage.encode(msg)).catch(() => socketS.getInstance().handleClose(socket));
