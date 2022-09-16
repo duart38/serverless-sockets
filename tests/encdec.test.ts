@@ -113,7 +113,7 @@ Deno.test("SocketMessage SYNC works", () => {
         }
     });
     
-    const syncingMessage: yieldedSocketMessage = {
+    const syncingMessage: yieldedSocketMessage<number[][]> = {
         event: "test",
         type: EventType.SYNC,
         payload: calculateUpdatePaths(originalMessage, newMessage)
