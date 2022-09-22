@@ -45,6 +45,8 @@ After this you can use the server in any folder with the command:
 ```bash
 ssocket
 ```
+
+
 > The server expects a folder called "plugs" to be present in the current directory.
 
 it's also possible to pre-configure the server before installing it to make sure the configurations persist every time the command is run.
