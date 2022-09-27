@@ -224,6 +224,7 @@ export async function INIT(_socket: Socket) {
   // Will be called when the server starts up (before the loading of the plugs)
 }
 ```
+> This can be used for example when one needs to connect to some other server/database to retrieve data
 
 
 
