@@ -13,7 +13,7 @@ Requirements: [Deno](https://deno.land)
 
 To install run the command:
 ```bash
-deno install -A -f -r -n ssocket https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/mod.ts
+deno install -A -f -r --import-map=https://raw.githubusercontent.com/duart38/serverless-sockets/main/import_map.json -n ssocket https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/mod.ts
 ```
 
 After this you can use the server in any folder with the command:
@@ -25,7 +25,7 @@ ssocket
 it's also possible to pre-configure the server before installing it to make sure the configurations persist every time the command is run.
 To do this use the command to install and prepend the configuration flags to the command:
 ```bash
-deno install -A -f -r -n ssocket https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/mod.ts <flags-goes-here>
+deno install -A -f -r --import-map=https://raw.githubusercontent.com/duart38/serverless-sockets/main/import_map.json -n ssocket https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/mod.ts <flags-goes-here>
 ```
 
 > See configuration documentation (CLI) on how to configure the server.
