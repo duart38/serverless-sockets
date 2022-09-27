@@ -39,7 +39,7 @@ export function start() {
       }, CONFIG.memoryMetrics.interval);
     }
     const socket = socketS.getInstance();
-    const init = await import("./INIT.ts");
+    const init = await import(`${Deno.cwd()}/INIT.ts`);
     init?.INIT(socket);
 
     CONFIG.preloadPlugs && preLoadPlugs(CONFIG.plugsFolder);
