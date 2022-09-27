@@ -218,6 +218,13 @@ deno run -A mod.ts --generate <name_of_event>
 To configure the server see the config.js file within the 'src' folder of this project.
 The configuration class in this file should contain all the information and documentation needed.
 
+Additionally, it is also possible to make (if installed as a script) a INIT.ts file with a function named INIT which, upon server start, will be called (see example below).
+```TypeScript
+export async function INIT(_socket: Socket) {
+  // Will be called when the server starts up (before the loading of the plugs)
+}
+```
+
 
 
 # Payload shape
