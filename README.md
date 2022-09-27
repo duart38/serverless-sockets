@@ -1,28 +1,3 @@
-# TOC
-- [The idea](#the-idea)
-  * [But why??](#but-why--)
-- [Installing](#installing)
-- [Running locally](#running-locally)
-- [How it works](#how-it-works)
-  * [Simple return message(s)](#simple-return-message-s-)
-  * [Broadcasting message to everyone](#broadcasting-message-to-everyone)
-      - [yielding a broadcast (Recommended)](#yielding-a-broadcast--recommended-)
-      - [method-based broadcast (avoid if possible)](#method-based-broadcast--avoid-if-possible-)
-  * [Sending to specific client](#sending-to-specific-client)
-  * [Synchronizing big objects with clients](#synchronizing-big-objects-with-clients)
-  * [The eventType](#the-eventtype)
-- [CLI](#cli)
-  * [Inline configuration (will not persist)](#inline-configuration--will-not-persist-)
-  * [Generating modules](#generating-modules)
-- [Configuration](#configuration)
-- [Payload shape](#payload-shape)
-- [SYNC payload shape](#sync-payload-shape)
-- [Testing](#testing)
-- [Considerations and limitations](#considerations-and-limitations)
-
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
-
-
 
 # The idea
 Bringing serverless functionality and extendability to a websocket server.
