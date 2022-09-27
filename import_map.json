@@ -1,0 +1,5 @@
+{
+    "imports": {
+      "ssocket": "https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/mod.ts"
+    }
+}
