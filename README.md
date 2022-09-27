@@ -225,7 +225,16 @@ export async function INIT(_socket: Socket) {
 }
 ```
 > This can be used for example when one needs to connect to some other server/database to retrieve data
-
+---
+If you want to shorten the import URLs you can use an import map. For example:
+```TypeScript
+import { SocketMessage, ModuleGenerator } from "ssocket";
+```
+To do this (in VSCode) change the settings.json within .vscode to include: 
+```
+"deno.importMap": "./import_map.json",
+```
+Also add this file inside your repository. A template of this file can be [found here](https://raw.githubusercontent.com/duart38/serverless-sockets/main/import_map.json)
 
 
 # Payload shape
