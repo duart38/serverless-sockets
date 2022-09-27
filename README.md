@@ -13,7 +13,7 @@ Requirements: [Deno](https://deno.land)
 
 To install run the command:
 ```bash
-deno install -A -f -r -n ssocket https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/mod.ts
+deno install -A -f -r --import-map=https://raw.githubusercontent.com/duart38/serverless-sockets/main/import_map.json -n ssocket https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/mod.ts
 ```
 
 After this you can use the server in any folder with the command:
@@ -25,7 +25,7 @@ ssocket
 it's also possible to pre-configure the server before installing it to make sure the configurations persist every time the command is run.
 To do this use the command to install and prepend the configuration flags to the command:
 ```bash
-deno install -A -f -r -n ssocket https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/mod.ts <flags-goes-here>
+deno install -A -f -r --import-map=https://raw.githubusercontent.com/duart38/serverless-sockets/main/import_map.json -n ssocket https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/mod.ts <flags-goes-here>
 ```
 
 > See configuration documentation (CLI) on how to configure the server.
@@ -225,7 +225,16 @@ export async function INIT(_socket: Socket) {
 }
 ```
 > This can be used for example when one needs to connect to some other server/database to retrieve data
-
+---
+If you want to shorten the import URLs you can use an import map. For example:
+```TypeScript
+import { SocketMessage, ModuleGenerator } from "ssocket";
+```
+To do this (in VSCode) change the settings.json within .vscode to include: 
+```
+"deno.importMap": "./import_map.json",
+```
+Also add this file inside your repository. A template of this file can be [found here](https://raw.githubusercontent.com/duart38/serverless-sockets/main/import_map.json)
 
 
 # Payload shape
