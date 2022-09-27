@@ -216,7 +216,7 @@ deno run -A mod.ts --generate <name_of_event>
 
 # Configuration
 To configure the server see the config.js file within the 'src' folder of this project.
-The configuration class in this file should contian all the information and documentation needed.
+The configuration class in this file should contain all the information and documentation needed.
 
 
 
