@@ -17,7 +17,7 @@
 
 import singleton from "https://raw.githubusercontent.com/grevend/singleton/main/mod.ts";
 import { Args, parse } from "https://deno.land/std@0.106.0/flags/mod.ts";
-import { CONFIG } from "../config.js";
+import { CONFIG } from "https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/config.js";
 import { moduleTemplate } from "../MISC/moduleTemplate.ts";
 
 export class CLI {
