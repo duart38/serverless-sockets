@@ -88,6 +88,20 @@ export async function* test(message: SocketMessage, _from: number): ModuleGenera
 }
 ```
 > This returns the yielded object to the client.
+---
+```TypeScript
+export async function* test(message: SocketMessage<{count: number}>, _from: number): ModuleGenerator<{name: string}> {
+    for(let i = 0; i<message.payload.count; i++){ // message.payload.count is what the client sends us
+      yield { // returning data back to the client
+        event: "spam-mode", // this is optional. will default to the event name of this module
+        payload: {
+          name: `iteration ${i}`
+        }
+      }
+    }
+}
+```
+> Types are also supported.
 
 Esentially you 'yield' back values to the client side every time you want to send them an update.
 If you're unfamiliar with generator functions take a look at [this page](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*)
