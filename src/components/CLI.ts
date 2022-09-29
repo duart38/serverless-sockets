@@ -16,7 +16,7 @@
  */
 
 import singleton from "https://raw.githubusercontent.com/grevend/singleton/main/mod.ts";
-import { Args, parse } from "https://deno.land/std@0.106.0/flags/mod.ts";
+import { Args, parse } from "https://deno.land/std@0.158.0/flags/mod.ts";
 import { CONFIG } from "../config.js";
 import { moduleTemplate } from "../MISC/moduleTemplate.ts";
 
@@ -36,6 +36,7 @@ export class CLI {
    */
   constructor() {
     this.args = parse(Deno.args);
+    console.log(this.args)
     this.ready = new Promise((res, rej) => {
       if (this.args["h"] !== undefined || this.args["help"] !== undefined) {
         console.log(`\n\n
@@ -102,6 +103,18 @@ Available configurations:`);
   }
 
   /**
+   * Attempts to cast 'value' to the typeof castTo
+   */
+  private _attemptCast(value: unknown, expected: unknown){
+    if(typeof value === typeof expected) return value;
+    switch(typeof expected){
+      case "boolean": return value === 'true' ? true : false;
+      case "number": return Number(value)
+      default: return value;
+    }
+  }
+
+  /**
    * Parses the stored arguments (from the command line) and updates the configuration values.
    */
   private parseArgs() {
@@ -115,10 +128,10 @@ Available configurations:`);
             if (this._checkTypeEquals(CONFIG[key][eK], eV) === false) {
               console.error(`Supplied argument ${key}.${eK}'s type (${typeof eV}) does not match config values type (${typeof CONFIG[key][eK]}).`);
             }
-            CONFIG[key][eK] = eV;
+            CONFIG[key][eK] = this._attemptCast(eV, CONFIG[key][eK]);
           });
         } else {
-          CONFIG[key] = val;
+          CONFIG[key] = this._attemptCast(val, CONFIG[key]);
         }
       } else {
         console.error(`Supplied argument ${key} is not a valid configuration option, run with -h to see available options`);
