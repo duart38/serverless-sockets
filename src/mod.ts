@@ -40,9 +40,12 @@ export function start() {
     }
     const socket = socketS.getInstance();
     Log.info(`Attempting to load initialization file from: ${Deno.cwd()}/INIT.ts`)
-    const init = await import(`file://${Deno.cwd()}/INIT.ts`);
-    if(init) await init?.INIT(socket);
 
+    await Log.silent(async ()=>{
+      const init = await import(`file://${Deno.cwd()}/INIT.ts`);
+      if(init) await init?.INIT(socket);
+    })
+    
     CONFIG.preloadPlugs && preLoadPlugs(CONFIG.plugsFolder);
     // ... other http code goes here ...
     if (CONFIG.secure) {

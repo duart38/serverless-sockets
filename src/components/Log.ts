@@ -81,9 +81,9 @@ export class Log {
    * Runs te provided method while catching for any errors, if an error is found it is logged silently (not displayed) to the logger.
    * @returns returns any value returned by the method, null otherwise.
    */
-  public static silent<I>(x: () => I): I | null {
+  public static async silent<I>(x: () => I): Promise<Awaited<I>|null> {
     try {
-      return x();
+      return await x();
     } catch (e) {
       Log.error(e);
     }
