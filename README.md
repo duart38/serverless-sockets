@@ -51,7 +51,7 @@ The default folder obtained with the cloning of this repository contains some ex
 Here's an example of how the modular functions look like.
 ## Simple return message(s)
 ```TypeScript
-export async function* test(message: SocketMessage, _from: number): ModuleGenerator { // _from is the id of the client
+export async function* test(message: SocketMessage, _from: WebSocket): ModuleGenerator { // _from is the id of the client
     for(let i = 0; i<message.payload.count; i++){ // message.payload.count is what the client sends us
       yield { // returning data back to the client
         event: "spam-mode", // this is optional. will default to the event name of this module
@@ -65,7 +65,7 @@ export async function* test(message: SocketMessage, _from: number): ModuleGenera
 > This returns the yielded object to the client.
 ---
 ```TypeScript
-export async function* test(message: SocketMessage<{count: number}>, _from: number): ModuleGenerator<{name: string}> {
+export async function* test(message: SocketMessage<{count: number}>, _from: WebSocket): ModuleGenerator<{name: string}> {
     for(let i = 0; i<message.payload.count; i++){ // message.payload.count is what the client sends us
       yield { // returning data back to the client
         event: "spam-mode", // this is optional. will default to the event name of this module
@@ -86,7 +86,7 @@ To broadcast a message to everyone you can either add ```type: EventType.BROADCA
 > NOTE: it is recommended to use the type property as it hides the implementation details and also prevents memory leaks.
 #### yielding a broadcast (Recommended)
 ```TypeScript
-export async function* broadcast(message: SocketMessage, _from: number): ModuleGenerator {
+export async function* broadcast(message: SocketMessage, _from: WebSocket): ModuleGenerator {
   yield {
     type: EventType.BROADCAST, // instruction to broadcast this message
     event: "broadcast-1",
@@ -97,7 +97,7 @@ export async function* broadcast(message: SocketMessage, _from: number): ModuleG
 
 #### method-based broadcast (avoid if possible)
 ```TypeScript
-export async function* broadcast(message: SocketMessage, _from: number): ModuleGenerator {
+export async function* broadcast(message: SocketMessage, _from: WebSocket): ModuleGenerator {
   Socket.broadcast({
       type: EventType.BROADCAST,
       event: "broadcast-1",
@@ -125,7 +125,7 @@ To mitigate this the framework offers a method to synchronize big objects with t
 To use this method you simply need to add ```type: EventType.SYNC,``` to your **yield**s.
 example: 
 ```TypeScript
-export async function* sync(message: SocketMessage, _from: number): ModuleGenerator {
+export async function* sync(message: SocketMessage, _from: WebSocket): ModuleGenerator {
   yield {
     type: EventType.SYNC,
     event: "sync-1",
