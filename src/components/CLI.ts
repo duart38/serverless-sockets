@@ -38,7 +38,6 @@ export class CLI {
    */
   constructor() {
     this.args = parse(Deno.args);
-    console.log(this.args)
     this.ready = new Promise((res, rej) => {
       if (this.args["h"] !== undefined || this.args["help"] !== undefined) {
         console.log(`\n\n
