@@ -18,10 +18,9 @@
 // deno-lint-ignore-file no-explicit-any ban-types
 
 import singleton from "https://raw.githubusercontent.com/grevend/singleton/main/mod.ts";
-import { CONFIG } from "https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/config.js";
+import { CONFIG, configuration } from "https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/config.js";
 import { Args, parse } from "https://deno.land/std@0.158.0/flags/mod.ts";
 import { moduleTemplate } from "../MISC/moduleTemplate.ts";
-import { configuration } from "../config.js";
 
 export class CLI {
   /**
