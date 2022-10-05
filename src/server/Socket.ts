@@ -15,10 +15,8 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { ServerRequest } from "https://deno.land/std@0.90.0/http/server.ts";
 import { EventType, serializable, SocketMessage, yieldedSocketMessage } from "../interface/message.ts";
 
-import { acceptWebSocket, isWebSocketCloseEvent, WebSocket } from "https://deno.land/std@0.90.0/ws/mod.ts";
 import { Watcher } from "../FS/FileWatcher.ts";
 import { HandleEvent } from "./EventHandler.ts";
 import { Log } from "../components/Log.ts";
@@ -27,62 +25,51 @@ import { CONFIG } from "../config.js";
 import singleton from "https://raw.githubusercontent.com/grevend/singleton/main/mod.ts";
 
 export default class Socket {
-  public connections: Map<number, WebSocket>;
+  public connections: Set<WebSocket>;
   public directoryWatcher: Watcher;
   protected instanceID: string;
   constructor(plugsDir: string) {
+    this.connections = new Set();
     Log.info(`[+] Opening socket with function folder: ${plugsDir}`);
     this.directoryWatcher = new Watcher(plugsDir);
     this.instanceID = crypto.getRandomValues(new Uint32Array(2)).join("");
-    this.connections = new Map();
   }
 
   private handleClose(socket: WebSocket) {
-    if (!socket.isClosed) socket.close();
-    this.connections.delete(socket.conn.rid);
+    socket.close();
+    this.connections.delete(socket);
     dispatchEvent(new Event(this.instanceID + "_disconnect"));
   }
 
-  private async waitForSocket(socket: WebSocket) {
-    if (socket.isClosed) return;
-    try {
-      for await (const ev of socket) {
-        if (ev instanceof Uint8Array) {
-          const incoming = SocketMessage.fromRaw(ev);
+  private waitForSocket(socket: WebSocket) {
+      socket.onmessage = ({data})=>{
+        console.log("RECEIVED MSG",data)
+        if (data instanceof ArrayBuffer) {
+          const incoming = SocketMessage.fromBuffer(data);
           if (incoming.sizeOfMessage <= CONFIG.payloadLimit) {
-            HandleEvent(incoming, socket.conn.rid);
+            HandleEvent(incoming, socket);
           } else {
-            Log.info(`payload with size ${incoming.sizeOfMessage} was rejected entrance. RID: ${socket.conn.rid}`);
+            Log.info(`payload with size ${incoming.sizeOfMessage} was rejected entrance.`);
           }
-        } else if (isWebSocketCloseEvent(ev)) {
-          this.handleClose(socket);
+        }else{
+          Log.error(`Client sent incorrect data type -> ${typeof data}`)
         }
       }
-    } catch (err) {
-      console.error(`failed to receive frame: ${err}`);
-
-      if (!socket.isClosed) {
-        await socket.close(1000).catch(console.error);
-        this.handleClose(socket);
-      }
-    }
   }
 
   /**
    * Accepts a request and upgrades it to a WebSocket connection.
    */
-  public accept(req: ServerRequest) {
-    const { conn, r: bufReader, w: bufWriter, headers } = req;
-    acceptWebSocket({ conn, bufReader, bufWriter, headers })
-      .then((socket) => {
-        this.connections.set(socket.conn.rid, socket);
-        dispatchEvent(new Event(this.instanceID + "_connect"));
-        this.waitForSocket(socket);
-      })
-      .catch(async (err: unknown) => {
-        console.error(`failed to accept websocket: ${err}`);
-        await req.respond({ status: 400 });
-      });
+  public accept(req: Request) {
+    if (req.headers.get("upgrade") != "websocket") {
+      return new Response(null, { status: 501 });
+    }
+
+    const {response, socket} = Deno.upgradeWebSocket(req);
+    this.connections.add(socket);
+    dispatchEvent(new Event(this.instanceID + "_connect"));
+    this.waitForSocket(socket);
+    return response;
   }
 
   /**
@@ -104,12 +91,11 @@ export default class Socket {
    * @param data the data to send
    * @param exclude the socket id to exclude (tip: exclude yourself)
    */
-  static broadcast(data: yieldedSocketMessage, exclude?: number) {
+  static broadcast(data: yieldedSocketMessage, exclude?: WebSocket) {
     const socket = socketS.getInstance();
     socket.connections.forEach((s) => {
-      if (!s.isClosed && s.conn.rid !== exclude) {
+      if (s !== exclude) {
         s.send(SocketMessage.encode(Object.assign(data, { type: EventType.BROADCAST, payload: { ...data.payload } })))
-          .catch(() => socket.handleClose(s));
       }
     });
   }
@@ -126,11 +112,8 @@ export default class Socket {
    * @param msg the message to send
    * @returns a promise to await for the sending to complete
    */
-  static sendMessage<K extends serializable>(to: number, msg: yieldedSocketMessage<K>): Promise<void> | undefined {
-    const socket = socketS.getInstance().connections.get(to);
-    if (socket && !socket.isClosed) {
-      return socket.send(SocketMessage.encode(msg)).catch(() => socketS.getInstance().handleClose(socket));
-    }
+  static sendMessage<K extends serializable>(to: WebSocket, msg: yieldedSocketMessage<K>) {
+      to.send(SocketMessage.encode(msg));
   }
   static getInstance() {
     return socketS.getInstance();
