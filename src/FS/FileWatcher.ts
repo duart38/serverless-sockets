@@ -69,7 +69,6 @@ export class Watcher {
 
   /**
    * top-level await seems to misbehave in constructor..
-   * @param x path to watch
    */
   private async init() {
     const watcher = Deno.watchFs(this.dir);
