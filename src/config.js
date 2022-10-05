@@ -15,6 +15,39 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+export class INSECURE {
+    /** The port to listen on. */
+    port = 8080;
+    /** 
+     * A literal IP address or host name that can be resolved to an IP address.
+     * If not specified, defaults to `0.0.0.0`. 
+     **/
+    hostname = "0.0.0.0";
+}
+
+export class memoryMetrics {
+  /**
+   * Turns the memoryMetrics on or off.
+   */
+   isOn = false;
+   /**
+    * The interval in which the program should print out heap information.
+    */
+   interval = 5000;
+}
+
+export class TLS {
+    /** The port to listen on. */
+    port = 8080;
+    /** A literal IP address or host name that can be resolved to an IP address.
+     * If not specified, defaults to `0.0.0.0`. */
+    hostname = "0.0.0.0";
+    /** Server certificate file. */
+    certFile = "./cert.pem";
+    /** Server public key file. */
+    keyFile = "./key.pem";
+}
+
 /**
  * configuration object
  */
@@ -60,29 +93,13 @@ export class configuration {
   /**
    * Configuration options for the insecure (HTTP, WS) version of the server.
    */
-  INSECURE = {
-    /** The port to listen on. */
-    port: 8080,
-    /** A literal IP address or host name that can be resolved to an IP address.
-     * If not specified, defaults to `0.0.0.0`. */
-    hostname: "0.0.0.0",
-  };
+  INSECURE = new INSECURE()
 
   /**
    * Configuration options for the secure (HTTPS, WSS) version of the server.
    * This version requires the certification and key files to spin up a secure web server.
    */
-  TLS = {
-    /** The port to listen on. */
-    port: 8080,
-    /** A literal IP address or host name that can be resolved to an IP address.
-     * If not specified, defaults to `0.0.0.0`. */
-    hostname: "0.0.0.0",
-    /** Server certificate file. */
-    certFile: "./cert.pem",
-    /** Server public key file. */
-    keyFile: "./key.pem",
-  };
+  TLS = new TLS()
 
   /**
    * Indicates wether we should validate the modular functions shape. this checks if the parameter count is according to the framework specifications.
@@ -94,16 +111,7 @@ export class configuration {
    * Includes options to turn on and adapt memory metric printouts in the console.
    * This can be used to view things like the external and internal heap size. (I.E. how much memory we're using)
    */
-  memoryMetrics = {
-    /**
-     * Turns the memoryMetrics on or off.
-     */
-    isOn: false,
-    /**
-     * The interval in which the program should print out heap information.
-     */
-    interval: 5000,
-  };
+  memoryMetrics = new memoryMetrics()
 }
 
 export const CONFIG = new configuration();
