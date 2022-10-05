@@ -17,15 +17,9 @@
 
 import { assertEquals, assertStringIncludes } from "https://deno.land/std@0.158.0/testing/asserts.ts";
 import { CONFIG, configuration } from "../src/config.js";
-import { readLines } from "https://deno.land/std@0.115.1/io/mod.ts";
-
 
 async function parseStdout(p: Deno.Process): Promise<configuration>{
-    const ret = new Uint8Array(2500);
-    await p.stdout?.read(ret);
-    p.stdout?.close();
-    let childRawOut = new TextDecoder().decode(ret).replaceAll('$_$_$','').trim();
-
+    let childRawOut = new TextDecoder().decode(await p.output()).replaceAll('$_$_$','').trim();
     childRawOut = childRawOut.replaceAll(String.fromCharCode(0), "");
     return JSON.parse(childRawOut);
 }
@@ -79,7 +73,7 @@ Deno.test("CLI allows for nested data manipulation", async () => {
     p.close();
 });
 
-Deno.test("CLI prints documentation correctly", async () => {
+Deno.test("CLI prints documentation correctly", async (t) => {
     const p = Deno.run({
         cmd: [
             'deno', 'run', '-A', 'tests/cli_test_doc_file.ts',
@@ -87,17 +81,16 @@ Deno.test("CLI prints documentation correctly", async () => {
         ],
         stdout: 'piped',
     });
-    let childRawOut = "";
-    for await (const line of readLines(p.stdout)) childRawOut+=line+'\n';
-    
+    const childRawOut = new TextDecoder().decode(await p.output());
     const status = (await p.status()).code;
+    Deno.writeTextFileSync("test.txt", childRawOut)
 
     assertEquals(status, 0, `finished with exit code ${status}`);
-    Object.keys(CONFIG).forEach((key)=>{
-        console.log(`\t\ttesting if ${key} is printed in the help`)
-        assertStringIncludes(childRawOut, key);
-    });
+    for(const key of Object.keys(CONFIG).filter(k=>typeof (CONFIG as unknown as Record<string, unknown>)[k] !== "object")){
+        await t.step(`${key} printed in help output`, ()=>{
+            assertStringIncludes(childRawOut, key);
+        })
+    }
 
-    p.stdout?.close();
     p.close();
 });
