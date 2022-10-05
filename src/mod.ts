@@ -18,11 +18,15 @@
 import { serve, serveTls } from "https://deno.land/std@0.158.0/http/server.ts";
 import { CLI } from "./components/CLI.ts";
 import { Log } from "./components/Log.ts";
-import { CONFIG } from "./config.js";
+import { CONFIG, configuration } from "./config.js";
 import { preLoadPlugs } from "./server/PreLoader.ts";
 import { socketS } from "./server/Socket.ts";
 
-export function start() {
+export function start(config_override: Partial<configuration> = {}) {
+  for(const [key, val] of Object.entries(config_override)){
+    (CONFIG as unknown as Record<string, unknown>)[key] = val;
+  }
+
   const cli = CLI.instance();
   cli.onReady().then(async () => {
     console.log("\n\n\tPID: " + Deno.pid);
