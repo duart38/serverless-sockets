@@ -21,13 +21,14 @@ import singleton from "https://raw.githubusercontent.com/grevend/singleton/main/
 import { CONFIG } from "https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/config.js";
 import { Args, parse } from "https://deno.land/std@0.158.0/flags/mod.ts";
 import { moduleTemplate } from "../MISC/moduleTemplate.ts";
+import { configuration } from "../config.js";
 
 export class CLI {
   /**
    * Contains arguments parsed from the command line
    */
   private args: Args;
-  private ready: Promise<void>;
+  private ready: Promise<configuration | void>;
 
   /**
    * Command Line Interface (CLI). used to parse command line arguments and set configuration values dynamically.
@@ -38,7 +39,7 @@ export class CLI {
    */
   constructor() {
     this.args = parse(Deno.args);
-    this.ready = new Promise((res, rej) => {
+    this.ready = new Promise<configuration | void>((res, rej) => {
       if (this.args["h"] !== undefined || this.args["help"] !== undefined) {
         console.log(`\n\n
 --generate <name of module> \t\t\t |generates an endpoint module with the name provided, the name is the name of the event|\n\n
@@ -56,7 +57,7 @@ Available configurations:`);
         Deno.writeTextFileSync(`${CONFIG.plugsFolder}/${this.args["generate"]}.ts`, moduleTemplate());
       } else {
         this.parseArgs();
-        res();
+        res(CONFIG);
       }
     });
   }
@@ -65,7 +66,7 @@ Available configurations:`);
    * A promise that resolves when the CLI has parsed the flags and updated the configuration.
    * @returns {Promise<void>} resolved when all command line arguments have been parsed and configuration values have been set.
    */
-  public onReady(): Promise<void> {
+  public onReady(): Promise<configuration | void> {
     return this.ready;
   }
 
@@ -75,22 +76,30 @@ Available configurations:`);
    * @param config The config file in the form of an object.
    * @param preKey DO NOT USE, this is to support recursive nesting in the object file.
    */
-  private printHelp(config: object, preKey = "") {
-    Object.entries(config).forEach(async ([key, v]) => {
+  private async printHelp(config: object, preKey = "") {
+    for(const [key, v] of Object.entries(config)){
       if (typeof v === "object") {
-        this.printHelp(v as Record<string, unknown>, preKey + `${key}.`);
+        await this.printHelp(v as Record<string, unknown>, preKey + `${key}.`);
       } else {
-        console.log("\n\t\t-------------------------");
+        console.log("\n-------------------------");
         console.log(`\u001b[31m--${preKey}${key}\u001b[0m \u001b[34m${typeof v}\u001b`);
-        await this.printDoc(`${preKey}${key}`);
+        console.log(await this.printDoc(`${preKey}${key}`));
       }
-    });
+    }
   }
-  private printDoc(path: string) {
-    if (!path.startsWith("configuration")) path = "configuration." + path;
-    return Deno.run({
+  private async printDoc(path: string) {
+    if (!path.startsWith("configuration") && path.split(".").length !== 2){
+      path = "configuration." + path;
+    }
+    // if(path.split(".").length === 2) path.replace("configuration.", "")
+    const p = Deno.run({
       cmd: ["deno", "doc", "config.js", `${path}`],
-    }).status();
+      stdout: 'piped'
+    });
+
+    const raw_text_out = new TextDecoder().decode((await p.output()));
+    return raw_text_out.replaceAll(/((const.+)|Defined.+)(\n|\r|\n\r|\r\n)/gm, "").trim();
+
   }
 
   /**
@@ -119,7 +128,7 @@ Available configurations:`);
    * Parses the stored arguments (from the command line) and updates the configuration values.
    */
   private parseArgs() {
-    Object.entries(this.args).filter(([k]) => k !== "_").forEach(([key, val]) => {
+    for(const [key, val] of Object.entries(this.args).filter(([k]) => k !== "_")){
       if ((CONFIG as unknown as Record<string, unknown>)[key]) {
         if (this._checkTypeEquals((CONFIG as unknown as Record<string, unknown>)[key], val) === false) {
           console.error(`Supplied argument ${key}'s type (${typeof val}) does not match config values type (${typeof (CONFIG as unknown as Record<string, unknown>)[key]}).`);
@@ -137,7 +146,7 @@ Available configurations:`);
       } else {
         console.error(`Supplied argument ${key} is not a valid configuration option, run with -h to see available options`);
       }
-    });
+    }
   }
 
   /**
