@@ -26,7 +26,7 @@ import { calculateUpdatePaths } from "../MISC/utils.ts";
  * Handle incoming yields from modules.
  * @param msgRef the reference to the incoming message to be freed-up when yielding is done.
  */
-function handleYields(generatorFunction: ModuleGenerator, from: number, msgRef: SocketMessage, prev: yieldedSocketMessage | undefined = undefined): void {
+function handleYields(generatorFunction: ModuleGenerator, from: WebSocket, msgRef: SocketMessage, prev: yieldedSocketMessage | undefined = undefined): void {
   generatorFunction.next().then((reply) => {
     if (reply.done === true || reply.done === undefined) return msgRef.free();
     /*
@@ -38,7 +38,7 @@ function handleYields(generatorFunction: ModuleGenerator, from: number, msgRef: 
     switch(reply.value.type){
       case EventType.MESSAGE: {
         Socket.sendMessage(from, reply.value)
-        ?.then(() => handleYields(generatorFunction, from, msgRef));
+        handleYields(generatorFunction, from, msgRef);
         break;
       }
       case EventType.BROADCAST: {
@@ -51,12 +51,13 @@ function handleYields(generatorFunction: ModuleGenerator, from: number, msgRef: 
           ...reply.value,
           payload: calculateUpdatePaths(prev !== undefined ? SocketMessage.encode(prev) : msgRef.raw, SocketMessage.encode(reply.value))
         }
-        Socket.sendMessage(from, toSend)?.then(() => handleYields(generatorFunction, from, msgRef, reply.value));
+        Socket.sendMessage(from, toSend);
+        handleYields(generatorFunction, from, msgRef, reply.value);
         break;
       }
       default: {
-        Socket.sendMessage(from, reply.value)
-        ?.then(() => handleYields(generatorFunction, from, msgRef));
+        Socket.sendMessage(from, reply.value);
+        handleYields(generatorFunction, from, msgRef);
       }
     }
   });
@@ -68,7 +69,7 @@ function handleYields(generatorFunction: ModuleGenerator, from: number, msgRef: 
  */
 export async function HandleEvent(
   incoming: SocketMessage,
-  from: number,
+  from: WebSocket,
 ) {
   const socket = socketS.getInstance();
   const fileWatcher: Watcher = socket.directoryWatcher;
