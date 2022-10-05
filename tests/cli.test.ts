@@ -15,7 +15,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { assertEquals, assertStringIncludes } from "https://deno.land/std@0.106.0/testing/asserts.ts";
+import { assertEquals, assertStringIncludes } from "https://deno.land/std@0.158.0/testing/asserts.ts";
 import { CONFIG, configuration } from "../src/config.js";
 import { readLines } from "https://deno.land/std@0.115.1/io/mod.ts";
 

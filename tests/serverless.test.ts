@@ -15,11 +15,11 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { assert, assertEquals, assertNotEquals } from "https://deno.land/std@0.106.0/testing/asserts.ts";
-import { serve } from "https://deno.land/std@0.90.0/http/server.ts";
+import { assert, assertEquals, assertNotEquals } from "https://deno.land/std@0.158.0/testing/asserts.ts";
 import { CONFIG } from "../src/config.js";
 import { SocketMessage, yieldedSocketMessage } from "../src/interface/message.ts";
-import { socketS } from "../src/server/Socket.ts";
+import TestHelper from "./TestHelper.ts";
+
 const plugsDir = './tests/testPlugs';
 try{
   Deno.mkdirSync(plugsDir, {});
@@ -37,35 +37,18 @@ writeToTemp('test', {event: 'unchanged', payload: {}});
 CONFIG.plugsFolder = plugsDir;
 CONFIG.secure = false;
 
-const ws2 = new WebSocket("ws://localhost:8080");
-const socket = socketS.getInstance();
-for await (const req of serve(CONFIG.INSECURE)) {
-  console.log("Received conn")
-  socket.accept(req);
-  break;
-}
-
-function waitForMessage(){
-  return new Promise<SocketMessage>((res)=>{
-    console.log("\n\n\t###Waiting for message\n\n")
-    const fn = async ({data}: MessageEvent) => {
-      res(SocketMessage.fromBuffer(await (data as Blob).arrayBuffer()));
-      ws2.removeEventListener("message", fn);
-    }
-    ws2.addEventListener("message", fn);
-  })
-}
-
-const _isOpen = await new Promise<boolean>((res)=>ws2.addEventListener("open", () => res(true)));
+const [ws] = await TestHelper.startServer(1);
 
 
 Deno.test({
+  sanitizeExit: false,
   sanitizeOps: false,
+  sanitizeResources: false,
   name: "Server re-loads changed files", 
   async fn () {
-    const res = waitForMessage();
+    const res = TestHelper.waitForMessage(ws);
     const payload = { event: "test", payload: {} };
-    ws2.send(SocketMessage.encode(payload));
+    ws.send(SocketMessage.encode(payload));
     writeToTemp('test', {event: 'changed', payload: {}});
     assertNotEquals((await res).event, "unchanged");
     assertEquals((await res).event, "changed");
@@ -75,12 +58,14 @@ Deno.test({
 
 Deno.test({
   name: "Server takes in newly added files",
+  sanitizeExit: false,
   sanitizeOps: false,
+  sanitizeResources: false,
   async fn() {
     writeToTemp('newfunc', {payload: {}});
-    const res = waitForMessage();
+    const res = TestHelper.waitForMessage(ws);
     const payload = { event: "newfunc", payload: {} };
-    ws2.send(SocketMessage.encode(payload));
+    ws.send(SocketMessage.encode(payload));
     console.log((await res).payload)
     assertEquals((await res).event, "newfunc")
   }
@@ -89,6 +74,7 @@ Deno.test({
 
 Deno.test({
   name: "Server does not crash on malformed request",
+  sanitizeExit: false,
   sanitizeOps: false,
   sanitizeResources: false,
   async fn() {
@@ -100,12 +86,12 @@ Deno.test({
     temp[0] = 0;
     temp[0] = 10;
 
-    ws2.send("LOL"); // malformed 1 (we dont support this)
-    ws2.send(temp); // malformed 2
+    ws.send("LOL"); // malformed 1 (we dont support this)
+    ws.send(temp); // malformed 2
     
     
-    const res = waitForMessage();
-    ws2.send(SocketMessage.encode(payload));
+    const res = TestHelper.waitForMessage(ws);
+    ws.send(SocketMessage.encode(payload));
     assert((await res).event, "changed")
   }
 });
@@ -113,7 +99,3 @@ Deno.test({
 self.addEventListener("unload", ()=>{
   Deno.removeSync(plugsDir, {recursive: true});
 });
-setTimeout(()=>{
-    console.log("Force quitting deno as the framework runs indefinitely")
-    Deno.exit(0)
-}, 1000000);
