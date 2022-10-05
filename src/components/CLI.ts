@@ -15,9 +15,11 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// deno-lint-ignore-file no-explicit-any ban-types
+
 import singleton from "https://raw.githubusercontent.com/grevend/singleton/main/mod.ts";
-import { Args, parse } from "https://deno.land/std@0.106.0/flags/mod.ts";
 import { CONFIG } from "https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/config.js";
+import { Args, parse } from "https://deno.land/std@0.158.0/flags/mod.ts";
 import { moduleTemplate } from "../MISC/moduleTemplate.ts";
 
 export class CLI {
@@ -73,7 +75,7 @@ Available configurations:`);
    * @param config The config file in the form of an object.
    * @param preKey DO NOT USE, this is to support recursive nesting in the object file.
    */
-  private printHelp(config: Record<string, unknown>, preKey = "") {
+  private printHelp(config: object, preKey = "") {
     Object.entries(config).forEach(async ([key, v]) => {
       if (typeof v === "object") {
         this.printHelp(v as Record<string, unknown>, preKey + `${key}.`);
@@ -102,23 +104,35 @@ Available configurations:`);
   }
 
   /**
+   * Attempts to cast 'value' to the typeof castTo
+   */
+  private _attemptCast(value: unknown, expected: unknown){
+    if(typeof value === typeof expected) return value;
+    switch(typeof expected){
+      case "boolean": return value === 'true' ? true : false;
+      case "number": return Number(value)
+      default: return value;
+    }
+  }
+
+  /**
    * Parses the stored arguments (from the command line) and updates the configuration values.
    */
   private parseArgs() {
     Object.entries(this.args).filter(([k]) => k !== "_").forEach(([key, val]) => {
-      if (CONFIG[key]) {
-        if (this._checkTypeEquals(CONFIG[key], val) === false) {
-          console.error(`Supplied argument ${key}'s type (${typeof val}) does not match config values type (${typeof CONFIG[key]}).`);
+      if ((CONFIG as unknown as Record<string, unknown>)[key]) {
+        if (this._checkTypeEquals((CONFIG as unknown as Record<string, unknown>)[key], val) === false) {
+          console.error(`Supplied argument ${key}'s type (${typeof val}) does not match config values type (${typeof (CONFIG as unknown as Record<string, unknown>)[key]}).`);
         }
-        if (typeof CONFIG[key] === "object") {
+        if (typeof (CONFIG as unknown as Record<string, unknown>)[key] === "object") {
           Object.entries(val).forEach(([eK, eV]) => {
-            if (this._checkTypeEquals(CONFIG[key][eK], eV) === false) {
-              console.error(`Supplied argument ${key}.${eK}'s type (${typeof eV}) does not match config values type (${typeof CONFIG[key][eK]}).`);
+            if (this._checkTypeEquals((CONFIG as any)[key][eK], eV) === false) {
+              console.error(`Supplied argument ${key}.${eK}'s type (${typeof eV}) does not match config values type (${typeof (CONFIG as any)[key][eK]}).`);
             }
-            CONFIG[key][eK] = eV;
+            (CONFIG as any)[key][eK] = this._attemptCast(eV, (CONFIG as any)[key][eK]);
           });
         } else {
-          CONFIG[key] = val;
+          (CONFIG as any)[key] = this._attemptCast(val, (CONFIG as any)[key]);
         }
       } else {
         console.error(`Supplied argument ${key} is not a valid configuration option, run with -h to see available options`);

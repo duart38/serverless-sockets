@@ -15,14 +15,18 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { serve, serveTLS } from "https://deno.land/std@0.90.0/http/server.ts";
+import { serve, serveTls } from "https://deno.land/std@0.158.0/http/server.ts";
 import { CLI } from "./components/CLI.ts";
 import { Log } from "./components/Log.ts";
-import { CONFIG } from "./config.js";
+import { CONFIG, configuration } from "./config.js";
 import { preLoadPlugs } from "./server/PreLoader.ts";
 import { socketS } from "./server/Socket.ts";
 
-export function start() {
+export function start(config_override: Partial<configuration> = {}) {
+  for(const [key, val] of Object.entries(config_override)){
+    (CONFIG as unknown as Record<string, unknown>)[key] = val;
+  }
+
   const cli = CLI.instance();
   cli.onReady().then(async () => {
     console.log("\n\n\tPID: " + Deno.pid);
@@ -40,17 +44,21 @@ export function start() {
     }
     const socket = socketS.getInstance();
     Log.info(`Attempting to load initialization file from: ${Deno.cwd()}/INIT.ts`)
-    const init = await import(`file://${Deno.cwd()}/INIT.ts`);
-    if(init) await init?.INIT(socket);
 
+    await Log.silent(async ()=>{
+      const init = await import(`file://${Deno.cwd()}/INIT.ts`);
+      if(init) await init?.INIT(socket);
+    })
+    
     CONFIG.preloadPlugs && preLoadPlugs(CONFIG.plugsFolder);
+
     // ... other http code goes here ...
     if (CONFIG.secure) {
       Log.info(`websocket server is running on :${CONFIG.TLS.port}`);
-      for await (const req of serveTLS(CONFIG.TLS)) socket.accept(req);
+      serveTls((r)=>socket.accept(r), CONFIG.TLS)
     } else {
       Log.info(`websocket server is running on :${CONFIG.INSECURE.port}`);
-      for await (const req of serve(CONFIG.INSECURE)) socket.accept(req);
+      serve((r)=>socket.accept(r), CONFIG.INSECURE)
     }
   }).catch((_: unknown) => {});
 }

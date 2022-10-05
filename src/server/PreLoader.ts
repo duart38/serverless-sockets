@@ -26,7 +26,7 @@ export async function preLoadPlugs(folder: string) {
   for await (const entry of Deno.readDir(folder)) {
     if (entry.isFile) {
       try {
-        await import(`${folder}/${entry.name}`);
+        await import(`file://${Deno.cwd()}/${folder}/${entry.name}`);
       } catch (e) {
         Log.error(`[!] Could not pre-load file : ${folder}/${entry.name}\n${e}`);
       }
