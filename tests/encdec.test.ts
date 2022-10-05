@@ -15,7 +15,7 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { assertEquals, assertThrows } from "https://deno.land/std@0.106.0/testing/asserts.ts";
+import { assertEquals, assertThrows } from "https://deno.land/std@0.158.0/testing/asserts.ts";
 import { EventType } from "../src/interface/message.ts";
 import { SocketMessage, yieldedSocketMessage } from "../src/interface/message.ts";
 import { calculateUpdatePaths } from "../src/MISC/utils.ts";
