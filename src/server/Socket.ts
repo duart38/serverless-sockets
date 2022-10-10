@@ -15,7 +15,12 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { EventType, serializable, SocketMessage, yieldedSocketMessage } from "../interface/message.ts";
+import {
+  EventType,
+  serializable,
+  SocketMessage,
+  yieldedSocketMessage,
+} from "../interface/message.ts";
 
 import { Watcher } from "../FS/FileWatcher.ts";
 import { HandleEvent } from "./EventHandler.ts";
@@ -36,25 +41,29 @@ export default class Socket {
   }
 
   private handleClose(socket: WebSocket) {
-    socket.close();
+    Log.silent(() => {
+      socket.close();
+    });
     this.connections.delete(socket);
     dispatchEvent(new Event(this.instanceID + "_disconnect"));
   }
 
   private waitForSocket(socket: WebSocket) {
-      socket.onmessage = ({data})=>{
-        console.log("RECEIVED MSG",data)
-        if (data instanceof ArrayBuffer) {
-          const incoming = SocketMessage.fromBuffer(data);
-          if (incoming.sizeOfMessage <= CONFIG.payloadLimit) {
-            HandleEvent(incoming, socket);
-          } else {
-            Log.info(`payload with size ${incoming.sizeOfMessage} was rejected entrance.`);
-          }
-        }else{
-          Log.error(`Client sent incorrect data type -> ${typeof data}`)
+    socket.onmessage = ({ data }) => {
+      console.log("RECEIVED MSG", data);
+      if (data instanceof ArrayBuffer) {
+        const incoming = SocketMessage.fromBuffer(data);
+        if (incoming.sizeOfMessage <= CONFIG.payloadLimit) {
+          HandleEvent(incoming, socket);
+        } else {
+          Log.info(
+            `payload with size ${incoming.sizeOfMessage} was rejected entrance.`,
+          );
         }
+      } else {
+        Log.error(`Client sent incorrect data type -> ${typeof data}`);
       }
+    };
   }
 
   /**
@@ -65,7 +74,7 @@ export default class Socket {
       return new Response(null, { status: 501 });
     }
 
-    const {response, socket} = Deno.upgradeWebSocket(req);
+    const { response, socket } = Deno.upgradeWebSocket(req);
     this.connections.add(socket);
     dispatchEvent(new Event(this.instanceID + "_connect"));
     this.waitForSocket(socket);
@@ -94,8 +103,19 @@ export default class Socket {
   static broadcast(data: yieldedSocketMessage, exclude?: WebSocket) {
     const socket = socketS.getInstance();
     socket.connections.forEach((s) => {
-      if (s !== exclude) {
-        s.send(SocketMessage.encode(Object.assign(data, { type: EventType.BROADCAST, payload: { ...data.payload } })))
+      if (s === exclude) return;
+      if (s.readyState === 1) {
+        s.send(
+          SocketMessage.encode(
+            Object.assign(data, {
+              type: EventType.BROADCAST,
+              payload: { ...data.payload },
+            }),
+          ),
+        );
+      } else {
+        Log.error("Attempting to send a message to a closed socket.");
+        socket.handleClose(s);
       }
     });
   }
@@ -112,8 +132,15 @@ export default class Socket {
    * @param msg the message to send
    * @returns a promise to await for the sending to complete
    */
-  static sendMessage<K extends serializable>(to: WebSocket, msg: yieldedSocketMessage<K>) {
-      to.send(SocketMessage.encode(msg));
+  static sendMessage<K extends serializable>(
+    to: WebSocket,
+    msg: yieldedSocketMessage<K>,
+  ) {
+    if (to.readyState === 1) to.send(SocketMessage.encode(msg));
+    else {
+      Log.error("Attempting to send a message to a closed socket");
+      Socket.getInstance().handleClose(to);
+    }
   }
   static getInstance() {
     return socketS.getInstance();
