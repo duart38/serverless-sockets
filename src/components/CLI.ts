@@ -92,7 +92,7 @@ Available configurations:`);
     }
     // if(path.split(".").length === 2) path.replace("configuration.", "")
     const p = Deno.run({
-      cmd: ["deno", "doc", "config.js", `${path}`],
+      cmd: ["deno", "doc", "https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/config.js", `${path}`],
       stdout: 'piped'
     });
 
