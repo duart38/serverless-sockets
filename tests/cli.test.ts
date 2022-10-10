@@ -83,7 +83,6 @@ Deno.test("CLI prints documentation correctly", async (t) => {
     });
     const childRawOut = new TextDecoder().decode(await p.output());
     const status = (await p.status()).code;
-    Deno.writeTextFileSync("test.txt", childRawOut)
 
     assertEquals(status, 0, `finished with exit code ${status}`);
     for(const key of Object.keys(CONFIG).filter(k=>typeof (CONFIG as unknown as Record<string, unknown>)[k] !== "object")){
