@@ -75,11 +75,6 @@ Deno.test("CLI allows for nested data manipulation", async () => {
 
 Deno.test("CLI prints documentation correctly", async (t) => {
 
-    const inst = Deno.run({
-        cmd: ["deno", "install", "-A", "-f", "-r", "--import-map=https://raw.githubusercontent.com/duart38/serverless-sockets/main/import_map.json", "-n", "ssocket_test", "https://raw.githubusercontent.com/duart38/serverless-sockets/main/src/mod.ts"],
-        stdout: 'piped'
-    });
-
     const p = Deno.run({
         cmd: [
             'ssocket_test', '-h'
@@ -99,5 +94,4 @@ Deno.test("CLI prints documentation correctly", async (t) => {
     }
 
     p.close();
-    inst.close();
 });
