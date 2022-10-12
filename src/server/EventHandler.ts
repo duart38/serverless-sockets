@@ -28,7 +28,7 @@ import { calculateUpdatePaths } from "../MISC/utils.ts";
  */
 function handleYields(generatorFunction: ModuleGenerator, from: WebSocket, msgRef: SocketMessage, prev: yieldedSocketMessage | undefined = undefined): void {
   generatorFunction.next().then((reply) => {
-    if (reply.done === true || reply.done === undefined) return msgRef.free();
+    if (reply.done === true || reply.done === undefined || from.readyState !== 1) return msgRef.free();
     /*
       send before we recursively call this method because otherwise the main event-loop will block the sending of messages
       which could potentially cause a memory overflow if the sum of yields are very large.
