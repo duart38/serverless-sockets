@@ -50,7 +50,6 @@ export default class Socket {
 
   private waitForSocket(socket: WebSocket) {
     socket.onmessage = ({ data }) => {
-      console.log("RECEIVED MSG", data);
       if (data instanceof ArrayBuffer) {
         const incoming = SocketMessage.fromBuffer(data);
         if (incoming.sizeOfMessage <= CONFIG.payloadLimit) {
