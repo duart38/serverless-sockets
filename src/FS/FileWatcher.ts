@@ -135,7 +135,6 @@ export class Watcher {
    * @param fn the file string
    */
   public containsFile(fn: string) {
-    console.log(this._sanitizeIncoming(fn), this.files)
     return this.files.has(this._sanitizeIncoming(fn));
   }
 
