@@ -128,16 +128,26 @@ Available configurations:`);
    */
   private parseArgs() {
     for(const [key, val] of Object.entries(this.args).filter(([k]) => k !== "_")){
-      if ((CONFIG as unknown as Record<string, unknown>)[key]) {
-        if (this._checkTypeEquals((CONFIG as unknown as Record<string, unknown>)[key], val) === false) {
+      if ((CONFIG as unknown as Record<string, unknown>)[key] !== undefined) {
+        // the value from the config file, unchanged.
+        const originalValue = (CONFIG as unknown as Record<string, unknown>)[key];
+        const incomingCasted = this._attemptCast(val, originalValue);
+
+        if (this._checkTypeEquals(originalValue, incomingCasted) === false) {
           console.error(`Supplied argument ${key}'s type (${typeof val}) does not match config values type (${typeof (CONFIG as unknown as Record<string, unknown>)[key]}).`);
         }
+
+        // nested checks
         if (typeof (CONFIG as unknown as Record<string, unknown>)[key] === "object") {
           Object.entries(val).forEach(([eK, eV]) => {
-            if (this._checkTypeEquals((CONFIG as any)[key][eK], eV) === false) {
+            const incomingCasted = this._attemptCast(eV, (CONFIG as any)[key][eK]);
+            // the value from the config file, unchanged.
+            const originalValue = (CONFIG as any)[key][eK];
+            if (this._checkTypeEquals(incomingCasted, originalValue) === false) {
               console.error(`Supplied argument ${key}.${eK}'s type (${typeof eV}) does not match config values type (${typeof (CONFIG as any)[key][eK]}).`);
             }
-            (CONFIG as any)[key][eK] = this._attemptCast(eV, (CONFIG as any)[key][eK]);
+            // change the value in the config file to the new (casted) value.
+            (CONFIG as any)[key][eK] = incomingCasted
           });
         } else {
           (CONFIG as any)[key] = this._attemptCast(val, (CONFIG as any)[key]);
