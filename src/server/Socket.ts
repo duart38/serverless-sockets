@@ -104,14 +104,8 @@ export default class Socket {
     socket.connections.forEach((s) => {
       if (s === exclude) return;
       if (s.readyState === 1) {
-        s.send(
-          SocketMessage.encode(
-            Object.assign(data, {
-              type: EventType.BROADCAST,
-              payload: { ...data.payload },
-            }),
-          ),
-        );
+        data.type = EventType.BROADCAST;
+        s.send(SocketMessage.encode(data));
       } else {
         Log.error("Attempting to send a message to a closed socket.");
         socket.handleClose(s);
